@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import KeychainAccess
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,6 +17,46 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        window = UIWindow(frame: UIScreen.main.bounds)
+        let tabController = UITabBarController()
+        let layout = UICollectionViewFlowLayout()
+        let homeController = HomeController(collectionViewLayout: layout)
+        homeController.tabBarItem = UITabBarItem(title: "Home", image: #imageLiteral(resourceName: "home").withRenderingMode(.alwaysTemplate), tag: 0)
+        homeController.title = "Home"
+        let searchController = SearchController()
+        searchController.tabBarItem = UITabBarItem(title: "Search", image: #imageLiteral(resourceName: "search").withRenderingMode(.alwaysTemplate), tag: 1)
+        searchController.title = "Search"
+        let postController = PostController()
+        postController.title = "Post"
+        postController.tabBarItem = UITabBarItem(title: "Post", image: #imageLiteral(resourceName: "send").withRenderingMode(.alwaysTemplate), tag: 2)
+        let profileController = ProfileController()
+        ProfileController.myProfile = profileController
+        profileController.title = "Profile"
+        profileController.tabBarItem = UITabBarItem(title: "Profile", image: #imageLiteral(resourceName: "profile").withRenderingMode(.alwaysTemplate), tag: 3)
+        tabController.viewControllers = [UINavigationController(rootViewController: homeController), UINavigationController(rootViewController: searchController), UINavigationController(rootViewController: postController), UINavigationController(rootViewController: profileController)]
+        window?.rootViewController = tabController
+        window?.makeKeyAndVisible()
+        
+        
+        let keychain = Keychain(service: "com.johnnywaity.flux")
+        if let refresh = keychain["refresh"] {
+            Network.request(url: "https://api.tryflux.app:3000/getNewToken", type: .post, paramters: ["refreshToken": refresh]) { (response, error) in
+                if let s = response["success"] as? Bool {
+                    if s {
+                        Network.authToken = (response["token"]! as! String)
+                        homeController.getFeed()
+                    }
+                    else{
+                        tabController.present(LoginController(), animated: true, completion: nil)
+                    }
+                }else{
+                    tabController.present(LoginController(), animated: true, completion: nil)
+                }
+            }
+        }else{
+            tabController.present(LoginController(), animated: true, completion: nil)
+        }
+        
         return true
     }
 
@@ -40,6 +81,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
+    
+    
 
 
 }

@@ -1,0 +1,32 @@
+PODS:
+  - Alamofire (4.8.1)
+  - CropViewController (2.4.0)
+  - JWTDecode (2.2.0)
+  - KeychainAccess (3.1.2)
+  - SwiftyJSON (4.2.0)
+
+DEPENDENCIES:
+  - Alamofire
+  - CropViewController
+  - JWTDecode
+  - KeychainAccess
+  - SwiftyJSON
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Alamofire
+    - CropViewController
+    - JWTDecode
+    - KeychainAccess
+    - SwiftyJSON
+
+SPEC CHECKSUMS:
+  Alamofire: 16ce2c353fb72865124ddae8a57c5942388f4f11
+  CropViewController: a090820b15fc3da68e694d7c192a4708c576828b
+  JWTDecode: 85a405ab16d5473e99bd89ded1d535090ebd6a0e
+  KeychainAccess: b3816fddcf28aa29d94b10ec305cd52be14c472b
+  SwiftyJSON: c4bcba26dd9ec7a027fc8eade48e2c911f229e96
+
+PODFILE CHECKSUM: ff6e9ace5e81ba5496ce11efd7971646897f2ae3
+
+COCOAPODS: 1.6.0

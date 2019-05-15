@@ -7,21 +7,61 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3D064C59226FFB680008A654 /* LoadingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D064C58226FFB680008A654 /* LoadingController.swift */; };
+		3D0A81D222827AA100ABB83E /* ProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0A81D122827AA100ABB83E /* ProfileController.swift */; };
+		3D50A54D2250A61D00619CF2 /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D50A54C2250A61D00619CF2 /* HomeController.swift */; };
+		3D50A5502250ABDB00619CF2 /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D50A54F2250ABDB00619CF2 /* PostCell.swift */; };
+		3D50A5532250AEC900619CF2 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D50A5522250AEC900619CF2 /* Extensions.swift */; };
+		3D50A55622512B2F00619CF2 /* Amandita.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3D50A55522512B0900619CF2 /* Amandita.ttf */; };
+		3D50A558225132F300619CF2 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D50A557225132F300619CF2 /* Post.swift */; };
+		3D50A55B2251367400619CF2 /* OptionPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D50A55A2251367400619CF2 /* OptionPostCell.swift */; };
+		3D6BA2F02254889200DAEEB7 /* TextPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D6BA2EF2254889200DAEEB7 /* TextPostCell.swift */; };
+		3D70CDDE226D2C5500D3A5F8 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D70CDDD226D2C5500D3A5F8 /* Network.swift */; };
+		3D70CDE2226D61F300D3A5F8 /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D70CDE1226D61F300D3A5F8 /* Auth.swift */; };
+		3D70CDE4226D6A8B00D3A5F8 /* PostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D70CDE3226D6A8B00D3A5F8 /* PostController.swift */; };
+		3D70CDE6226D755500D3A5F8 /* CreateOptionPostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D70CDE5226D755500D3A5F8 /* CreateOptionPostController.swift */; };
+		3D70CDE8226D7A0300D3A5F8 /* NewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D70CDE7226D7A0300D3A5F8 /* NewCell.swift */; };
+		3D70CDEA226D817C00D3A5F8 /* OptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D70CDE9226D817C00D3A5F8 /* OptionCell.swift */; };
+		3D70CDED226D86B200D3A5F8 /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D70CDEC226D86B200D3A5F8 /* ColorPicker.swift */; };
 		3D9723372250A3D70093C754 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9723362250A3D70093C754 /* AppDelegate.swift */; };
-		3D9723392250A3D70093C754 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9723382250A3D70093C754 /* ViewController.swift */; };
-		3D97233C2250A3D70093C754 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D97233A2250A3D70093C754 /* Main.storyboard */; };
 		3D97233E2250A3DA0093C754 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D97233D2250A3DA0093C754 /* Assets.xcassets */; };
 		3D9723412250A3DA0093C754 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D97233F2250A3DA0093C754 /* LaunchScreen.storyboard */; };
+		3DD8F1902283F72F00DCCB0F /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD8F18F2283F72F00DCCB0F /* SearchController.swift */; };
+		3DD8F1922283FC9A00DCCB0F /* UserListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD8F1912283FC9A00DCCB0F /* UserListController.swift */; };
+		3DD8F1942283FCFF00DCCB0F /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD8F1932283FCFF00DCCB0F /* UserCell.swift */; };
+		3DDFB6AD226D07C7006EAFA0 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DDFB6AC226D07C7006EAFA0 /* LoginController.swift */; };
+		7A19914D075ADAB934A0D6FF /* Pods_Flux.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 576EC450AA725A2767E3858A /* Pods_Flux.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3D064C58226FFB680008A654 /* LoadingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingController.swift; sourceTree = "<group>"; };
+		3D0A81D122827AA100ABB83E /* ProfileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileController.swift; sourceTree = "<group>"; };
+		3D50A54C2250A61D00619CF2 /* HomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
+		3D50A54F2250ABDB00619CF2 /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
+		3D50A5522250AEC900619CF2 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		3D50A55522512B0900619CF2 /* Amandita.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Amandita.ttf; sourceTree = "<group>"; };
+		3D50A557225132F300619CF2 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
+		3D50A55A2251367400619CF2 /* OptionPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionPostCell.swift; sourceTree = "<group>"; };
+		3D6BA2EF2254889200DAEEB7 /* TextPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPostCell.swift; sourceTree = "<group>"; };
+		3D70CDDD226D2C5500D3A5F8 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
+		3D70CDE1226D61F300D3A5F8 /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
+		3D70CDE3226D6A8B00D3A5F8 /* PostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostController.swift; sourceTree = "<group>"; };
+		3D70CDE5226D755500D3A5F8 /* CreateOptionPostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOptionPostController.swift; sourceTree = "<group>"; };
+		3D70CDE7226D7A0300D3A5F8 /* NewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCell.swift; sourceTree = "<group>"; };
+		3D70CDE9226D817C00D3A5F8 /* OptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionCell.swift; sourceTree = "<group>"; };
+		3D70CDEC226D86B200D3A5F8 /* ColorPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
 		3D9723332250A3D70093C754 /* Flux.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Flux.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D9723362250A3D70093C754 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		3D9723382250A3D70093C754 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		3D97233B2250A3D70093C754 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3D97233D2250A3DA0093C754 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3D9723402250A3DA0093C754 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3D9723422250A3DA0093C754 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3DD8F18F2283F72F00DCCB0F /* SearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
+		3DD8F1912283FC9A00DCCB0F /* UserListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListController.swift; sourceTree = "<group>"; };
+		3DD8F1932283FCFF00DCCB0F /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
+		3DDFB6AC226D07C7006EAFA0 /* LoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
+		3F7783D4D33FEF188F0A32FD /* Pods-Flux.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Flux.release.xcconfig"; path = "Target Support Files/Pods-Flux/Pods-Flux.release.xcconfig"; sourceTree = "<group>"; };
+		576EC450AA725A2767E3858A /* Pods_Flux.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Flux.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF67C9C0ACE108A521DC02A8 /* Pods-Flux.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Flux.debug.xcconfig"; path = "Target Support Files/Pods-Flux/Pods-Flux.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,17 +69,90 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A19914D075ADAB934A0D6FF /* Pods_Flux.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		197126E3AAF1E13D44D67590 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				576EC450AA725A2767E3858A /* Pods_Flux.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3D50A54B2250A5A700619CF2 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				3D50A54C2250A61D00619CF2 /* HomeController.swift */,
+				3DDFB6AC226D07C7006EAFA0 /* LoginController.swift */,
+				3D70CDE3226D6A8B00D3A5F8 /* PostController.swift */,
+				3D70CDE5226D755500D3A5F8 /* CreateOptionPostController.swift */,
+				3D064C58226FFB680008A654 /* LoadingController.swift */,
+				3D0A81D122827AA100ABB83E /* ProfileController.swift */,
+				3DD8F18F2283F72F00DCCB0F /* SearchController.swift */,
+				3DD8F1912283FC9A00DCCB0F /* UserListController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		3D50A54E2250ABBF00619CF2 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				3D50A54F2250ABDB00619CF2 /* PostCell.swift */,
+				3D50A55A2251367400619CF2 /* OptionPostCell.swift */,
+				3D6BA2EF2254889200DAEEB7 /* TextPostCell.swift */,
+				3D70CDE7226D7A0300D3A5F8 /* NewCell.swift */,
+				3D70CDE9226D817C00D3A5F8 /* OptionCell.swift */,
+				3DD8F1932283FCFF00DCCB0F /* UserCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		3D50A5512250AEBB00619CF2 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				3D50A5522250AEC900619CF2 /* Extensions.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		3D50A55422512AFB00619CF2 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				3D50A55522512B0900619CF2 /* Amandita.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		3D50A559225133BF00619CF2 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				3D50A557225132F300619CF2 /* Post.swift */,
+				3D70CDDD226D2C5500D3A5F8 /* Network.swift */,
+				3D70CDE1226D61F300D3A5F8 /* Auth.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		3D70CDEB226D86A000D3A5F8 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				3D70CDEC226D86B200D3A5F8 /* ColorPicker.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		3D97232A2250A3D70093C754 = {
 			isa = PBXGroup;
 			children = (
 				3D9723352250A3D70093C754 /* Flux */,
 				3D9723342250A3D70093C754 /* Products */,
+				5BF571248BFCED03B16F908D /* Pods */,
+				197126E3AAF1E13D44D67590 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -55,13 +168,26 @@
 			isa = PBXGroup;
 			children = (
 				3D9723362250A3D70093C754 /* AppDelegate.swift */,
-				3D9723382250A3D70093C754 /* ViewController.swift */,
-				3D97233A2250A3D70093C754 /* Main.storyboard */,
+				3D50A54B2250A5A700619CF2 /* Controllers */,
+				3D70CDEB226D86A000D3A5F8 /* Views */,
+				3D50A559225133BF00619CF2 /* Model */,
+				3D50A54E2250ABBF00619CF2 /* Cells */,
+				3D50A5512250AEBB00619CF2 /* Helpers */,
+				3D50A55422512AFB00619CF2 /* Fonts */,
 				3D97233D2250A3DA0093C754 /* Assets.xcassets */,
 				3D97233F2250A3DA0093C754 /* LaunchScreen.storyboard */,
 				3D9723422250A3DA0093C754 /* Info.plist */,
 			);
 			path = Flux;
+			sourceTree = "<group>";
+		};
+		5BF571248BFCED03B16F908D /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				AF67C9C0ACE108A521DC02A8 /* Pods-Flux.debug.xcconfig */,
+				3F7783D4D33FEF188F0A32FD /* Pods-Flux.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -71,9 +197,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3D9723452250A3DA0093C754 /* Build configuration list for PBXNativeTarget "Flux" */;
 			buildPhases = (
+				691860432B7EFEC126DFC08A /* [CP] Check Pods Manifest.lock */,
 				3D97232F2250A3D70093C754 /* Sources */,
 				3D9723302250A3D70093C754 /* Frameworks */,
 				3D9723312250A3D70093C754 /* Resources */,
+				77813E4D867995E6375CF6C0 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -122,35 +250,100 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3D50A55622512B2F00619CF2 /* Amandita.ttf in Resources */,
 				3D9723412250A3DA0093C754 /* LaunchScreen.storyboard in Resources */,
 				3D97233E2250A3DA0093C754 /* Assets.xcassets in Resources */,
-				3D97233C2250A3D70093C754 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		691860432B7EFEC126DFC08A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Flux-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		77813E4D867995E6375CF6C0 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Flux/Pods-Flux-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/CropViewController/CropViewController.framework",
+				"${BUILT_PRODUCTS_DIR}/JWTDecode/JWTDecode.framework",
+				"${BUILT_PRODUCTS_DIR}/KeychainAccess/KeychainAccess.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CropViewController.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JWTDecode.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KeychainAccess.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Flux/Pods-Flux-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3D97232F2250A3D70093C754 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D9723392250A3D70093C754 /* ViewController.swift in Sources */,
+				3D70CDE6226D755500D3A5F8 /* CreateOptionPostController.swift in Sources */,
+				3D6BA2F02254889200DAEEB7 /* TextPostCell.swift in Sources */,
+				3D70CDED226D86B200D3A5F8 /* ColorPicker.swift in Sources */,
+				3D70CDEA226D817C00D3A5F8 /* OptionCell.swift in Sources */,
+				3D064C59226FFB680008A654 /* LoadingController.swift in Sources */,
+				3D50A54D2250A61D00619CF2 /* HomeController.swift in Sources */,
 				3D9723372250A3D70093C754 /* AppDelegate.swift in Sources */,
+				3DD8F1902283F72F00DCCB0F /* SearchController.swift in Sources */,
+				3DD8F1942283FCFF00DCCB0F /* UserCell.swift in Sources */,
+				3D50A55B2251367400619CF2 /* OptionPostCell.swift in Sources */,
+				3D70CDE4226D6A8B00D3A5F8 /* PostController.swift in Sources */,
+				3D50A5502250ABDB00619CF2 /* PostCell.swift in Sources */,
+				3D70CDE2226D61F300D3A5F8 /* Auth.swift in Sources */,
+				3D70CDDE226D2C5500D3A5F8 /* Network.swift in Sources */,
+				3DD8F1922283FC9A00DCCB0F /* UserListController.swift in Sources */,
+				3DDFB6AD226D07C7006EAFA0 /* LoginController.swift in Sources */,
+				3D70CDE8226D7A0300D3A5F8 /* NewCell.swift in Sources */,
+				3D50A5532250AEC900619CF2 /* Extensions.swift in Sources */,
+				3D50A558225132F300619CF2 /* Post.swift in Sources */,
+				3D0A81D222827AA100ABB83E /* ProfileController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		3D97233A2250A3D70093C754 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3D97233B2250A3D70093C754 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		3D97233F2250A3DA0093C754 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -280,11 +473,13 @@
 		};
 		3D9723462250A3DA0093C754 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AF67C9C0ACE108A521DC02A8 /* Pods-Flux.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86FFSYZRW3;
 				INFOPLIST_FILE = Flux/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -298,11 +493,13 @@
 		};
 		3D9723472250A3DA0093C754 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3F7783D4D33FEF188F0A32FD /* Pods-Flux.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86FFSYZRW3;
 				INFOPLIST_FILE = Flux/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
