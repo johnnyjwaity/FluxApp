@@ -15,7 +15,7 @@ class UserListController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        tableView.tableFooterView = UIView()
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -42,7 +42,7 @@ class UserListController: UITableViewController {
         if let d = delegate {
             d.userClicked((tableView.cellForRow(at: indexPath) as! UserCell).user)
         }else{
-            navigationController?.pushViewController(ProfileController(), animated: true)
+            navigationController?.pushViewController(ProfileController((tableView.cellForRow(at: indexPath) as! UserCell).user), animated: true)
         }
     }
     

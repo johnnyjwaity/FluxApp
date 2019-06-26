@@ -50,6 +50,20 @@ class SearchController: UIViewController, UISearchResultsUpdating, UISearchBarDe
         // Do any additional setup after loading the view.
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if #available(iOS 11.0, *) {
+            navigationItem.hidesSearchBarWhenScrolling = false
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if #available(iOS 11.0, *) {
+            navigationItem.hidesSearchBarWhenScrolling = true
+        }
+    }
+    
     func updateSearchResults(for searchController: UISearchController) {
     }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {

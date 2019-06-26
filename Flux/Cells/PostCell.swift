@@ -11,6 +11,7 @@ import UIKit
 class PostCell: UICollectionViewCell {
     
     var questionLabel:UILabel!
+    var dateLabel:UILabel!
     var profile:UIImageView!
     var content:UIView!
     var usernameButton:UIButton!
@@ -19,6 +20,7 @@ class PostCell: UICollectionViewCell {
     let gradientLayer = CAGradientLayer()
     var cell:UICollectionViewCell!
     var totalPostContent:UIView!
+    var collectionView:UICollectionView!
     
     
     override init(frame: CGRect) {
@@ -48,7 +50,7 @@ class PostCell: UICollectionViewCell {
         contentView.rightAnchor.constraint(equalTo: rightAnchor, constant: -2).isActive = true
         totalPostContent = contentView
         
-        profile = UIImageView(image: nil)
+        profile = UIImageView(image: #imageLiteral(resourceName: "profilePlaceholder"))
         profile.backgroundColor = UIColor.clear
         profile.translatesAutoresizingMaskIntoConstraints = false
         profile.contentMode = .scaleAspectFill
@@ -62,6 +64,8 @@ class PostCell: UICollectionViewCell {
         profile.widthAnchor.constraint(equalToConstant: 40).isActive = true
         profile.heightAnchor.constraint(equalToConstant: 40).isActive = true
         
+        
+        
         usernameButton = UIButton(type: .system)
         usernameButton.setTitle("", for: .normal)
         usernameButton.translatesAutoresizingMaskIntoConstraints = false
@@ -72,7 +76,28 @@ class PostCell: UICollectionViewCell {
         usernameButton.leftAnchor.constraint(equalTo: profile.rightAnchor, constant: 10).isActive = true
         usernameButton.topAnchor.constraint(equalTo: profile.topAnchor).isActive = true
         usernameButton.bottomAnchor.constraint(equalTo: profile.bottomAnchor).isActive = true
-        usernameButton.rightAnchor.constraint(equalTo: contentView.rightAnchor).isActive = true
+        usernameButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -170).isActive = true
+        
+        let refreshButton = UIButton(type: .system)
+        refreshButton.translatesAutoresizingMaskIntoConstraints = false
+        refreshButton.setImage(#imageLiteral(resourceName: "refresh").withRenderingMode(.alwaysTemplate), for: .normal)
+        refreshButton.tintColor = UIColor.appBlue
+        contentView.addSubview(refreshButton)
+        refreshButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 0).isActive = true
+        refreshButton.centerYAnchor.constraint(equalTo: usernameButton.centerYAnchor).isActive = true
+        refreshButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        refreshButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        refreshButton.addTarget(self, action: #selector(refresh), for: .touchUpInside)
+        
+        dateLabel = UILabel()
+        dateLabel.translatesAutoresizingMaskIntoConstraints = false
+        dateLabel.textColor = UIColor.lightGray
+        dateLabel.font = UIFont.systemFont(ofSize: 15)
+        dateLabel.textAlignment = .right
+        contentView.addSubview(dateLabel)
+        dateLabel.rightAnchor.constraint(equalTo: refreshButton.leftAnchor, constant: 0).isActive = true
+        dateLabel.centerYAnchor.constraint(equalTo: usernameButton.centerYAnchor).isActive = true
+        dateLabel.widthAnchor.constraint(equalToConstant: 150).isActive = true
         
         let divider = UIView()
         divider.translatesAutoresizingMaskIntoConstraints = false
@@ -96,6 +121,8 @@ class PostCell: UICollectionViewCell {
         questionLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 10).isActive = true
         questionLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -10).isActive = true
         
+        
+        
         let subContent = UIView()
         subContent.backgroundColor = UIColor.clear
         subContent.translatesAutoresizingMaskIntoConstraints = false
@@ -112,7 +139,8 @@ class PostCell: UICollectionViewCell {
         
     }
     
-    func setPost(_ post:Post, collectionView:UICollectionView){
+    func setPost(_ post:Post, collectionView:UICollectionView?){
+        
         if post.fetched {
             self.update(post)
 //            (collectionView.collectionViewLayout as! UICollectionViewFlowLayout).invalidateLayout()
@@ -133,17 +161,26 @@ class PostCell: UICollectionViewCell {
                 }, completion: { (completed) in
                     coverView.removeFromSuperview()
                 })
-                (collectionView.collectionViewLayout as! UICollectionViewFlowLayout).invalidateLayout()
+                (collectionView?.collectionViewLayout as? UICollectionViewFlowLayout)?.invalidateLayout()
             }
         }
     }
     
     func update(_ post:Post){
-        profile.image = post.profilePicture
+        if let i = post.profilePicture {
+            profile.image = i
+        }else{
+            profile.image = #imageLiteral(resourceName: "profilePlaceholder")
+        }
+        
         questionLabel.text = post.question
         self.post = post
 //        gradientLayer.frame = CGRect(x: 0, y: 0, width: bounds.width, height: CGFloat(112 + round((Double(post.choices!.count) / 2)) * 70))
         usernameButton.setTitle(post.user ?? "", for: .normal)
+        var components = post.timeStamp!.components(separatedBy: "-")
+        components[0] = "\(Int(components[0])! + 1)"
+        let newTimeStamp = components.joined(separator: "-")
+        dateLabel.text = Date.UTCToLocal(date: newTimeStamp)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -158,5 +195,11 @@ class PostCell: UICollectionViewCell {
             keyPath == #keyPath(UIView.bounds) {
             gradientLayer.frame = objectView.bounds
         }
+    }
+    
+    @objc
+    func refresh(){
+        post.invalidate()
+        setPost(post, collectionView: nil)
     }
 }

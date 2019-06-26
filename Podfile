@@ -11,4 +11,6 @@ pod 'KeychainAccess'
 pod 'SwiftyJSON'
 pod 'JWTDecode'
 pod 'CropViewController'
+pod 'Charts'
+pod 'SnapSDK'
 end

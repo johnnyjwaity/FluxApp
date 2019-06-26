@@ -52,6 +52,14 @@ class CreateOptionPostController: UIViewController, UICollectionViewDelegateFlow
         textView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20).isActive = true
         textView.heightAnchor.constraint(equalToConstant: 44).isActive = true
         
+        let toolbar:UIToolbar = UIToolbar(frame: CGRect(x: 0, y: 0,  width: view.frame.size.width, height: 30))
+        //create left side empty space so that done button set on right side
+        let flexSpace = UIBarButtonItem(barButtonSystemItem:    .flexibleSpace, target: nil, action: nil)
+        let doneBtn: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(dismissKeyboard))
+        toolbar.setItems([flexSpace, doneBtn], animated: false)
+        toolbar.sizeToFit()
+        textView.inputAccessoryView = toolbar
+        
         let optionLabel = UILabel()
         optionLabel.font = UIFont(name: "Amandita", size: 45)
         optionLabel.text = "Options"
@@ -79,7 +87,12 @@ class CreateOptionPostController: UIViewController, UICollectionViewDelegateFlow
         collectionBottom = collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -view.safeAreaInsets.bottom)
         collectionBottom.isActive = true
         
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    @objc
+    func dismissKeyboard(){
+        view.endEditing(true)
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -102,6 +115,7 @@ class CreateOptionPostController: UIViewController, UICollectionViewDelegateFlow
             (cell as! OptionCell).optionIndex = indexPath.row
             (cell as! OptionCell).delegate = self
             (cell as! OptionCell).textView.text = options[indexPath.row].name
+            (cell as! OptionCell).textView.tag = indexPath.row
             (cell as! OptionCell).setColor(options[indexPath.row].color)
         }
         return cell
@@ -129,7 +143,16 @@ class CreateOptionPostController: UIViewController, UICollectionViewDelegateFlow
     
     @objc
     func post(){
-        if textView.text == "" || options.count == 0 {
+        if textView.text == "" {
+            let alert = UIAlertController(title: "Hmmm..", message: "Please Make Sure You Filled in the Question", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ok!", style: .default, handler: nil))
+            present(alert, animated: true, completion: nil)
+            return
+        }
+        if options.count == 0 || options.count == 1 {
+            let alert = UIAlertController(title: "Hmmm..", message: "Please Add More Options", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ok!", style: .default, handler: nil))
+            present(alert, animated: true, completion: nil)
             return
         }
         var params:[String:Any] = [:]
@@ -139,6 +162,12 @@ class CreateOptionPostController: UIViewController, UICollectionViewDelegateFlow
         var choices:[String] = []
         var colors:[String] = []
         for o in self.options {
+            if o.name == "" {
+                let alert = UIAlertController(title: "Hmmm..", message: "Please Make Sure You Filled in the Option Name for all the Options", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Ok!", style: .default, handler: nil))
+                present(alert, animated: true, completion: nil)
+                return
+            }
             choices.append(o.name)
             var color = "r"
             switch(o.color){
@@ -162,6 +191,16 @@ class CreateOptionPostController: UIViewController, UICollectionViewDelegateFlow
             }
             colors.append(color)
         }
+        var usedColors:[String] = []
+        for color in colors {
+            if usedColors.contains(color) {
+                let alert = UIAlertController(title: "Hmmm..", message: "Please Don't Use Duplicate Colors", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Ok!", style: .default, handler: nil))
+                present(alert, animated: true, completion: nil)
+                return
+            }
+            usedColors.append(color)
+        }
         options["choices"] = choices
         options["colors"] = colors
         params["options"] = options
@@ -178,6 +217,41 @@ class CreateOptionPostController: UIViewController, UICollectionViewDelegateFlow
                 self.navigationController?.popViewController(animated: true)
             })
             
+        }
+    }
+    
+    @objc
+    func keyboardWillShow(notification: NSNotification) {
+//        collectionView.scrollToItem(at: IndexPath(row: view.selectedTextField?.tag ?? 0, section: 0), at: .top, animated: true)
+        if view.selectedTextField?.placeholder == "Question" {
+            return
+        }
+        let cell = collectionView.layoutAttributesForItem(at: IndexPath(row: view.selectedTextField?.tag ?? 0, section: 0))
+        let cellBottom = collectionView.frame.origin.y + (cell?.frame.origin.y)! + (cell?.frame.height)!
+        print(cellBottom)
+        let view1 = UIView(frame: CGRect(x: 0, y: cellBottom, width: view.frame.width, height: view.frame.height))
+        view1.backgroundColor = UIColor.red
+//        view.addSubview(view1)
+
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+//            let offset = (view.frame.height - keyboardSize.height) - cellBottom
+            if self.view.frame.origin.y == 0 {
+                let index = (view.selectedTextField?.tag ?? 0) + 1
+                let amountOfCells = collectionView.frame.height / cell!.frame.height
+                if index < Int(amountOfCells) {
+                    self.view.frame.origin.y -= ((keyboardSize.height + 30) - (view.frame.height - cellBottom))
+                }else{
+                    self.view.frame.origin.y -= keyboardSize.height
+                }
+                
+            }
+        }
+    }
+    
+    @objc
+    func keyboardWillHide(notification: NSNotification) {
+        if self.view.frame.origin.y != 0 {
+            self.view.frame.origin.y = 0
         }
     }
 

@@ -8,12 +8,15 @@
 
 import UIKit
 import KeychainAccess
+import SCSDKLoginKit
+import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    static var hasAttemptedRegistrantion:Bool = false
+    static var deviceToken:String? = nil
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -56,7 +59,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }else{
             tabController.present(LoginController(), animated: true, completion: nil)
         }
-        
         return true
     }
 
@@ -82,8 +84,43 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        print("HELLO")
+        let handled = SCSDKLoginClient.application(app, open: url, options: options)
+        return handled
+    }
     
+    static func registerForPushNotifications() {
+        UNUserNotificationCenter.current()
+            .requestAuthorization(options: [.alert, .sound, .badge]) {
+                 granted, error in
+                
+                print("Permission granted: \(granted)")
+                guard granted else { return }
+                AppDelegate.getNotificationSettings()
+        }
+    }
+    
+    static func getNotificationSettings() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            print("Notification settings: \(settings)")
+            guard settings.authorizationStatus == .authorized else { return }
+            DispatchQueue.main.async {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+        }
+    }
 
-
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
+        let token = tokenParts.joined()
+        print("Device Token: \(token)")
+        AppDelegate.deviceToken = token
+        Network.request(url: "https://api.tryflux.app:3000/deviceToken", type: .post, paramters: ["deviceToken" : token], auth: true)
+    }
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("Failed to register: \(error)")
+    }
 }
 

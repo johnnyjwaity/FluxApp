@@ -9,12 +9,14 @@
 /* Begin PBXBuildFile section */
 		3D064C59226FFB680008A654 /* LoadingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D064C58226FFB680008A654 /* LoadingController.swift */; };
 		3D0A81D222827AA100ABB83E /* ProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0A81D122827AA100ABB83E /* ProfileController.swift */; };
+		3D2CB21A228D00940001DB8E /* PostResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CB219228D00940001DB8E /* PostResultsController.swift */; };
 		3D50A54D2250A61D00619CF2 /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D50A54C2250A61D00619CF2 /* HomeController.swift */; };
 		3D50A5502250ABDB00619CF2 /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D50A54F2250ABDB00619CF2 /* PostCell.swift */; };
 		3D50A5532250AEC900619CF2 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D50A5522250AEC900619CF2 /* Extensions.swift */; };
 		3D50A55622512B2F00619CF2 /* Amandita.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3D50A55522512B0900619CF2 /* Amandita.ttf */; };
 		3D50A558225132F300619CF2 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D50A557225132F300619CF2 /* Post.swift */; };
 		3D50A55B2251367400619CF2 /* OptionPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D50A55A2251367400619CF2 /* OptionPostCell.swift */; };
+		3D56D9BB228D4C4E00090A4C /* LegendCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D56D9BA228D4C4E00090A4C /* LegendCell.swift */; };
 		3D6BA2F02254889200DAEEB7 /* TextPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D6BA2EF2254889200DAEEB7 /* TextPostCell.swift */; };
 		3D70CDDE226D2C5500D3A5F8 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D70CDDD226D2C5500D3A5F8 /* Network.swift */; };
 		3D70CDE2226D61F300D3A5F8 /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D70CDE1226D61F300D3A5F8 /* Auth.swift */; };
@@ -36,12 +38,15 @@
 /* Begin PBXFileReference section */
 		3D064C58226FFB680008A654 /* LoadingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingController.swift; sourceTree = "<group>"; };
 		3D0A81D122827AA100ABB83E /* ProfileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileController.swift; sourceTree = "<group>"; };
+		3D2CB219228D00940001DB8E /* PostResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostResultsController.swift; sourceTree = "<group>"; };
+		3D395236228FB49A000B5496 /* Flux.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Flux.entitlements; sourceTree = "<group>"; };
 		3D50A54C2250A61D00619CF2 /* HomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
 		3D50A54F2250ABDB00619CF2 /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
 		3D50A5522250AEC900619CF2 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		3D50A55522512B0900619CF2 /* Amandita.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Amandita.ttf; sourceTree = "<group>"; };
 		3D50A557225132F300619CF2 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		3D50A55A2251367400619CF2 /* OptionPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionPostCell.swift; sourceTree = "<group>"; };
+		3D56D9BA228D4C4E00090A4C /* LegendCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegendCell.swift; sourceTree = "<group>"; };
 		3D6BA2EF2254889200DAEEB7 /* TextPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPostCell.swift; sourceTree = "<group>"; };
 		3D70CDDD226D2C5500D3A5F8 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		3D70CDE1226D61F300D3A5F8 /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
@@ -95,6 +100,7 @@
 				3D0A81D122827AA100ABB83E /* ProfileController.swift */,
 				3DD8F18F2283F72F00DCCB0F /* SearchController.swift */,
 				3DD8F1912283FC9A00DCCB0F /* UserListController.swift */,
+				3D2CB219228D00940001DB8E /* PostResultsController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -108,6 +114,7 @@
 				3D70CDE7226D7A0300D3A5F8 /* NewCell.swift */,
 				3D70CDE9226D817C00D3A5F8 /* OptionCell.swift */,
 				3DD8F1932283FCFF00DCCB0F /* UserCell.swift */,
+				3D56D9BA228D4C4E00090A4C /* LegendCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -167,6 +174,7 @@
 		3D9723352250A3D70093C754 /* Flux */ = {
 			isa = PBXGroup;
 			children = (
+				3D395236228FB49A000B5496 /* Flux.entitlements */,
 				3D9723362250A3D70093C754 /* AppDelegate.swift */,
 				3D50A54B2250A5A700619CF2 /* Controllers */,
 				3D70CDEB226D86A000D3A5F8 /* Views */,
@@ -224,6 +232,14 @@
 				TargetAttributes = {
 					3D9723322250A3D70093C754 = {
 						CreatedOnToolsVersion = 10.1;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -291,9 +307,16 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Flux/Pods-Flux-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/Charts/Charts.framework",
 				"${BUILT_PRODUCTS_DIR}/CropViewController/CropViewController.framework",
 				"${BUILT_PRODUCTS_DIR}/JWTDecode/JWTDecode.framework",
 				"${BUILT_PRODUCTS_DIR}/KeychainAccess/KeychainAccess.framework",
+				"${BUILT_PRODUCTS_DIR}/PINCache/PINCache.framework",
+				"${BUILT_PRODUCTS_DIR}/PINOperation/PINOperation.framework",
+				"${PODS_ROOT}/SnapSDK/SCSDKBitmojiKit.framework",
+				"${PODS_ROOT}/SnapSDK/SCSDKCoreKit.framework",
+				"${PODS_ROOT}/SnapSDK/SCSDKCreativeKit.framework",
+				"${PODS_ROOT}/SnapSDK/SCSDKLoginKit.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -301,9 +324,16 @@
 			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Charts.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CropViewController.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JWTDecode.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KeychainAccess.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PINCache.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PINOperation.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SCSDKBitmojiKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SCSDKCoreKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SCSDKCreativeKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SCSDKLoginKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -318,6 +348,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3D2CB21A228D00940001DB8E /* PostResultsController.swift in Sources */,
 				3D70CDE6226D755500D3A5F8 /* CreateOptionPostController.swift in Sources */,
 				3D6BA2F02254889200DAEEB7 /* TextPostCell.swift in Sources */,
 				3D70CDED226D86B200D3A5F8 /* ColorPicker.swift in Sources */,
@@ -329,6 +360,7 @@
 				3DD8F1942283FCFF00DCCB0F /* UserCell.swift in Sources */,
 				3D50A55B2251367400619CF2 /* OptionPostCell.swift in Sources */,
 				3D70CDE4226D6A8B00D3A5F8 /* PostController.swift in Sources */,
+				3D56D9BB228D4C4E00090A4C /* LegendCell.swift in Sources */,
 				3D50A5502250ABDB00619CF2 /* PostCell.swift in Sources */,
 				3D70CDE2226D61F300D3A5F8 /* Auth.swift in Sources */,
 				3D70CDDE226D2C5500D3A5F8 /* Network.swift in Sources */,
@@ -476,6 +508,7 @@
 			baseConfigurationReference = AF67C9C0ACE108A521DC02A8 /* Pods-Flux.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Flux/Flux.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86FFSYZRW3;
 				INFOPLIST_FILE = Flux/Info.plist;
@@ -496,6 +529,7 @@
 			baseConfigurationReference = 3F7783D4D33FEF188F0A32FD /* Pods-Flux.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Flux/Flux.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86FFSYZRW3;
 				INFOPLIST_FILE = Flux/Info.plist;

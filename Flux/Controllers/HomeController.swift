@@ -44,13 +44,23 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     @objc
     func logout(){
         Network.authToken = nil
+        AppDelegate.hasAttemptedRegistrantion = false
         let keychain = Keychain(service: "com.johnnywaity.flux")
         Network.request(url: "https://api.tryflux.app:3000/invalidateToken", type: .delete, paramters: ["refreshToken": keychain["refresh"] ?? ""])
+        if let t = AppDelegate.deviceToken {
+            Network.request(url: "https://api.tryflux.app:3000/deviceToken", type: .delete, paramters: ["deviceToken" : t])
+        }
         keychain["refresh"] = nil
         tabBarController?.present(LoginController(), animated: true, completion: nil)
     }
     @objc
     func getFeed(){
+        if !AppDelegate.hasAttemptedRegistrantion{
+            AppDelegate.hasAttemptedRegistrantion = true
+            AppDelegate.registerForPushNotifications()
+        }
+        URLCache.shared = URLCache()
+        
         Network.request(url: "https://api.tryflux.app:3000/feed", type: .get, paramters: nil, auth: true) { (response, error) in
             if let success = response["success"] as? Bool {
                 if success {
@@ -83,6 +93,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: posts[indexPath.row].type == .Option ? "option" : "text", for: indexPath) as! PostCell
+        cell.collectionView = collectionView
         cell.setPost(posts[indexPath.row], collectionView: collectionView)
         
         return cell
@@ -97,7 +108,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
                 return CGSize(width: (UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width : UIScreen.main.bounds.height) * 0.96, height: CGFloat(112 + round((Double(posts[indexPath.row].amount ?? 1) / 2)) * 70))
             }else{
                 if posts[indexPath.row].showingResults {
-                    return CGSize(width: (UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width : UIScreen.main.bounds.height) * 0.96, height: CGFloat(112 + (posts[indexPath.row].choices!.count * 72)))
+                    return CGSize(width: (UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width : UIScreen.main.bounds.height) * 0.96, height: CGFloat(162 + (posts[indexPath.row].choices!.count * 72)))
                 }
                 return CGSize(width: (UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width : UIScreen.main.bounds.height) * 0.96, height: CGFloat(112 + round((Double(posts[indexPath.row].choices!.count) / 2)) * 70))
             }

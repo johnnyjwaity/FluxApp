@@ -9,12 +9,13 @@
 import UIKit
 import JWTDecode
 import CropViewController
+import SCSDKBitmojiKit
+import SCSDKLoginKit
 
-class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CropViewControllerDelegate {
+class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CropViewControllerDelegate, UITableViewDelegate, UITableViewDataSource {
     
     static var myProfile:ProfileController? = nil
     let followButton = UIButton(type: .system)
-    var followButtonHeight:NSLayoutConstraint!
     
     var profilePicture:UIImageView!
     let box1 = InfoButton("Posts", showDivider: false)
@@ -22,16 +23,28 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
     let box3 = InfoButton("Following")
     let usernameLabel = UILabel()
     var postContoller:HomeController? = nil
+    var isMe = false
+    
+    var tableView:UITableView? = nil
+    var tablePosts:[Post] = []
     
     let picker = UIImagePickerController()
     
     var user:String? = nil
     
     let refreshControl = UIRefreshControl()
-    let tableView = UITableView()
+    var followers:[String] = []
+    var following:[String] = []
+    
+//    let tableView = UITableView()
+    var scrollView:UIScrollView!
+    var constraintedScrollView = false
     
     init(_ user:String){
         self.user = user
+        if user == ""{
+            isMe = true
+        }
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -53,21 +66,39 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont(name: "Amandita", size: 28)!]
         navigationController?.navigationBar.tintColor = UIColor.appBlue
         navigationController?.navigationBar.barTintColor = UIColor.appBlue
+        self.navigationController?.navigationBar.tintColor = UIColor.white
         
-        profilePicture = UIImageView(image: nil)
-        profilePicture.backgroundColor = UIColor.clear
+        scrollView = UIScrollView()//UIScrollView(frame: view.safeAreaLayoutGuide.layoutFrame)
+        scrollView.backgroundColor = UIColor.white
+        scrollView.alwaysBounceVertical = true
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
+        refreshControl.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
+        scrollView.addSubview(refreshControl)
+        
+        
+        let containerView = UIView()//UIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: view.safeAreaLayoutGuide.layoutFrame.height))
+        containerView.backgroundColor = UIColor.white
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(containerView)
+        containerView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+        containerView.leftAnchor.constraint(equalTo: scrollView.leftAnchor).isActive = true
+        containerView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+        containerView.heightAnchor.constraint(equalToConstant: 160).isActive = true
+        
+        profilePicture = UIImageView(image: #imageLiteral(resourceName: "profilePlaceholder"))
+        profilePicture.backgroundColor = UIColor.lightGray
         profilePicture.translatesAutoresizingMaskIntoConstraints = false
         profilePicture.contentMode = .scaleAspectFill
-        profilePicture.layer.cornerRadius = 37.5
+        profilePicture.layer.cornerRadius = 50
         profilePicture.layer.masksToBounds = true
         profilePicture.clipsToBounds = true
-        profilePicture.backgroundColor = UIColor.black
         profilePicture.isUserInteractionEnabled = true
-        view.addSubview(profilePicture)
-        profilePicture.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10).isActive = true
-        profilePicture.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10).isActive = true
-        profilePicture.widthAnchor.constraint(equalToConstant: 75).isActive = true
-        profilePicture.heightAnchor.constraint(equalToConstant: 75).isActive = true
+        containerView.addSubview(profilePicture)
+        profilePicture.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10).isActive = true
+        profilePicture.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 10).isActive = true
+        profilePicture.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        profilePicture.heightAnchor.constraint(equalToConstant: 100).isActive = true
         let tap = UITapGestureRecognizer(target: self, action: #selector(profilePictureClicked))
         tap.numberOfTapsRequired = 1
         profilePicture.addGestureRecognizer(tap)
@@ -76,27 +107,29 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
         let infoBar = UIView()
         infoBar.translatesAutoresizingMaskIntoConstraints = false
         infoBar.backgroundColor = UIColor.white
-        view.addSubview(infoBar)
+        containerView.addSubview(infoBar)
         infoBar.leftAnchor.constraint(equalTo: profilePicture.rightAnchor, constant: 10).isActive = true
-        infoBar.centerYAnchor.constraint(equalTo: profilePicture.centerYAnchor).isActive = true
-        infoBar.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10).isActive = true
-        infoBar.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        infoBar.topAnchor.constraint(equalTo: profilePicture.topAnchor, constant: 10).isActive = true
+        infoBar.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -10).isActive = true
+        infoBar.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
-        
+        box1.tag = 0
         infoBar.addSubview(box1)
         box1.leftAnchor.constraint(equalTo: infoBar.leftAnchor).isActive = true
         box1.heightAnchor.constraint(equalTo: infoBar.heightAnchor).isActive = true
         box1.centerYAnchor.constraint(equalTo: infoBar.centerYAnchor).isActive = true
         box1.widthAnchor.constraint(equalTo: infoBar.widthAnchor, multiplier: 1.0/3).isActive = true
         
-        
+        box2.tag = 1
+        box2.addTarget(self, action: #selector(infoButtonClicked(_:)), for: .touchUpInside)
         infoBar.addSubview(box2)
         box2.leftAnchor.constraint(equalTo: box1.rightAnchor).isActive = true
         box2.heightAnchor.constraint(equalTo: infoBar.heightAnchor).isActive = true
         box2.centerYAnchor.constraint(equalTo: infoBar.centerYAnchor).isActive = true
         box2.widthAnchor.constraint(equalTo: infoBar.widthAnchor, multiplier: 1.0/3).isActive = true
         
-        
+        box3.tag = 2
+        box3.addTarget(self, action: #selector(infoButtonClicked(_:)), for: .touchUpInside)
         infoBar.addSubview(box3)
         box3.leftAnchor.constraint(equalTo: box2.rightAnchor).isActive = true
         box3.heightAnchor.constraint(equalTo: infoBar.heightAnchor).isActive = true
@@ -104,54 +137,101 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
         box3.widthAnchor.constraint(equalTo: infoBar.widthAnchor, multiplier: 1.0/3).isActive = true
         
         
-        
         followButton.translatesAutoresizingMaskIntoConstraints = false
         followButton.setTitle("Follow", for: .normal)
         followButton.backgroundColor = UIColor.appBlue
-        followButton.layer.cornerRadius = 20
+        followButton.layer.cornerRadius = 15
         followButton.setTitleColor(UIColor.white, for: .normal)
         followButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
         followButton.addTarget(self, action: #selector(followButtonClicked), for: .touchUpInside)
-        view.addSubview(followButton)
-        followButton.topAnchor.constraint(equalTo: profilePicture.bottomAnchor, constant: 5).isActive = true
-        followButton.centerXAnchor.constraint(equalTo: profilePicture.centerXAnchor).isActive = true
-        followButton.widthAnchor.constraint(equalTo: profilePicture.widthAnchor, multiplier: 1.2).isActive = true
-        followButtonHeight = followButton.heightAnchor.constraint(equalToConstant: 0)
-        followButtonHeight.isActive = true
+        containerView.addSubview(followButton)
+        followButton.bottomAnchor.constraint(equalTo: profilePicture.bottomAnchor, constant: 0).isActive = true
+        followButton.topAnchor.constraint(equalTo: infoBar.bottomAnchor, constant: 10).isActive = true
+        followButton.leftAnchor.constraint(equalTo: infoBar.leftAnchor).isActive = true
+        followButton.rightAnchor.constraint(equalTo: infoBar.rightAnchor).isActive = true
+        
+        
         
         usernameLabel.text = "Test Username"
         usernameLabel.textColor = UIColor.appBlue
         usernameLabel.font = UIFont.boldSystemFont(ofSize: 20)
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(usernameLabel)
-        usernameLabel.centerYAnchor.constraint(equalTo: followButton.centerYAnchor, constant: 0).isActive = true
-        usernameLabel.leftAnchor.constraint(equalTo: infoBar.leftAnchor, constant: 10).isActive = true
-        usernameLabel.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        containerView.addSubview(usernameLabel)
+        usernameLabel.topAnchor.constraint(equalTo: profilePicture.bottomAnchor, constant: 12).isActive = true
+        usernameLabel.leftAnchor.constraint(equalTo: profilePicture.leftAnchor).isActive = true
+        usernameLabel.rightAnchor.constraint(equalTo: infoBar.rightAnchor).isActive = true
         
         let divider = UIView()
         divider.backgroundColor = UIColor.lightGray
         divider.layer.cornerRadius = 0.5
         divider.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(divider)
-        divider.topAnchor.constraint(equalTo: followButton.bottomAnchor, constant: 12).isActive = true
-        divider.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        divider.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
+        containerView.addSubview(divider)
+        divider.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 12).isActive = true
+        divider.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
+        divider.widthAnchor.constraint(equalTo: containerView.widthAnchor, multiplier: 1).isActive = true
         divider.heightAnchor.constraint(equalToConstant: 1).isActive = true
         
-        let homeController = HomeController(collectionViewLayout: UICollectionViewFlowLayout())
-        homeController.allowsRefresh = false
-        addChild(homeController)
-        homeController.view.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(homeController.view)
-        homeController.view.topAnchor.constraint(equalTo: divider.bottomAnchor, constant: 0).isActive = true
-        homeController.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        homeController.view.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        homeController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-        postContoller = homeController
+//        let scrollTable = UITableView(frame: CGRect.zero, style: .plain)
+//        scrollTable.translatesAutoresizingMaskIntoConstraints = false
+//        tableView?.clipsToBounds = false
+//        tableView?.layer.masksToBounds = false
+//        scrollTable.tableHeaderView = containerView
+//        view.addSubview(scrollTable)
+//        scrollTable.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+//        scrollTable.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+//        scrollTable.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+////        scrollTable.heightAnchor.constraint(equalToConstant: 160).isActive = true
+//        scrollTable.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        
+        var myUsername = ""
+        if let auth = Network.authToken {
+            do{
+                let jwt = try decode(jwt: auth)
+                myUsername = (jwt.body["uID"] as! String)
+                
+            }catch{
+                print(error)
+            }
+        }
+        
+        
+        if user != nil && user != myUsername {
+            let homeController = HomeController(collectionViewLayout: UICollectionViewFlowLayout())
+            homeController.allowsRefresh = false
+            addChild(homeController)
+            homeController.view.translatesAutoresizingMaskIntoConstraints = false
+            scrollView.addSubview(homeController.view)
+            homeController.view.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0).isActive = true
+            homeController.view.leftAnchor.constraint(equalTo: scrollView.leftAnchor).isActive = true
+            homeController.view.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
+            homeController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+            postContoller = homeController
+        }else{
+            let tableView = UITableView(frame: CGRect.zero, style: .plain)
+            tableView.translatesAutoresizingMaskIntoConstraints = false
+            tableView.delegate = self
+            tableView.dataSource = self
+            tableView.tableFooterView = UIView()
+            scrollView.addSubview(tableView)
+            tableView.topAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+            tableView.leftAnchor.constraint(equalTo: scrollView.leftAnchor).isActive = true
+            tableView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+            
+            self.tableView = tableView
+        }
+        
+        
         
         if let u = user {
             setAccount(u)
         }
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
         
     }
     
@@ -160,32 +240,54 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
         if user == nil {
             setAccount()
         }
+//        scrollView.frame = view.safeAreaLayoutGuide.layoutFrame
+        if !constraintedScrollView {
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+            scrollView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
+            scrollView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
+            constraintedScrollView = true
+        }
+        
+    }
+    
+    @objc
+    func refresh(_ indicator:UIRefreshControl){
+        if let u = user {
+            setAccount(u)
+        }else{
+            setAccount()
+        }
     }
     
     func setAccount(_ username:String = ""){
         var username:String = username
-        followButtonHeight.constant = 40
         
         var myUsername = ""
         do{
             let jwt = try decode(jwt: Network.authToken!)
             myUsername = (jwt.body["uID"] as! String)
+            
         }catch{
             print(error)
         }
         
-        if username == "" {
-            followButtonHeight.constant = 0
+        if username == "" || username == myUsername {
             username = myUsername
             self.user = username
+            followButton.setTitle("Edit", for: .normal)
         }
         Network.request(url: "https://api.tryflux.app:3000/account?user=\(username)", type: .get, paramters: nil, auth: true) { (result, error) in
             if let err = error {
                 print(err)
+                self.refreshControl.endRefreshing()
                 return
             }
-            
             let account = result["account"] as! [String:Any]
+            
+            self.followers = account["followers"] as? [String] ?? []
+            self.following = account["following"] as? [String] ?? []
+            
             self.usernameLabel.text = account["username"] as? String
             self.box1.numberLabel.text = "\((account["posts"] as? [Any] ?? []).count)"
             self.box2.numberLabel.text = "\((account["followers"] as! [Any]).count)"
@@ -201,6 +303,17 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
             
             if let cont = self.postContoller {
                 cont.setPosts(posts)
+            }else {
+                self.tablePosts = posts
+                self.tableView?.reloadData()
+                var counter = 0
+                for post in self.tablePosts {
+                    let indexPath = IndexPath(row: counter, section: 0)
+                    post.fetch {
+                        self.tableView?.cellForRow(at: indexPath)?.textLabel?.text = post.question
+                    }
+                    counter += 1
+                }
             }
             
             if let followers = account["followers"] as? [String] {
@@ -211,15 +324,29 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
                     }
                 }
             }
+            self.refreshControl.endRefreshing()
         }
         Network.downloadImage(user: username) { (image) in
-            self.profilePicture.image = image
+            if let i = image {
+                self.profilePicture.image = i
+            }
         }
     }
     
     @objc
     func profilePictureClicked(){
         print("Cliked")
+        var myUsername = ""
+        do{
+            let jwt = try decode(jwt: Network.authToken!)
+            myUsername = (jwt.body["uID"] as! String)
+            
+        }catch{
+            print(error)
+        }
+        if user != "" && user != myUsername {
+            return
+        }
         let action = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let takePhoto = UIAlertAction(title: "Take Photo", style: .default) { (a) in
             if UIImagePickerController.isSourceTypeAvailable(.camera){
@@ -236,8 +363,16 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
 //            action.dismiss(animated: true, completion: nil)
             self.present(self.picker, animated: true, completion: nil)
         }
+        let linkBitmoji = UIAlertAction(title: "Link Bitmoji", style: .default) { (a) in
+            SCSDKLoginClient.login(from: self, completion: { (res, err) in
+                if res {
+                    self.getBitmoji()
+                }
+                
+            })
+        }
         let deletePhoto = UIAlertAction(title: "Delete Profile Picture", style: .destructive) { (a) in
-            self.profilePicture.image = nil
+            self.profilePicture.image = #imageLiteral(resourceName: "profilePlaceholder")
             Network.request(url: "https://api.tryflux.app:3000/profilePicture", type: .delete, paramters: nil, auth: true)
         }
         let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (a) in
@@ -245,6 +380,7 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
         }
         action.addAction(takePhoto)
         action.addAction(choosePhoto)
+        action.addAction(linkBitmoji)
         action.addAction(deletePhoto)
         action.addAction(cancel)
         present(action, animated: true, completion: nil)
@@ -264,6 +400,46 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
         
     }
     
+    func getBitmoji(){
+        let graphQLQuery = "{me{displayName, bitmoji{avatar}}}"
+        SCSDKLoginClient.fetchUserData(withQuery: graphQLQuery, variables: ["page": "bitmoji"], success: { (resource) in
+            guard let resources = resource,
+                let data = resources["data"] as? [String: Any],
+                let me = data["me"] as? [String: Any] else { return }
+            var bitmojiAvatarUrl: String?
+            if let bitmoji = me["bitmoji"] as? [String: Any] {
+                bitmojiAvatarUrl = bitmoji["avatar"] as? String
+            }
+            if let link = bitmojiAvatarUrl {
+                do {
+                    let url = URL(string: link)!
+                    let data = try Data(contentsOf: url)
+                    let image = UIImage(data: data)
+                    
+                    let bottomImage = UIImage.from(color: UIColor.white)
+                    let size = CGSize(width: 200, height: 200)
+                    UIGraphicsBeginImageContext(size)
+                    
+                    let areaSize = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+                    bottomImage.draw(in: areaSize)
+                    
+                    image!.draw(in: areaSize, blendMode: .normal, alpha: 1)
+                    
+                    let newImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+                    UIGraphicsEndImageContext()
+                    DispatchQueue.main.async {
+                        self.profilePicture.image = newImage
+                    }
+                    Network.uploadImage(image: newImage)
+                }catch{
+                    print(error ?? "Error")
+                }
+            }
+        }, failure: { (err, loggedOut) in
+            
+        })
+    }
+    
     func cropViewController(_ cropViewController: CropViewController, didCropToCircularImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
         profilePicture.image = image
         print("HiISAODOJSAKLDJKLSAJNDKNSA<MDN<MSAND<MNSADMAS<MND<MASN<M>DN")
@@ -278,7 +454,7 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
             if let u = user {
                 Network.request(url: "https://api.tryflux.app:3000/follow", type: .post, paramters: ["account": u], auth: true)
             }
-        }else{
+        }else if followButton.titleLabel?.text == "Following"{
             followButton.setTitle("Follow", for: .normal)
             if let u = user {
                 Network.request(url: "https://api.tryflux.app:3000/unfollow", type: .post, paramters: ["account": u], auth: true)
@@ -286,11 +462,43 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
         }
     }
     
-    @objc
-    func refresh(_ refreshControl:UIRefreshControl){
-        
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return tablePosts.count
     }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+        cell.textLabel?.text = ""
+        cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 20)
+        cell.textLabel?.textColor = UIColor.appBlue
+        cell.accessoryType = .disclosureIndicator
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        if tableView.cellForRow(at: indexPath)?.textLabel?.text == "" {
+            return
+        }
+        let controller = PostResultsController(tablePosts[indexPath.row])
+        controller.title = "Post"
+        navigationController?.pushViewController(controller, animated: true)
+    }
+    
+//    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+//        scrollView.frame = view.safeAreaLayoutGuide.layoutFrame
+//    }
 
+    @objc
+    func infoButtonClicked(_ sender:InfoButton) {
+        let listCont = UserListController(style: .plain)
+        listCont.setUsers(sender.tag == 1 ? followers : following)
+        navigationController?.pushViewController(listCont, animated: true)
+    }
 }
 
 class InfoButton:UIButton {
@@ -334,11 +542,13 @@ class InfoButton:UIButton {
         numberLabel.adjustsFontSizeToFitWidth = true
         numberLabel.textAlignment = .center
         addSubview(numberLabel)
-        numberLabel.bottomAnchor.constraint(equalTo: textLabel.topAnchor, constant: -8).isActive = true
+        numberLabel.bottomAnchor.constraint(equalTo: textLabel.topAnchor, constant: -4).isActive = true
         numberLabel.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        numberLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8).isActive = true
+        numberLabel.topAnchor.constraint(equalTo: topAnchor, constant: 0).isActive = true
         numberLabel.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.95).isActive = true
     }
+    
+    
     
     
     

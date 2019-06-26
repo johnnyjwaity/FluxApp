@@ -34,8 +34,10 @@ class PostController: UIViewController {
         // Do any additional setup after loading the view.
         
         
+        
+        
         let optionButton = UIButton(type: .system)
-        optionButton.setTitle("Option", for: .normal)
+        optionButton.setTitle("Create", for: .normal)
         optionButton.backgroundColor = UIColor.appGreen
         optionButton.setTitleColor(UIColor.white, for: .normal)
         optionButton.translatesAutoresizingMaskIntoConstraints = false
@@ -59,11 +61,13 @@ class PostController: UIViewController {
         writtenButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
         writtenButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         writtenButton.titleLabel?.adjustsFontSizeToFitWidth = true
+        writtenButton.alpha = 0
         view.addSubview(writtenButton)
         writtenButton.topAnchor.constraint(equalTo: optionButton.bottomAnchor, constant: 10).isActive = true
         writtenButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         writtenButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.6).isActive = true
         writtenButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
     }
     
     @objc

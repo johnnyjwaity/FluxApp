@@ -1,32 +1,56 @@
 PODS:
   - Alamofire (4.8.1)
+  - Charts (3.2.2):
+    - Charts/Core (= 3.2.2)
+  - Charts/Core (3.2.2)
   - CropViewController (2.4.0)
   - JWTDecode (2.2.0)
   - KeychainAccess (3.1.2)
+  - PINCache (2.3)
+  - PINOperation (1.1.1)
+  - SnapSDK (1.2.0):
+    - SnapSDK/SCSDKBitmojiKit (= 1.2.0)
+    - SnapSDK/SCSDKCreativeKit (= 1.2.0)
+    - SnapSDK/SCSDKLoginKit (= 1.2.0)
+  - SnapSDK/SCSDKBitmojiKit (1.2.0):
+    - PINCache (< 3.1, >= 2.3)
+    - PINOperation (~> 1.1)
+  - SnapSDK/SCSDKCreativeKit (1.2.0)
+  - SnapSDK/SCSDKLoginKit (1.2.0)
   - SwiftyJSON (4.2.0)
 
 DEPENDENCIES:
   - Alamofire
+  - Charts
   - CropViewController
   - JWTDecode
   - KeychainAccess
+  - SnapSDK
   - SwiftyJSON
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Alamofire
+    - Charts
     - CropViewController
     - JWTDecode
     - KeychainAccess
+    - PINCache
+    - PINOperation
+    - SnapSDK
     - SwiftyJSON
 
 SPEC CHECKSUMS:
   Alamofire: 16ce2c353fb72865124ddae8a57c5942388f4f11
+  Charts: f69cf0518b6d1d62608ca504248f1bbe0b6ae77e
   CropViewController: a090820b15fc3da68e694d7c192a4708c576828b
   JWTDecode: 85a405ab16d5473e99bd89ded1d535090ebd6a0e
   KeychainAccess: b3816fddcf28aa29d94b10ec305cd52be14c472b
+  PINCache: ce36ed282031b92fc7733ffe831f474ff80fddc2
+  PINOperation: a6219e6fc9db9c269eb7a7b871ac193bcf400aac
+  SnapSDK: ab99c79e619067da4ed60c98ea5a04a288b83dc0
   SwiftyJSON: c4bcba26dd9ec7a027fc8eade48e2c911f229e96
 
-PODFILE CHECKSUM: ff6e9ace5e81ba5496ce11efd7971646897f2ae3
+PODFILE CHECKSUM: 6762abf2e923248c631b15242bb3981bd231598e
 
 COCOAPODS: 1.6.0

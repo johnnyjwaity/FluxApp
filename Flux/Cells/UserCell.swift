@@ -16,7 +16,7 @@ class UserCell: UITableViewCell {
         self.user = user
         super.init(style: .default, reuseIdentifier: nil)
         
-        let profile = UIImageView(image: nil)
+        let profile = UIImageView(image: #imageLiteral(resourceName: "profilePlaceholder"))
         profile.backgroundColor = UIColor.clear
         profile.translatesAutoresizingMaskIntoConstraints = false
         profile.contentMode = .scaleAspectFill
@@ -42,7 +42,9 @@ class UserCell: UITableViewCell {
         userLabel.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
         
         Network.downloadImage(user: user) { (image) in
-            profile.image = image
+            if let i = image {
+                profile.image = i
+            }
         }
         
     }

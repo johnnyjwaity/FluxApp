@@ -118,6 +118,7 @@ class LoginController: UIViewController, UITableViewDelegate, UITableViewDataSou
         textView.rightAnchor.constraint(equalTo: cell.rightAnchor).isActive = true
         textView.leftAnchor.constraint(equalTo: cell.leftAnchor, constant: 15).isActive = true
         textFields[indexPath.row] = textView
+        
         return cell
     }
     
@@ -213,6 +214,30 @@ class LoginController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 self.dismiss(animated: true, completion: nil)
             })
         }
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let oldText = textField.text ?? ""
+        let prospectiveText = (oldText as NSString).replacingCharacters(in: range, with: string)
+        if prospectiveText == "" {
+            return true
+        }
+        if prospectiveText.count > 320 {
+            return false
+        }
+        if textField.placeholder != "Email" {
+            if prospectiveText.count > 20 {
+                return false
+            }
+            let allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
+            for char in prospectiveText {
+                if !allowedChars.contains(char) {
+                    return false
+                }
+            }
+        }
+        return true
+        
     }
     
     func isValidEmail(email:String?) -> Bool {

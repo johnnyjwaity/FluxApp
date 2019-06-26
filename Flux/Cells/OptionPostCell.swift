@@ -105,10 +105,29 @@ class OptionPostCell: PostCell {
     
     
     func showAnswers(_ results:[Int], animated:Bool = true){
-        post.showingResults = true
+        self.post.showingResults = true
+        
+        
         optionRightAnchor.constant = -content.bounds.width
         resultLeftAnchor.constant = -content.bounds.width
         
+        for view in resultScreen.subviews {
+            view.removeFromSuperview()
+        }
+        
+        let returnButton = UIButton()
+        returnButton.setTitle("Change Answer", for: .normal)
+        returnButton.setTitleColor(UIColor.white, for: .normal)
+        returnButton.backgroundColor = UIColor.appBlue
+        returnButton.translatesAutoresizingMaskIntoConstraints = false
+        returnButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
+        returnButton.layer.cornerRadius = 17.5
+        resultScreen.addSubview(returnButton)
+        returnButton.bottomAnchor.constraint(equalTo: resultScreen.bottomAnchor, constant: -10).isActive = true
+        returnButton.centerXAnchor.constraint(equalTo: resultScreen.centerXAnchor).isActive = true
+        returnButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        returnButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        returnButton.addTarget(self, action: #selector(switchToButtonScreen), for: .touchUpInside)
         
         var counter = 0
         var bars:[UIView] = []
@@ -160,9 +179,10 @@ class OptionPostCell: PostCell {
         UIView.animate(withDuration: animated ? 0.3 : 0, delay: 0, options: .curveEaseIn, animations: {
             self.content.layoutIfNeeded()
         }) { (completed) in
-            (HomeController.shared.collectionView.collectionViewLayout as! UICollectionViewFlowLayout).invalidateLayout()
+            (self.collectionView.collectionViewLayout as! UICollectionViewFlowLayout).invalidateLayout()
             UIView.animate(withDuration: animated ? 0.2 : 0, delay: 0, options: .curveLinear, animations: {
-                HomeController.shared.collectionView.layoutIfNeeded()
+                self.collectionView.layoutIfNeeded()
+                
             }, completion: { (completed) in
                 if self.post.postID != originalID {
                     return
@@ -182,8 +202,21 @@ class OptionPostCell: PostCell {
                 }
                 UIView.animate(withDuration: animated ? 0.2 : 0, animations: {
                     self.resultScreen.layoutIfNeeded()
+                    
                 }, completion: nil)
             })
+        }
+    }
+    
+    @objc
+    func switchToButtonScreen(){
+        post.showingResults = false
+        optionRightAnchor.constant = 0
+        resultLeftAnchor.constant = 0
+        (collectionView.collectionViewLayout as! UICollectionViewFlowLayout).invalidateLayout()
+        UIView.animate(withDuration: 0.3) {
+            self.content.layoutIfNeeded()
+            self.collectionView.layoutIfNeeded()
         }
     }
 }

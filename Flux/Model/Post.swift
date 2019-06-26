@@ -89,10 +89,46 @@ class Post:Hashable{
             finalAnswers.append(0)
         }
         for value in trimedAnswers.values {
+            finalAnswers[value] += 1
+        }
+        return finalAnswers
+    }
+    
+    func getAnswers(_ time:Date) -> [Int] {
+        var filteredAnswers:[Answer] = []
+        for a in answers ?? [] {
+            let at = Date.fromStamp(a.timestamp)
+            if at.timeIntervalSince1970 <= time.timeIntervalSince1970 {
+                filteredAnswers.append(a)
+            }
+        }
+        var trimedAnswers:[String:Int] = [:]
+        for a in filteredAnswers {
+            trimedAnswers[a.user] = a.answer
+        }
+        
+        var finalAnswers:[Int] = []
+        for _ in choices ?? [] {
+            finalAnswers.append(0)
+        }
+        for value in trimedAnswers.values {
             print("value \(value)")
             finalAnswers[value] += 1
         }
         return finalAnswers
+    }
+    func getUsers(_ index:Int) -> [String] {
+        var trimedAnswers:[String:Int] = [:]
+        for a in answers ?? [] {
+            trimedAnswers[a.user] = a.answer
+        }
+        var users:[String] = []
+        for name in trimedAnswers.keys {
+            if trimedAnswers[name] == index {
+                users.append(name)
+            }
+        }
+        return users
     }
     
     func didAnswer() -> Bool {
@@ -111,6 +147,10 @@ class Post:Hashable{
             }
         }
         return false
+    }
+    
+    func invalidate(){
+        fetched = false
     }
 }
 

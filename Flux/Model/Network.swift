@@ -80,7 +80,10 @@ class Network{
     }
     
     static func downloadImage(user:String, callback:@escaping (UIImage?)->Void){
-        let downloadDestination = DownloadRequest.suggestedDownloadDestination(for: .cachesDirectory)
+        
+        
+//        let downloadDestination = DownloadRequest.suggestedDownloadDestination(for: .cachesDirectory)
+        
         Network.request(url: "https://api.tryflux.app:3000/hasProfilePicture?user=\(user)", type: .get, paramters: nil) { (response, err) in
             if let error = err {
                 print(error)
@@ -89,17 +92,28 @@ class Network{
             }
             if let exists = response["exists"] as? Bool {
                 if exists{
-                    Alamofire.download("https://api.tryflux.app:3000/profilePicture?user=\(user)", method: .get, to: downloadDestination).response(completionHandler: { (response) in
-                        do{
-                            let image = UIImage(data: try Data(contentsOf: response.destinationURL!))
-                            if let i = image {
-                                callback(i)
-                            }else{
-                                print("No Image")
-                                callback(nil)
-                            }
-                        }catch{
-                            print(error)
+//                    Network.deleteCache()
+//                    Alamofire.download("https://api.tryflux.app:3000/profilePicture?user=\(user)", method: .get, to: downloadDestination).response(completionHandler: { (response) in
+//                        do{
+//                            let image = UIImage(data: try Data(contentsOf: response.destinationURL!))
+////                            Network.deleteCache()
+//                            if let i = image {
+//                                callback(i)
+//                            }else{
+//                                print("No Image")
+//                                callback(nil)
+//                            }
+//
+//                        }catch{
+//                            print(error)
+//                            callback(nil)
+//                        }
+//                    })
+                    Alamofire.request("https://api.tryflux.app:3000/profilePicture?user=\(user)", method: .get).validate().responseData(completionHandler: { (responseData) in
+                        if let dat = responseData.data {
+                            let image = UIImage(data: dat)
+                            callback(image)
+                        }else{
                             callback(nil)
                         }
                     })
@@ -109,6 +123,21 @@ class Network{
             }else{
                 callback(nil)
             }
+        }
+    }
+    
+    static func deleteCache(){
+        let fileManager = FileManager.default
+        var path = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        path.appendPathComponent("profilePicture.png")
+        //        print(path.relativeString)
+        if fileManager.fileExists(atPath: path.absoluteString.components(separatedBy: "ile://")[1]){
+            do {
+                try fileManager.removeItem(at: path)
+            }catch{
+                print(error)
+            }
+            
         }
     }
 }
