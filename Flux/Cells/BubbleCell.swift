@@ -128,7 +128,7 @@ class BubbleCell: UICollectionViewCell {
             if range.contains(tapPosition) {
                 var username = str[range]
                 username.removeFirst()
-                delegate?.openProfile(username)
+                delegate?.openProfileLink(username)
                 print("Clicked \(username)")
                 break
             }
@@ -141,5 +141,5 @@ enum BubbleStyle {
     case other
 }
 protocol BubbleDelegate {
-    func openProfile(_ username:String)
+    func openProfileLink(_ username:String)
 }

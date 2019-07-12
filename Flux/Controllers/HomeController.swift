@@ -15,6 +15,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     static var shared:HomeController!
     
     var posts:[Post] = []
+    var postStates:[PostState] = []
     let refreshControl = UIRefreshControl()
     var allowsRefresh = true
     
@@ -87,12 +88,26 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     func setPosts(_ posts:[Post]){
         self.posts = posts
+        self.postStates = []
+        for _ in 0..<posts.count {
+            postStates.append(.Question)
+        }
         self.collectionView.reloadData()
-//        for post in self.posts {
-//            post.fetch {
-//
-//            }
-//        }
+        
+        var counter = 0
+        for post in self.posts {
+            let index = counter
+            fetchPost(post, index: index)
+            counter += 1
+        }
+    }
+    
+    func fetchPost(_ post:Post, index:Int){
+        post.fetch {
+            if let cell = self.collectionView.cellForItem(at: IndexPath(row: index, section: 0)) as? PostCell {
+                cell.update(post)
+            }
+        }
     }
     
     
@@ -101,10 +116,11 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: posts[indexPath.row].type == .Option ? "option" : "text", for: indexPath) as! PostCell
-        cell.collectionView = collectionView
         cell.delegate = self
-        cell.setPost(posts[indexPath.row], collectionView: collectionView)
-        
+        cell.setPost(posts[indexPath.row].postID, collectionView: collectionView)
+        if posts[indexPath.row].fetched {
+            cell.update(posts[indexPath.row])
+        }
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -116,7 +132,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             if posts[indexPath.row].fetched == false {
                 return CGSize(width: (UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width : UIScreen.main.bounds.height) * 0.96, height: CGFloat(112 + round((Double(posts[indexPath.row].amount ?? 1) / 2)) * 70))
             }else{
-                if posts[indexPath.row].showingResults {
+                if postStates[indexPath.row] == .Result {
                     return CGSize(width: (UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width : UIScreen.main.bounds.height) * 0.96, height: CGFloat(162 + (posts[indexPath.row].choices!.count * 72)))
                 }
                 return CGSize(width: (UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width : UIScreen.main.bounds.height) * 0.96, height: CGFloat(112 + round((Double(posts[indexPath.row].choices!.count) / 2)) * 70))
@@ -126,12 +142,92 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
     }
     
-    func openProfile(_ user: String) {
-        navigationController?.pushViewController(ProfileController(user), animated: true)
+    /* PostDelegate START */
+    func openProfile(for postID:String) {
+        for i in 0..<posts.count {
+            if posts[i].postID == postID {
+                navigationController?.pushViewController(ProfileController(posts[i].user ?? ""), animated: true)
+                break
+            }
+        }
     }
     
-    func openComments(_ post: Post) {
-        navigationController?.pushViewController(CommentsController(post), animated: true)
+    func openComments(for postID:String) {
+        for i in 0..<posts.count {
+            if posts[i].postID == postID {
+                navigationController?.pushViewController(CommentsController(posts[i]), animated: true)
+                break
+            }
+        }
+        
     }
-    
+    func postState(for postID: String) -> PostState{
+        for i in 0..<posts.count {
+            if posts[i].postID == postID {
+                return postStates[i]
+            }
+        }
+        fatalError("No Post State")
+    }
+    func setPostState(for postID: String, with state: PostState) {
+        for i in 0..<posts.count {
+            if posts[i].postID == postID {
+                postStates[i] = state
+                break
+            }
+        }
+    }
+    func answerPost(for postID: String, with answer: Int) {
+        for i in 0..<posts.count {
+            if posts[i].postID == postID {
+                posts[i].answerOption(answer)
+                break
+            }
+        }
+    }
+    func getAnswers(for postID: String) -> [Int] {
+        for i in 0..<posts.count {
+            if posts[i].postID == postID {
+                return posts[i].getAnswers()
+            }
+        }
+        fatalError("Couldnt get answers")
+    }
+    func getCommentCount(for postID: String) -> Int {
+        for i in 0..<posts.count {
+            if posts[i].postID == postID {
+                return posts[i].comments.count
+            }
+        }
+        fatalError("Couldnt get Comment Count")
+    }
+    func getPostChoices(for postID: String) -> [String] {
+        for i in 0..<posts.count {
+            if posts[i].postID == postID {
+                return posts[i].choices ?? []
+            }
+        }
+        fatalError("Couldnt get Choices")
+    }
+    func getPostColors(for postID: String) -> [String] {
+        for i in 0..<posts.count {
+            if posts[i].postID == postID {
+                return posts[i].colors ?? []
+            }
+        }
+        fatalError("Couldnt get Colors")
+    }
+    func refreshPost(for postID: String) {
+        for i in 0..<posts.count {
+            if posts[i].postID == postID {
+                posts[i].invalidate()
+                if let cell = collectionView.cellForItem(at: IndexPath(row: i, section: 0)) as? PostCell {
+                    cell.setPost(postID, collectionView: collectionView)
+                }
+                fetchPost(posts[i], index: i)
+                break
+            }
+        }
+    }
+    /* PostDelegate END */
 }

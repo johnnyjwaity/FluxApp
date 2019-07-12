@@ -265,5 +265,5 @@ protocol OptionCallback {
     func optionColorChanged(_ color:UIColor, index:Int)
 }
 protocol CreateOptionPostDelegate {
-    func post
+//    func post
 }

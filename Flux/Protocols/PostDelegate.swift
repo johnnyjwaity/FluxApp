@@ -9,6 +9,14 @@
 import Foundation
 
 protocol PostDelegate {
-    func openProfile(_ user:String)
-    func openComments(_ post:Post)
+    func openProfile(for postID:String)
+    func openComments(for postID:String)
+    func postState(for postID:String) -> PostState
+    func setPostState(for postID:String, with state:PostState)
+    func answerPost(for postID:String, with answer:Int)
+    func getAnswers(for postID:String) -> [Int]
+    func getCommentCount(for postID:String) -> Int
+    func getPostChoices(for postID:String) -> [String]
+    func getPostColors(for postID:String) -> [String]
+    func refreshPost(for postID:String)
 }

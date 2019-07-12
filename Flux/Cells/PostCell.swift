@@ -9,20 +9,23 @@
 import UIKit
 
 class PostCell: UICollectionViewCell {
+    var postID:String!
+    
+    var coverView:UIView? = nil
     
     var questionLabel:UILabel!
     var dateLabel:UILabel!
     var profile:UIImageView!
     var content:UIView!
     var usernameButton:UIButton!
-    var post:Post!
+    
     
     let gradientLayer = CAGradientLayer()
     var cell:UICollectionViewCell!
     var totalPostContent:UIView!
     var collectionView:UICollectionView!
     
-    var delegate:PostDelegate? = nil
+    var delegate:PostDelegate!
     
     
     override init(frame: CGRect) {
@@ -142,34 +145,30 @@ class PostCell: UICollectionViewCell {
         
     }
     
-    func setPost(_ post:Post, collectionView:UICollectionView?){
+    func setPost(_ post:String, collectionView:UICollectionView?){
         self.collectionView = collectionView
-        if post.fetched {
-            self.update(post)
-//            (collectionView.collectionViewLayout as! UICollectionViewFlowLayout).invalidateLayout()
-        }else{
-            let coverView = UIView()
-            coverView.backgroundColor = UIColor.white
-            coverView.translatesAutoresizingMaskIntoConstraints = false
-            coverView.layer.cornerRadius = totalPostContent.layer.cornerRadius
-            totalPostContent.addSubview(coverView)
-            coverView.topAnchor.constraint(equalTo: totalPostContent.topAnchor).isActive = true
-            coverView.bottomAnchor.constraint(equalTo: totalPostContent.bottomAnchor).isActive = true
-            coverView.leftAnchor.constraint(equalTo: totalPostContent.leftAnchor).isActive = true
-            coverView.rightAnchor.constraint(equalTo: totalPostContent.rightAnchor).isActive = true
-            post.fetch {
-                self.update(post)
-                UIView.animate(withDuration: 0.7, animations: {
-                    coverView.alpha = 0
-                }, completion: { (completed) in
-                    coverView.removeFromSuperview()
-                })
-                (collectionView?.collectionViewLayout as? UICollectionViewFlowLayout)?.invalidateLayout()
-            }
+        self.postID = post
+        if let cv = self.coverView {
+            cv.removeFromSuperview()
         }
+        let coverView = UIView()
+        coverView.backgroundColor = UIColor.white
+        coverView.translatesAutoresizingMaskIntoConstraints = false
+        coverView.layer.cornerRadius = totalPostContent.layer.cornerRadius
+        totalPostContent.addSubview(coverView)
+        coverView.topAnchor.constraint(equalTo: totalPostContent.topAnchor).isActive = true
+        coverView.bottomAnchor.constraint(equalTo: totalPostContent.bottomAnchor).isActive = true
+        coverView.leftAnchor.constraint(equalTo: totalPostContent.leftAnchor).isActive = true
+        coverView.rightAnchor.constraint(equalTo: totalPostContent.rightAnchor).isActive = true
+        self.coverView = coverView
     }
     
     func update(_ post:Post){
+        UIView.animate(withDuration: 0.7, animations: {
+            self.coverView?.alpha = 0
+        }, completion: { (completed) in
+            self.coverView?.removeFromSuperview()
+        })
         if let i = post.profilePicture {
             profile.image = i
         }else{
@@ -177,8 +176,6 @@ class PostCell: UICollectionViewCell {
         }
         
         questionLabel.text = post.question
-        self.post = post
-//        gradientLayer.frame = CGRect(x: 0, y: 0, width: bounds.width, height: CGFloat(112 + round((Double(post.choices!.count) / 2)) * 70))
         usernameButton.setTitle(post.user ?? "", for: .normal)
         var components = post.timeStamp!.components(separatedBy: "-")
         components[0] = "\(Int(components[0])! + 1)"
@@ -202,14 +199,11 @@ class PostCell: UICollectionViewCell {
     
     @objc
     func refresh(){
-        post.invalidate()
-        setPost(post, collectionView: nil)
+        delegate.refreshPost(for: self.postID)
     }
     
     @objc
     func usernameButtonClicked(){
-        if let user = post.user {
-            delegate?.openProfile(user)
-        }
+        delegate.openProfile(for: self.postID)
     }
 }

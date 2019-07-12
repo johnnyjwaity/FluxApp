@@ -33,7 +33,6 @@ class Post:Hashable{
     var choices:[String]? = nil
     var colors:[String]? = nil
     var profilePicture:UIImage? = nil
-    var showingResults = false
     
     init(postID:String, type:PostType) {
         self.postID = postID
@@ -191,4 +190,8 @@ enum PostType{
         }
         return .Option
     }
+}
+enum PostState{
+    case Question
+    case Result
 }

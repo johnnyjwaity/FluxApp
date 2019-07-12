@@ -43,6 +43,7 @@ class OptionPostCell: PostCell {
     }
     override func update(_ post:Post){
         super.update(post)
+        print("Option Update")
         for view in optionScreen.subviews {
             view.removeFromSuperview()
         }
@@ -90,31 +91,31 @@ class OptionPostCell: PostCell {
             prevButton = optionButton
             counter += 1
         }
-        if post.didAnswer() && post.showingResults {
-            showAnswers(post.getAnswers(), animated: false)
+        if post.didAnswer() && (delegate.postState(for: self.postID) == .Result) {
+            showAnswers(delegate.getAnswers(for: self.postID), animated: false)
         }else if post.didAnswer() {
-            showAnswers(post.getAnswers())
+            showAnswers(delegate.getAnswers(for: self.postID))
         }
     }
     
     @objc
     func click(_ sender:UIButton){
-        post.answerOption(sender.tag)
-        showAnswers(post.getAnswers())
+        delegate.answerPost(for: self.postID, with: sender.tag)
+        showAnswers(delegate.getAnswers(for: self.postID))
     }
     
     
     func showAnswers(_ results:[Int], animated:Bool = true){
-        self.post.showingResults = true
         
+        delegate.setPostState(for: self.postID, with: .Result)
         
         optionRightAnchor.constant = -content.bounds.width
         resultLeftAnchor.constant = -content.bounds.width
-        
+
         for view in resultScreen.subviews {
             view.removeFromSuperview()
         }
-        
+
         let returnButton = UIButton()
         returnButton.setTitle("Change Answer", for: .normal)
         returnButton.setTitleColor(UIColor.white, for: .normal)
@@ -128,7 +129,7 @@ class OptionPostCell: PostCell {
         returnButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
         returnButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
         returnButton.addTarget(self, action: #selector(switchToButtonScreen), for: .touchUpInside)
-        
+
         let commentButton = UIButton()
         commentButton.setImage(#imageLiteral(resourceName: "comment").withRenderingMode(.alwaysTemplate), for: .normal)
         commentButton.tintColor = UIColor.appBlue
@@ -139,10 +140,10 @@ class OptionPostCell: PostCell {
         commentButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
         commentButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
         commentButton.addTarget(self, action: #selector(openComments), for: .touchUpInside)
-        
-        
-        
-        if post.comments.count ?? 0 > 0 {
+
+
+
+        if delegate.getCommentCount(for: self.postID) > 0 {
             let commentIndicator = UIView()
             commentIndicator.backgroundColor = UIColor.appGreen
             commentIndicator.layer.cornerRadius = 5
@@ -153,12 +154,14 @@ class OptionPostCell: PostCell {
             commentIndicator.widthAnchor.constraint(equalToConstant: 10).isActive = true
             commentIndicator.heightAnchor.constraint(equalToConstant: 10).isActive = true
         }
-        
-        
+
+
         var counter = 0
         var bars:[UIView] = []
         var info:[(bar:UIView, constraint:NSLayoutConstraint, percent:UILabel, percentLeftConstraint:NSLayoutConstraint)] = []
-        for choice in post.choices ?? [] {
+        let choices = delegate.getPostChoices(for: self.postID)
+        let colors = delegate.getPostColors(for: self.postID)
+        for choice in choices {
             let choiceLabel = UILabel()
             choiceLabel.text = choice
             choiceLabel.textColor = UIColor.appBlue//UIColor.postColors[post.colors?[counter] ?? "b"]
@@ -174,9 +177,9 @@ class OptionPostCell: PostCell {
             choiceLabel.leftAnchor.constraint(equalTo: resultScreen.leftAnchor).isActive = true
             choiceLabel.rightAnchor.constraint(equalTo: resultScreen.rightAnchor).isActive = true
             choiceLabel.heightAnchor.constraint(equalToConstant: 35).isActive = true
-            
+
             let bar = UIView()
-            bar.backgroundColor = UIColor.postColors[post.colors?[counter] ?? "b"]
+            bar.backgroundColor = UIColor.postColors[colors[counter]]
             bar.translatesAutoresizingMaskIntoConstraints = false
             bar.layer.cornerRadius = 11
             bars.append(bar)
@@ -186,10 +189,10 @@ class OptionPostCell: PostCell {
             let widthAnchor = bar.widthAnchor.constraint(equalToConstant: 0)
             widthAnchor.isActive = true
             bar.heightAnchor.constraint(equalToConstant: 22).isActive = true
-            
+
             let percentLabel = UILabel()
             percentLabel.text = "0%"
-            percentLabel.textColor = UIColor.postColors[post.colors?[counter] ?? "b"]
+            percentLabel.textColor = UIColor.postColors[colors[counter]]
             percentLabel.font = UIFont.boldSystemFont(ofSize: 18)
             percentLabel.translatesAutoresizingMaskIntoConstraints = false
             resultScreen.addSubview(percentLabel)
@@ -200,17 +203,17 @@ class OptionPostCell: PostCell {
             info.append((bar: bar, constraint: widthAnchor, percent: percentLabel, percentLeftConstraint: leftPercent))
             counter += 1
         }
-        
-        let originalID = post.postID
+
+        let originalID = self.postID
         UIView.animate(withDuration: animated ? 0.3 : 0, delay: 0, options: .curveEaseIn, animations: {
             self.content.layoutIfNeeded()
         }) { (completed) in
             (self.collectionView.collectionViewLayout as! UICollectionViewFlowLayout).invalidateLayout()
             UIView.animate(withDuration: animated ? 0.2 : 0, delay: 0, options: .curveLinear, animations: {
                 self.collectionView.layoutIfNeeded()
-                
+
             }, completion: { (completed) in
-                if self.post.postID != originalID {
+                if self.postID != originalID {
                     return
                 }
                 let totalResponses = results.reduce(0, +)
@@ -228,7 +231,7 @@ class OptionPostCell: PostCell {
                 }
                 UIView.animate(withDuration: animated ? 0.2 : 0, animations: {
                     self.resultScreen.layoutIfNeeded()
-                    
+
                 }, completion: nil)
             })
         }
@@ -236,7 +239,7 @@ class OptionPostCell: PostCell {
     
     @objc
     func switchToButtonScreen(){
-        post.showingResults = false
+        delegate.setPostState(for: self.postID, with: .Question)
         optionRightAnchor.constant = 0
         resultLeftAnchor.constant = 0
         (collectionView.collectionViewLayout as! UICollectionViewFlowLayout).invalidateLayout()
@@ -248,7 +251,7 @@ class OptionPostCell: PostCell {
     
     @objc
     func openComments() {
-        delegate?.openComments(post)
+        delegate.openComments(for: self.postID)
     }
 }
 //print("Result \(post.question) \(results)")
