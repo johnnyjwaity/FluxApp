@@ -22,6 +22,11 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
     let box2 = InfoButton("Followers")
     let box3 = InfoButton("Following")
     let usernameLabel = UILabel()
+    let nameLabel = UILabel()
+    let bioField = UITextView()
+    var bioHeight:NSLayoutConstraint!
+    let linkField = UITextView()
+    var containerHeight:NSLayoutConstraint!
     var postContoller:HomeController? = nil
     var isMe = false
     
@@ -39,6 +44,8 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
 //    let tableView = UITableView()
     var scrollView:UIScrollView!
     var constraintedScrollView = false
+    
+    var profile:Profile? = nil
     
     init(_ user:String){
         self.user = user
@@ -84,7 +91,8 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
         containerView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
         containerView.leftAnchor.constraint(equalTo: scrollView.leftAnchor).isActive = true
         containerView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-        containerView.heightAnchor.constraint(equalToConstant: 160).isActive = true
+        containerHeight = containerView.heightAnchor.constraint(equalToConstant: 180)
+//        containerHeight.isActive = true
         
         profilePicture = UIImageView(image: #imageLiteral(resourceName: "profilePlaceholder"))
         profilePicture.backgroundColor = UIColor.lightGray
@@ -150,23 +158,58 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
         followButton.leftAnchor.constraint(equalTo: infoBar.leftAnchor).isActive = true
         followButton.rightAnchor.constraint(equalTo: infoBar.rightAnchor).isActive = true
         
+        nameLabel.text = "Test Username"
+        nameLabel.textColor = UIColor.appBlue
+        nameLabel.font = UIFont.boldSystemFont(ofSize: 22)
+        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(nameLabel)
+        nameLabel.topAnchor.constraint(equalTo: profilePicture.bottomAnchor, constant: 12).isActive = true
+        nameLabel.leftAnchor.constraint(equalTo: profilePicture.leftAnchor).isActive = true
+        nameLabel.rightAnchor.constraint(equalTo: infoBar.rightAnchor).isActive = true
         
         
         usernameLabel.text = "Test Username"
-        usernameLabel.textColor = UIColor.appBlue
-        usernameLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        usernameLabel.textColor = UIColor.appGreen
+        usernameLabel.font = UIFont.boldSystemFont(ofSize: 16)
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(usernameLabel)
-        usernameLabel.topAnchor.constraint(equalTo: profilePicture.bottomAnchor, constant: 12).isActive = true
-        usernameLabel.leftAnchor.constraint(equalTo: profilePicture.leftAnchor).isActive = true
+        usernameLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 1).isActive = true
+        usernameLabel.leftAnchor.constraint(equalTo: nameLabel.leftAnchor).isActive = true
         usernameLabel.rightAnchor.constraint(equalTo: infoBar.rightAnchor).isActive = true
+        
+        linkField.text = "https://johnnywaity.com"
+        linkField.font = UIFont.systemFont(ofSize: 16)
+        linkField.textColor = UIColor.appBlue
+        linkField.translatesAutoresizingMaskIntoConstraints = false
+        linkField.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0)
+        linkField.isEditable = false
+        linkField.isScrollEnabled = false
+//        containerView.addSubview(linkField)
+//        linkField.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
+//        linkField.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
+//        linkField.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
+        
+        bioField.text = ""
+        bioField.textColor = UIColor.black
+        bioField.font = UIFont.boldSystemFont(ofSize: 15)
+        bioField.translatesAutoresizingMaskIntoConstraints = false
+        bioField.isEditable = false
+        bioField.isScrollEnabled = false
+        bioField.textContainer.lineBreakMode = .byWordWrapping
+        containerView.addSubview(bioField)
+        bioField.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 0).isActive = true
+        bioField.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
+        bioField.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
+        bioHeight = bioField.heightAnchor.constraint(equalToConstant: 0)
+        bioHeight.isActive = true
+        containerView.bottomAnchor.constraint(equalTo: bioField.bottomAnchor, constant: 10).isActive = true
         
         let divider = UIView()
         divider.backgroundColor = UIColor.lightGray
         divider.layer.cornerRadius = 0.5
         divider.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(divider)
-        divider.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 12).isActive = true
+        divider.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0).isActive = true
         divider.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
         divider.widthAnchor.constraint(equalTo: containerView.widthAnchor, multiplier: 1).isActive = true
         divider.heightAnchor.constraint(equalToConstant: 1).isActive = true
@@ -207,6 +250,9 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
             homeController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
             postContoller = homeController
         }else{
+            navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "settings").withRenderingMode(.alwaysTemplate), style: .plain, target: self, action: #selector(openSettings))
+            navigationItem.rightBarButtonItem?.tintColor = UIColor.white
+//            navigationItem.rightBarButtonItem?.imageInsets = UIImagr
             let tableView = UITableView(frame: CGRect.zero, style: .plain)
             tableView.translatesAutoresizingMaskIntoConstraints = false
             tableView.delegate = self
@@ -223,23 +269,28 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
         
         
         
-        if let u = user {
-            setAccount(u)
-        }
+//        if let u = user {
+            setAccount(user ?? "")
+//        }
         
+    }
+    
+    @objc
+    func openSettings(){
+        navigationController?.pushViewController(SettingsController(style: .grouped), animated: true)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        tabBarController?.tabBar.isHidden = false
         
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if user == nil {
-            setAccount()
-        }
+//        if user == nil {
+//            setAccount()
+//        }
 //        scrollView.frame = view.safeAreaLayoutGuide.layoutFrame
         if !constraintedScrollView {
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
@@ -288,10 +339,20 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
             self.followers = account["followers"] as? [String] ?? []
             self.following = account["following"] as? [String] ?? []
             
-            self.usernameLabel.text = account["username"] as? String
+            
+            
+            self.usernameLabel.text = "@\((account["username"] as? String) ?? "n/a")"
             self.box1.numberLabel.text = "\((account["posts"] as? [Any] ?? []).count)"
             self.box2.numberLabel.text = "\((account["followers"] as! [Any]).count)"
             self.box3.numberLabel.text = "\((account["following"] as! [Any]).count)"
+            
+            let name = (account["name"] as? String) ?? "\((account["username"] as? String) ?? "n/a")"
+            self.nameLabel.text = name
+            
+            let link = (account["link"] as? String) ?? ""
+//
+            let bio = (account["bio"] as? String) ?? ""
+            self.profile = Profile(username: username, name: name, bio: bio, link: link)
             
             var posts:[Post] = []
             var postsData = account["posts"] as? [[String:Any]] ?? []
@@ -323,6 +384,34 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
                         break
                     }
                 }
+            }
+            let finalBio = NSMutableAttributedString(string: bio)
+            finalBio.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 16), range: NSRange(location: 0, length: bio.count))
+            if link != "" {
+                if bio != "" {
+                    finalBio.append(NSAttributedString(string: "\n\n"))
+                }
+                let linkstr = NSMutableAttributedString(string: link)
+                linkstr.addAttribute(.link, value: self.linkField.text, range: NSRange(location: 0, length: link.count))
+                linkstr.addAttribute(.font, value: UIFont.systemFont(ofSize: 16), range: NSRange(location: 0, length: link.count))
+                let imageAttatchment = NSTextAttachment()
+                let titleFont = UIFont.systemFont(ofSize: 16)
+                imageAttatchment.bounds = CGRect(x: 0.0, y: (titleFont.capHeight - 30).rounded() / 2, width: 30.0, height: 30.0)//CGRect(x: 0, y: 8, width: 30, height: 30)
+                imageAttatchment.image = #imageLiteral(resourceName: "link").withRenderingMode(.alwaysTemplate)
+                let imageStr = NSAttributedString(attachment: imageAttatchment)
+                
+                let colorStr = NSMutableAttributedString(string: " ")
+                colorStr.append(imageStr)
+                colorStr.append(NSAttributedString(string: "  "))
+                colorStr.addAttribute(.foregroundColor, value: UIColor.appBlue, range: NSRange(location: 0, length: colorStr.length))
+                finalBio.append(colorStr)
+                finalBio.append(linkstr)
+            }
+            self.bioField.text = ""
+            self.bioField.attributedText = finalBio
+            self.bioHeight.isActive = false
+            if finalBio.string.count == 0 {
+                self.bioHeight.isActive = true
             }
             self.refreshControl.endRefreshing()
         }
@@ -459,6 +548,9 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
             if let u = user {
                 Network.request(url: "https://api.tryflux.app:3000/unfollow", type: .post, paramters: ["account": u], auth: true)
             }
+        }else if followButton.titleLabel?.text == "Edit" {
+            
+            present(UINavigationController(rootViewController: ProfileEditController(name: profile?.name ?? "", bio: profile?.bio ?? "", link: profile?.link ?? "")), animated: true, completion: nil)
         }
     }
     
@@ -557,4 +649,11 @@ class InfoButton:UIButton {
     }
     
     
+}
+
+struct Profile {
+    let username:String
+    let name:String
+    let bio:String
+    let link:String
 }

@@ -22,6 +22,8 @@ class PostCell: UICollectionViewCell {
     var totalPostContent:UIView!
     var collectionView:UICollectionView!
     
+    var delegate:PostDelegate? = nil
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -77,6 +79,7 @@ class PostCell: UICollectionViewCell {
         usernameButton.topAnchor.constraint(equalTo: profile.topAnchor).isActive = true
         usernameButton.bottomAnchor.constraint(equalTo: profile.bottomAnchor).isActive = true
         usernameButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -170).isActive = true
+        usernameButton.addTarget(self, action: #selector(usernameButtonClicked), for: .touchUpInside)
         
         let refreshButton = UIButton(type: .system)
         refreshButton.translatesAutoresizingMaskIntoConstraints = false
@@ -140,7 +143,7 @@ class PostCell: UICollectionViewCell {
     }
     
     func setPost(_ post:Post, collectionView:UICollectionView?){
-        
+        self.collectionView = collectionView
         if post.fetched {
             self.update(post)
 //            (collectionView.collectionViewLayout as! UICollectionViewFlowLayout).invalidateLayout()
@@ -201,5 +204,12 @@ class PostCell: UICollectionViewCell {
     func refresh(){
         post.invalidate()
         setPost(post, collectionView: nil)
+    }
+    
+    @objc
+    func usernameButtonClicked(){
+        if let user = post.user {
+            delegate?.openProfile(user)
+        }
     }
 }

@@ -129,6 +129,32 @@ class OptionPostCell: PostCell {
         returnButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
         returnButton.addTarget(self, action: #selector(switchToButtonScreen), for: .touchUpInside)
         
+        let commentButton = UIButton()
+        commentButton.setImage(#imageLiteral(resourceName: "comment").withRenderingMode(.alwaysTemplate), for: .normal)
+        commentButton.tintColor = UIColor.appBlue
+        commentButton.translatesAutoresizingMaskIntoConstraints = false
+        resultScreen.addSubview(commentButton)
+        commentButton.rightAnchor.constraint(equalTo: resultScreen.rightAnchor, constant: -12).isActive = true
+        commentButton.bottomAnchor.constraint(equalTo: resultScreen.bottomAnchor, constant: -12).isActive = true
+        commentButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        commentButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        commentButton.addTarget(self, action: #selector(openComments), for: .touchUpInside)
+        
+        
+        
+        if post.comments.count ?? 0 > 0 {
+            let commentIndicator = UIView()
+            commentIndicator.backgroundColor = UIColor.appGreen
+            commentIndicator.layer.cornerRadius = 5
+            commentIndicator.translatesAutoresizingMaskIntoConstraints = false
+            commentButton.addSubview(commentIndicator)
+            commentIndicator.centerXAnchor.constraint(equalTo: commentButton.rightAnchor, constant: -2).isActive = true
+            commentIndicator.centerYAnchor.constraint(equalTo: commentButton.topAnchor, constant: -2).isActive = true
+            commentIndicator.widthAnchor.constraint(equalToConstant: 10).isActive = true
+            commentIndicator.heightAnchor.constraint(equalToConstant: 10).isActive = true
+        }
+        
+        
         var counter = 0
         var bars:[UIView] = []
         var info:[(bar:UIView, constraint:NSLayoutConstraint, percent:UILabel, percentLeftConstraint:NSLayoutConstraint)] = []
@@ -218,6 +244,11 @@ class OptionPostCell: PostCell {
             self.content.layoutIfNeeded()
             self.collectionView.layoutIfNeeded()
         }
+    }
+    
+    @objc
+    func openComments() {
+        delegate?.openComments(post)
     }
 }
 //print("Result \(post.question) \(results)")

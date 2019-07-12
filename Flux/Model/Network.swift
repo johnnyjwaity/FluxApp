@@ -81,8 +81,10 @@ class Network{
     
     static func downloadImage(user:String, callback:@escaping (UIImage?)->Void){
         
-        
-//        let downloadDestination = DownloadRequest.suggestedDownloadDestination(for: .cachesDirectory)
+        if let img = CacheManager.profilePictures[user] {
+            callback(img)
+            return
+        }
         
         Network.request(url: "https://api.tryflux.app:3000/hasProfilePicture?user=\(user)", type: .get, paramters: nil) { (response, err) in
             if let error = err {
@@ -92,26 +94,11 @@ class Network{
             }
             if let exists = response["exists"] as? Bool {
                 if exists{
-//                    Network.deleteCache()
-//                    Alamofire.download("https://api.tryflux.app:3000/profilePicture?user=\(user)", method: .get, to: downloadDestination).response(completionHandler: { (response) in
-//                        do{
-//                            let image = UIImage(data: try Data(contentsOf: response.destinationURL!))
-////                            Network.deleteCache()
-//                            if let i = image {
-//                                callback(i)
-//                            }else{
-//                                print("No Image")
-//                                callback(nil)
-//                            }
-//
-//                        }catch{
-//                            print(error)
-//                            callback(nil)
-//                        }
-//                    })
+                    print("Fetching Picture For \(user)")
                     Alamofire.request("https://api.tryflux.app:3000/profilePicture?user=\(user)", method: .get).validate().responseData(completionHandler: { (responseData) in
                         if let dat = responseData.data {
                             let image = UIImage(data: dat)
+                            CacheManager.profilePictures[user] = image
                             callback(image)
                         }else{
                             callback(nil)

@@ -6,7 +6,11 @@
     },
     {
       "idiom" : "universal",
-      "filename" : "send@2x.png",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "message.png",
       "scale" : "2x"
     },
     {

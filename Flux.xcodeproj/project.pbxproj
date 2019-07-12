@@ -10,6 +10,15 @@
 		3D064C59226FFB680008A654 /* LoadingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D064C58226FFB680008A654 /* LoadingController.swift */; };
 		3D0A81D222827AA100ABB83E /* ProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0A81D122827AA100ABB83E /* ProfileController.swift */; };
 		3D2CB21A228D00940001DB8E /* PostResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CB219228D00940001DB8E /* PostResultsController.swift */; };
+		3D46FD7A22CC4BB400DC6876 /* ProfileEditController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46FD7922CC4BB400DC6876 /* ProfileEditController.swift */; };
+		3D46FD7C22CD913C00DC6876 /* CommentsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46FD7B22CD913C00DC6876 /* CommentsController.swift */; };
+		3D46FD7E22CD938200DC6876 /* CommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46FD7D22CD938200DC6876 /* CommentCell.swift */; };
+		3D46FD8022CF0B2000DC6876 /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46FD7F22CF0B2000DC6876 /* SettingsController.swift */; };
+		3D46FD8222CF136400DC6876 /* DMController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46FD8122CF136400DC6876 /* DMController.swift */; };
+		3D46FD8422CF142C00DC6876 /* ConvoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46FD8322CF142C00DC6876 /* ConvoCell.swift */; };
+		3D46FD8622CF16C600DC6876 /* ConvoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46FD8522CF16C600DC6876 /* ConvoController.swift */; };
+		3D46FD8822CF197A00DC6876 /* BubbleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46FD8722CF197A00DC6876 /* BubbleCell.swift */; };
+		3D46FD8B22CF2BFE00DC6876 /* PostDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46FD8A22CF2BFE00DC6876 /* PostDelegate.swift */; };
 		3D50A54D2250A61D00619CF2 /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D50A54C2250A61D00619CF2 /* HomeController.swift */; };
 		3D50A5502250ABDB00619CF2 /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D50A54F2250ABDB00619CF2 /* PostCell.swift */; };
 		3D50A5532250AEC900619CF2 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D50A5522250AEC900619CF2 /* Extensions.swift */; };
@@ -17,6 +26,8 @@
 		3D50A558225132F300619CF2 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D50A557225132F300619CF2 /* Post.swift */; };
 		3D50A55B2251367400619CF2 /* OptionPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D50A55A2251367400619CF2 /* OptionPostCell.swift */; };
 		3D56D9BB228D4C4E00090A4C /* LegendCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D56D9BA228D4C4E00090A4C /* LegendCell.swift */; };
+		3D58E47422C3EFA500B373A5 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D58E47322C3EFA500B373A5 /* CacheManager.swift */; };
+		3D58E47622C976DA00B373A5 /* ContactsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D58E47522C976DA00B373A5 /* ContactsController.swift */; };
 		3D6BA2F02254889200DAEEB7 /* TextPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D6BA2EF2254889200DAEEB7 /* TextPostCell.swift */; };
 		3D70CDDE226D2C5500D3A5F8 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D70CDDD226D2C5500D3A5F8 /* Network.swift */; };
 		3D70CDE2226D61F300D3A5F8 /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D70CDE1226D61F300D3A5F8 /* Auth.swift */; };
@@ -40,6 +51,15 @@
 		3D0A81D122827AA100ABB83E /* ProfileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileController.swift; sourceTree = "<group>"; };
 		3D2CB219228D00940001DB8E /* PostResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostResultsController.swift; sourceTree = "<group>"; };
 		3D395236228FB49A000B5496 /* Flux.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Flux.entitlements; sourceTree = "<group>"; };
+		3D46FD7922CC4BB400DC6876 /* ProfileEditController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditController.swift; sourceTree = "<group>"; };
+		3D46FD7B22CD913C00DC6876 /* CommentsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsController.swift; sourceTree = "<group>"; };
+		3D46FD7D22CD938200DC6876 /* CommentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentCell.swift; sourceTree = "<group>"; };
+		3D46FD7F22CF0B2000DC6876 /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
+		3D46FD8122CF136400DC6876 /* DMController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DMController.swift; sourceTree = "<group>"; };
+		3D46FD8322CF142C00DC6876 /* ConvoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvoCell.swift; sourceTree = "<group>"; };
+		3D46FD8522CF16C600DC6876 /* ConvoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvoController.swift; sourceTree = "<group>"; };
+		3D46FD8722CF197A00DC6876 /* BubbleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleCell.swift; sourceTree = "<group>"; };
+		3D46FD8A22CF2BFE00DC6876 /* PostDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDelegate.swift; sourceTree = "<group>"; };
 		3D50A54C2250A61D00619CF2 /* HomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
 		3D50A54F2250ABDB00619CF2 /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
 		3D50A5522250AEC900619CF2 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -47,6 +67,8 @@
 		3D50A557225132F300619CF2 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		3D50A55A2251367400619CF2 /* OptionPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionPostCell.swift; sourceTree = "<group>"; };
 		3D56D9BA228D4C4E00090A4C /* LegendCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegendCell.swift; sourceTree = "<group>"; };
+		3D58E47322C3EFA500B373A5 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
+		3D58E47522C976DA00B373A5 /* ContactsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsController.swift; sourceTree = "<group>"; };
 		3D6BA2EF2254889200DAEEB7 /* TextPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPostCell.swift; sourceTree = "<group>"; };
 		3D70CDDD226D2C5500D3A5F8 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		3D70CDE1226D61F300D3A5F8 /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
@@ -89,6 +111,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		3D46FD8922CF2BDF00DC6876 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				3D46FD8A22CF2BFE00DC6876 /* PostDelegate.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
 		3D50A54B2250A5A700619CF2 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -101,6 +131,12 @@
 				3DD8F18F2283F72F00DCCB0F /* SearchController.swift */,
 				3DD8F1912283FC9A00DCCB0F /* UserListController.swift */,
 				3D2CB219228D00940001DB8E /* PostResultsController.swift */,
+				3D58E47522C976DA00B373A5 /* ContactsController.swift */,
+				3D46FD7922CC4BB400DC6876 /* ProfileEditController.swift */,
+				3D46FD7B22CD913C00DC6876 /* CommentsController.swift */,
+				3D46FD7F22CF0B2000DC6876 /* SettingsController.swift */,
+				3D46FD8122CF136400DC6876 /* DMController.swift */,
+				3D46FD8522CF16C600DC6876 /* ConvoController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -115,6 +151,9 @@
 				3D70CDE9226D817C00D3A5F8 /* OptionCell.swift */,
 				3DD8F1932283FCFF00DCCB0F /* UserCell.swift */,
 				3D56D9BA228D4C4E00090A4C /* LegendCell.swift */,
+				3D46FD7D22CD938200DC6876 /* CommentCell.swift */,
+				3D46FD8322CF142C00DC6876 /* ConvoCell.swift */,
+				3D46FD8722CF197A00DC6876 /* BubbleCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -141,6 +180,7 @@
 				3D50A557225132F300619CF2 /* Post.swift */,
 				3D70CDDD226D2C5500D3A5F8 /* Network.swift */,
 				3D70CDE1226D61F300D3A5F8 /* Auth.swift */,
+				3D58E47322C3EFA500B373A5 /* CacheManager.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -180,6 +220,7 @@
 				3D70CDEB226D86A000D3A5F8 /* Views */,
 				3D50A559225133BF00619CF2 /* Model */,
 				3D50A54E2250ABBF00619CF2 /* Cells */,
+				3D46FD8922CF2BDF00DC6876 /* Protocols */,
 				3D50A5512250AEBB00619CF2 /* Helpers */,
 				3D50A55422512AFB00619CF2 /* Fonts */,
 				3D97233D2250A3DA0093C754 /* Assets.xcassets */,
@@ -353,22 +394,33 @@
 				3D6BA2F02254889200DAEEB7 /* TextPostCell.swift in Sources */,
 				3D70CDED226D86B200D3A5F8 /* ColorPicker.swift in Sources */,
 				3D70CDEA226D817C00D3A5F8 /* OptionCell.swift in Sources */,
+				3D46FD8B22CF2BFE00DC6876 /* PostDelegate.swift in Sources */,
+				3D46FD7C22CD913C00DC6876 /* CommentsController.swift in Sources */,
+				3D46FD7A22CC4BB400DC6876 /* ProfileEditController.swift in Sources */,
 				3D064C59226FFB680008A654 /* LoadingController.swift in Sources */,
+				3D58E47422C3EFA500B373A5 /* CacheManager.swift in Sources */,
 				3D50A54D2250A61D00619CF2 /* HomeController.swift in Sources */,
 				3D9723372250A3D70093C754 /* AppDelegate.swift in Sources */,
 				3DD8F1902283F72F00DCCB0F /* SearchController.swift in Sources */,
 				3DD8F1942283FCFF00DCCB0F /* UserCell.swift in Sources */,
+				3D46FD8422CF142C00DC6876 /* ConvoCell.swift in Sources */,
 				3D50A55B2251367400619CF2 /* OptionPostCell.swift in Sources */,
+				3D46FD7E22CD938200DC6876 /* CommentCell.swift in Sources */,
+				3D46FD8622CF16C600DC6876 /* ConvoController.swift in Sources */,
 				3D70CDE4226D6A8B00D3A5F8 /* PostController.swift in Sources */,
 				3D56D9BB228D4C4E00090A4C /* LegendCell.swift in Sources */,
 				3D50A5502250ABDB00619CF2 /* PostCell.swift in Sources */,
 				3D70CDE2226D61F300D3A5F8 /* Auth.swift in Sources */,
+				3D46FD8222CF136400DC6876 /* DMController.swift in Sources */,
 				3D70CDDE226D2C5500D3A5F8 /* Network.swift in Sources */,
+				3D46FD8822CF197A00DC6876 /* BubbleCell.swift in Sources */,
 				3DD8F1922283FC9A00DCCB0F /* UserListController.swift in Sources */,
 				3DDFB6AD226D07C7006EAFA0 /* LoginController.swift in Sources */,
 				3D70CDE8226D7A0300D3A5F8 /* NewCell.swift in Sources */,
 				3D50A5532250AEC900619CF2 /* Extensions.swift in Sources */,
+				3D46FD8022CF0B2000DC6876 /* SettingsController.swift in Sources */,
 				3D50A558225132F300619CF2 /* Post.swift in Sources */,
+				3D58E47622C976DA00B373A5 /* ContactsController.swift in Sources */,
 				3D0A81D222827AA100ABB83E /* ProfileController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

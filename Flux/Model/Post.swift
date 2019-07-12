@@ -29,6 +29,7 @@ class Post:Hashable{
     var timeStamp:String? = nil
     var user:String? = nil
     var answers:[Answer]? = nil
+    var comments:[Comment] = []
     var choices:[String]? = nil
     var colors:[String]? = nil
     var profilePicture:UIImage? = nil
@@ -49,6 +50,16 @@ class Post:Hashable{
             let rawAnswers = (rPost["answers"]! as! [[String:Any]])
             for a in rawAnswers {
                 self.answers?.append(Answer(a))
+            }
+            self.comments = []
+            if let cs = rPost["comments"] as? [[String: String]] {
+                for c in cs {
+                    guard let user = c["user"] else {continue}
+                    guard let comment = c["comment"] else {continue}
+                    guard var timestamp = c["timestamp"] else {continue}
+                    timestamp = Date.UTCToLocal(date: timestamp)
+                    self.comments.append(Comment(user: user, comment: comment, timestamp: timestamp))
+                }
             }
             if self.type == .Option {
                 let options = (rPost["options"]! as! [String:Any])
@@ -163,6 +174,11 @@ struct Answer {
         answer = answerDict["answer"] as! Int
         timestamp = answerDict["time"] as! String
     }
+}
+struct Comment {
+    let user:String
+    let comment:String
+    let timestamp:String
 }
 enum PostType{
     case Option

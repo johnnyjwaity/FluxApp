@@ -16,7 +16,7 @@ class SearchController: UIViewController, UISearchResultsUpdating, UISearchBarDe
         super.viewDidLoad()
         view.backgroundColor = UIColor.white
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont(name: "Amandita", size: 28)!]
-        navigationController?.navigationBar.tintColor = UIColor.appBlue
+        navigationController?.navigationBar.tintColor = UIColor.white
         navigationController?.navigationBar.barTintColor = UIColor.appBlue
         
         let searchController = UISearchController(searchResultsController: nil)
@@ -38,6 +38,40 @@ class SearchController: UIViewController, UISearchResultsUpdating, UISearchBarDe
         navigationItem.searchController = searchController
         definesPresentationContext = true
         
+        let findFreindsView = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 200))
+        findFreindsView.backgroundColor = UIColor.white
+        
+        let contactButton = UIButton(type: .roundedRect)
+        contactButton.translatesAutoresizingMaskIntoConstraints = false
+        contactButton.layer.cornerRadius = 10
+        contactButton.layer.borderColor = UIColor.appBlue.cgColor
+        contactButton.layer.borderWidth = 2.5
+        findFreindsView.addSubview(contactButton)
+        contactButton.topAnchor.constraint(equalTo: findFreindsView.topAnchor, constant: 20).isActive = true
+        contactButton.widthAnchor.constraint(equalTo: findFreindsView.widthAnchor, multiplier: 0.8).isActive = true
+        contactButton.centerXAnchor.constraint(equalTo: findFreindsView.centerXAnchor).isActive = true
+        contactButton.heightAnchor.constraint(equalToConstant: 85).isActive = true
+        contactButton.addTarget(self, action: #selector(openContacts), for: .touchUpInside)
+        let contactGlyph = UIImageView(image: #imageLiteral(resourceName: "contact").withRenderingMode(.alwaysTemplate))
+        contactGlyph.translatesAutoresizingMaskIntoConstraints = false
+        contactGlyph.tintColor = UIColor.appBlue
+        contactGlyph.contentMode = .scaleAspectFit
+        contactButton.addSubview(contactGlyph)
+        contactGlyph.topAnchor.constraint(equalTo: contactButton.topAnchor, constant: 10).isActive = true
+        contactGlyph.centerXAnchor.constraint(equalTo: contactButton.centerXAnchor).isActive = true
+        contactGlyph.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        contactGlyph.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        let fromContactsLabel = UILabel()
+        fromContactsLabel.translatesAutoresizingMaskIntoConstraints = false
+        fromContactsLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        fromContactsLabel.text = "Find Friends in Contacts"
+        fromContactsLabel.textColor = UIColor.appBlue
+        fromContactsLabel.textAlignment = .center
+        contactButton.addSubview(fromContactsLabel)
+        fromContactsLabel.topAnchor.constraint(equalTo: contactGlyph.bottomAnchor, constant: 5).isActive = true
+        fromContactsLabel.widthAnchor.constraint(equalTo: contactButton.widthAnchor).isActive = true
+        fromContactsLabel.centerXAnchor.constraint(equalTo: contactButton.centerXAnchor).isActive = true
+        listController.tableView.tableFooterView = findFreindsView
         listController.delegate = self
         addChild(listController)
         view.addSubview(listController.view)
@@ -60,7 +94,7 @@ class SearchController: UIViewController, UISearchResultsUpdating, UISearchBarDe
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if #available(iOS 11.0, *) {
-            navigationItem.hidesSearchBarWhenScrolling = true
+//            navigationItem.hidesSearchBarWhenScrolling = true
         }
     }
     
@@ -78,6 +112,11 @@ class SearchController: UIViewController, UISearchResultsUpdating, UISearchBarDe
         let profileController = ProfileController(user)
         profileController.title = user
         navigationController?.pushViewController(profileController, animated: true)
+    }
+    
+    @objc
+    func openContacts(){
+        navigationController?.pushViewController(ContactsController(), animated: true)
     }
 
 }

@@ -264,3 +264,6 @@ protocol OptionCallback {
     func optionNameChanged(_ name:String, index:Int)
     func optionColorChanged(_ color:UIColor, index:Int)
 }
+protocol CreateOptionPostDelegate {
+    func post
+}
