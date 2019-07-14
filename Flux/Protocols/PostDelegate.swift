@@ -19,4 +19,9 @@ protocol PostDelegate {
     func getPostChoices(for postID:String) -> [String]
     func getPostColors(for postID:String) -> [String]
     func refreshPost(for postID:String)
+    func shouldShowShare() -> Bool
+    func sharePost(for postID:String)
+}
+extension PostDelegate {
+    func sharePost(for postID:String) {}
 }

@@ -43,7 +43,7 @@ class UserCell: UITableViewCell {
         followButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -10).isActive = true
         followButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         followButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        
+        followButton.alpha = 0
         
         let userLabel = UILabel()
         userLabel.text = user

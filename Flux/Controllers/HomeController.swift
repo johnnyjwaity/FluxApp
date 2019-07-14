@@ -35,7 +35,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         navigationController?.navigationBar.tintColor = UIColor.white
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "message").withRenderingMode(.alwaysTemplate), style: .done, target: self, action: #selector(openDirectMessages))
         navigationItem.rightBarButtonItem?.tintColor = UIColor.white
-        refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+//        refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         refreshControl.addTarget(self, action: #selector(getFeed), for: .valueChanged)
         collectionView.alwaysBounceVertical = true
         if allowsRefresh {
@@ -228,6 +228,12 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
                 break
             }
         }
+    }
+    func shouldShowShare() -> Bool {
+        return true
+    }
+    func sharePost(for postID: String) {
+        tabBarController?.present(PostShareController(postID), animated: false, completion: nil)
     }
     /* PostDelegate END */
 }

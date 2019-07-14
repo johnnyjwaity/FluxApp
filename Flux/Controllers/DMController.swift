@@ -7,18 +7,25 @@
 //
 
 import UIKit
+import JWTDecode
 
-class DMController: UITableViewController {
+class DMController: UITableViewController, UserListControllerDelegate {
+    
     
     var convos:[Convo] = []
+    
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        let rc = UIRefreshControl()
+        rc.addTarget(self, action: #selector(fetchConvos), for: .valueChanged)
+        refreshControl = rc
         title = "Direct Messages"
         navigationItem.title = "Direct Messages"
         view.backgroundColor = UIColor.white
         tableView.register(ConvoCell.self, forCellReuseIdentifier: "convo")
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: nil)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(compose))
         navigationItem.rightBarButtonItem?.tintColor = UIColor.white
         tableView.tableFooterView = UIView()
         fetchConvos()
@@ -41,10 +48,10 @@ class DMController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        navigationController?.pushViewController(ConvoController(convos[indexPath.row].id), animated: true)
+        navigationController?.pushViewController(ConvoController(convos[indexPath.row].id, title: convos[indexPath.row].recipient), animated: true)
     }
 
-    
+    @objc
     func fetchConvos(){
         Network.request(url: "https://api.tryflux.app:3000/convos", type: .get, paramters: nil, auth: true) { (result, err) in
             if let e = err {
@@ -59,8 +66,57 @@ class DMController: UITableViewController {
             }
             self.convos = newConvos
             self.tableView.reloadData()
+            self.tableView.refreshControl?.endRefreshing()
         }
     }
+    
+    @objc
+    func compose(){
+        var myUsername = ""
+        do{
+            let jwt = try decode(jwt: Network.authToken!)
+            myUsername = (jwt.body["uID"] as! String)
+            
+        }catch{
+            print(error)
+        }
+        Network.request(url: "https://api.tryflux.app:3000/account?user=\(myUsername)", type: .get, paramters: nil, auth: true) { (result, error) in
+            if let err = error {
+                print(err)
+                return
+            }
+            let account = result["account"] as! [String:Any]
+            let following = account["following"] as? [String] ?? []
+            let cont = UserListController()
+            cont.setUsers(following)
+            cont.delegate = self
+            self.navigationController?.pushViewController(cont, animated: true)
+            
+        }
+    }
+    func userClicked(_ user: String) {
+        navigationController?.popViewController(animated: true)
+        Network.request(url: "https://api.tryflux.app:3000/createDM", type: .post, paramters: ["recipient":user], auth: true) { (result, error) in
+            if error != nil {
+                return
+            }
+            let convoID = result["convoID"] as! String
+            var counter = 0
+            for convo in self.convos {
+                if convo.id == convoID {
+                    self.tableView.selectRow(at: IndexPath(row: counter, section: 0), animated: true, scrollPosition: .none)
+                    self.tableView(self.tableView, didSelectRowAt: IndexPath(row: counter, section: 0))
+                    return
+                }
+                counter += 1
+            }
+            self.convos.insert(Convo(recipient: user, preview: "", id: convoID, time: "now"), at: 0)
+            self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+            self.tableView.selectRow(at: IndexPath(row: 0, section: 0), animated: true, scrollPosition: .top)
+            self.tableView(self.tableView, didSelectRowAt: IndexPath(row: 0, section: 0))
+        }
+    }
+    
 }
 struct Convo {
     let recipient:String

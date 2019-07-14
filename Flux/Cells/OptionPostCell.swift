@@ -140,6 +140,19 @@ class OptionPostCell: PostCell {
         commentButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
         commentButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
         commentButton.addTarget(self, action: #selector(openComments), for: .touchUpInside)
+        
+        if delegate.shouldShowShare() {
+            let shareButton = UIButton()
+            shareButton.setImage(#imageLiteral(resourceName: "share").withRenderingMode(.alwaysTemplate), for: .normal)
+            shareButton.tintColor = UIColor.appBlue
+            shareButton.translatesAutoresizingMaskIntoConstraints = false
+            resultScreen.addSubview(shareButton)
+            shareButton.leftAnchor.constraint(equalTo: resultScreen.leftAnchor, constant: 12).isActive = true
+            shareButton.bottomAnchor.constraint(equalTo: resultScreen.bottomAnchor, constant: -12).isActive = true
+            shareButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+            shareButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+            shareButton.addTarget(self, action: #selector(sharePost), for: .touchUpInside)
+        }
 
 
 
@@ -252,6 +265,11 @@ class OptionPostCell: PostCell {
     @objc
     func openComments() {
         delegate.openComments(for: self.postID)
+    }
+    
+    @objc
+    func sharePost(){
+        delegate.sharePost(for: self.postID)
     }
 }
 //print("Result \(post.question) \(results)")

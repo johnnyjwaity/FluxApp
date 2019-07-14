@@ -15,9 +15,10 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
     var posts:[Post] = []
     var postStates:[PostState] = []
 
-    init(_ convoID:String) {
+    init(_ convoID:String, title:String) {
         self.convoID = convoID
         super.init(nibName: nil, bundle: nil)
+        self.title = title
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -72,8 +73,11 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.white
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(fetchMessages))
         // Do any additional setup after loading the view.
         let layout = UICollectionViewFlowLayout()
+        
 
         collectionView = UICollectionView(frame: UIScreen.main.bounds, collectionViewLayout: layout)
         fetchMessages()
@@ -216,10 +220,7 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
             UIView.animate(withDuration: 0, delay: 0, options: [.curveEaseOut], animations: {
                 self.view.layoutIfNeeded()
             }, completion: { (completed) in
-//                let commentCount = self.post.comments.count
-//                if commentCount > 0 {
-//                    self.tableView.scrollToRow(at: IndexPath(row: commentCount - 1, section: 0), at: .bottom, animated: true)
-//                }
+                self.scrollToBottom()
             })
         }
     }
@@ -254,7 +255,7 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
 
     
 
-
+    @objc
     func fetchMessages(){
         Network.request(url: "https://api.tryflux.app:3000/messages", type: .post, paramters: ["convoID":convoID], auth: true) { (result, err) in
             if let e = err {
@@ -265,8 +266,7 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
             var cellIndexes:[Int] = []
             var states:[PostState] = []
             var newMessages:[Message] = []
-            if var ms = result["messages"] as? [[String:Any]] {
-                ms.append(["user": "Johnnyjw", "type":1, "time":"", "isMe": true, "postID":"d0fda7d0-989e-11e9-b7bb-519472ef21f2"])
+            if let ms = result["messages"] as? [[String:Any]] {
                 for m in ms {
                     guard let user = m["user"] as? String else{continue}
                     guard let type = m["type"] as? Int else{continue}
@@ -293,7 +293,15 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
             }
             self.messages = newMessages
             self.collectionView.reloadData()
+            Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false, block: { (timer) in
+                self.scrollToBottom()
+            })
+            
         }
+    }
+    
+    func scrollToBottom(){
+        collectionView.scrollToItem(at: IndexPath(row: messages.count - 1, section: 0), at: .bottom, animated: true)
     }
     
     func fetchPost(_ post:Post, index:Int){
@@ -392,6 +400,9 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
                 fetchPost(posts[postMessage.postIndex], index: postMessage.cellIndex)
             }
         }
+    }
+    func shouldShowShare() -> Bool {
+        return false
     }
     /* PostDelegate END */
 

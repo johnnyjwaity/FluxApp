@@ -66,26 +66,35 @@ class ContactsController: UIViewController, UITableViewDelegate, UITableViewData
         }catch{
             print(error)
         }
-        
-        let fluxUsers:[[String:String]] = [["name":"virajsule12", "email":"virajsule12@gmail.com"]]
-        for u in fluxUsers {
-            users.append(u["name"] ?? "")
-            var counter = 0
-            for contact in contacts {
-                if contact.emails.contains(u["email"] ?? "") {
-                    break
-                }
-                counter += 1
-            }
-            contacts.remove(at: counter)
+        var emails:[String] = []
+        for c in contacts {
+            emails.append(contentsOf: c.emails)
         }
-        inviteContacts = contacts.sorted(by: { (c1, c2) -> Bool in
-            if c1.sortedname < c2.sortedname {
-                return true
+        Network.request(url: "https://api.tryflux.app:3000/contacts", type: .post, paramters: ["emails":emails], auth: false) { (result, error) in
+            let fluxUsers:[[String:String]] = result["users"] as! [[String:String]]
+            print(fluxUsers)
+            for u in fluxUsers {
+                self.users.append(u["name"] ?? "")
+                var counter = 0
+                for contact in contacts {
+                    if contact.emails.contains(u["email"] ?? "") {
+                        break
+                    }
+                    counter += 1
+                }
+                if counter < contacts.count {
+                    contacts.remove(at: counter)
+                }
+                
             }
-            return false
-        })
-        tableView.reloadData()
+            self.inviteContacts = contacts.sorted(by: { (c1, c2) -> Bool in
+                if c1.sortedname < c2.sortedname {
+                    return true
+                }
+                return false
+            })
+            self.tableView.reloadData()
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -137,6 +146,9 @@ class ContactsController: UIViewController, UITableViewDelegate, UITableViewData
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        if indexPath.section == 0 {
+            navigationController?.pushViewController(ProfileController(users[indexPath.row]), animated: true)
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSContactsUsageDescription</key>
-	<string>In order to find firends on Flux</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -32,7 +30,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>3</string>
+	<string>4</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>itms-apps</string>
@@ -43,6 +41,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>In order to take profile picture</string>
+	<key>NSContactsUsageDescription</key>
+	<string>In order to find firends on Flux</string>
 	<key>SCSDKClientId</key>
 	<string>ab046876-0683-46dc-80fe-f773a796e8e5</string>
 	<key>SCSDKRedirectUrl</key>
