@@ -24,6 +24,15 @@ class LoginController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     let errorBox = UILabel()
     
+    init(){
+        super.init(nibName: nil, bundle: nil)
+        modalPresentationStyle = .fullScreen
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         let gradientLayer = CAGradientLayer()

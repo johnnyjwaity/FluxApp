@@ -61,7 +61,10 @@ class ContactsController: UIViewController, UITableViewDelegate, UITableViewData
                 
                 var name = "\(contact.givenName) \(contact.familyName)"
                 name = name.trimmingCharacters(in: .whitespacesAndNewlines)
-                contacts.append(Contact(name: name, emails: emails, phonenumbers: phoneNumbers, sortedname: "\(contact.familyName)\(contact.givenName)"))
+                if name != "" {
+                    contacts.append(Contact(name: name, emails: emails, phonenumbers: phoneNumbers, sortedname: "\(contact.familyName)\(contact.givenName)"))
+                }
+                
             }
         }catch{
             print(error)
@@ -71,7 +74,7 @@ class ContactsController: UIViewController, UITableViewDelegate, UITableViewData
             emails.append(contentsOf: c.emails)
         }
         Network.request(url: "https://api.tryflux.app:3000/contacts", type: .post, paramters: ["emails":emails], auth: false) { (result, error) in
-            let fluxUsers:[[String:String]] = result["users"] as! [[String:String]]
+            let fluxUsers:[[String:String]] = result["users"] as? [[String:String]] ?? []
             print(fluxUsers)
             for u in fluxUsers {
                 self.users.append(u["name"] ?? "")
@@ -121,7 +124,9 @@ class ContactsController: UIViewController, UITableViewDelegate, UITableViewData
             return cell
         }else{
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+//            print(inviteContacts[indexPath.row].name)
             cell.textLabel?.text = inviteContacts[indexPath.row].name
+            cell.textLabel?.textColor = UIColor.appBlue
             let button = UIButton(type: .roundedRect)
             button.tintColor = UIColor.appBlue
             button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)

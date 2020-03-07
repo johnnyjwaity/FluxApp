@@ -23,7 +23,11 @@ class SearchController: UIViewController, UISearchResultsUpdating, UISearchBarDe
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search For User"
+        searchController.searchBar.searchTextField.backgroundColor = UIColor.white
         searchController.searchBar.delegate = self
+        searchController.searchBar.searchBarStyle = .prominent
+        searchController.searchBar.barTintColor = UIColor.white
+        searchController.searchBar.backgroundImage = nil
         if let textfield = searchController.searchBar.value(forKey: "searchField") as? UITextField {
             if let backgroundview = textfield.subviews.first {
                 
