@@ -151,7 +151,7 @@ class ProfileEditController: UIViewController, UITableViewDelegate, UITableViewD
         let bio:String = textFields[1].text
         let link:String = textFields[2].text
 //        print("\(name) \(bio) \(link)")
-        Network.request(url: "https://api.tryflux.app:3000/updateProfile", type: .post, paramters: ["bio": bio, "name": name, "link": link], auth: true)
+        Network.request(url: "https://api.tryflux.app/updateProfile", type: .post, paramters: ["bio": bio, "name": name, "link": link], auth: true)
         dismiss(animated: true, completion: nil)
     }
 

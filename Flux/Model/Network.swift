@@ -73,7 +73,7 @@ class Network{
             
             Alamofire.upload(multipartFormData: { (multipartFormData) in
                 multipartFormData.append(dat, withName: "picture", fileName: "\(u).png", mimeType: "image/png")
-            }, to: "https://api.tryflux.app:3000/uploadProfile", method: .post, headers: headers, encodingCompletion: { (result) in
+            }, to: "https://api.tryflux.app/uploadProfile", method: .post, headers: headers, encodingCompletion: { (result) in
                 print(result)
             })
         }
@@ -86,7 +86,7 @@ class Network{
             return
         }
         
-        Network.request(url: "https://api.tryflux.app:3000/hasProfilePicture?user=\(user)", type: .get, paramters: nil) { (response, err) in
+        Network.request(url: "https://api.tryflux.app/hasProfilePicture?user=\(user)", type: .get, paramters: nil) { (response, err) in
             if let error = err {
                 print(error)
                 callback(nil)
@@ -95,7 +95,7 @@ class Network{
             if let exists = response["exists"] as? Bool {
                 if exists{
                     print("Fetching Picture For \(user)")
-                    Alamofire.request("https://api.tryflux.app:3000/profilePicture?user=\(user)", method: .get).validate().responseData(completionHandler: { (responseData) in
+                    Alamofire.request("https://api.tryflux.app/profilePicture?user=\(user)", method: .get).validate().responseData(completionHandler: { (responseData) in
                         if let dat = responseData.data {
                             let image = UIImage(data: dat)
                             CacheManager.profilePictures[user] = image

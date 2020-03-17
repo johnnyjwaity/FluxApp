@@ -65,7 +65,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
         URLCache.shared = URLCache()
         
-        Network.request(url: "https://api.tryflux.app:3000/feed", type: .get, paramters: nil, auth: true) { (response, error) in
+        Network.request(url: "https://api.tryflux.app/feed", type: .get, paramters: nil, auth: true) { (response, error) in
             var posts:[Post] = []
             if let success = response["success"] as? Bool {
                 if success {

@@ -246,7 +246,7 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
         let message = inputTextField.text!
         messages.append(TextMessage(user: myUsername, time: "now", message: message, style: .mine))
         collectionView.insertItems(at: [IndexPath(row: messages.count - 1, section: 0)])
-        Network.request(url: "https://api.tryflux.app:3000/sendDM", type: .post, paramters: ["convoID": convoID, "type": 0, "message": message], auth: true)
+        Network.request(url: "https://api.tryflux.app/sendDM", type: .post, paramters: ["convoID": convoID, "type": 0, "message": message], auth: true)
         inputTextField.text = ""
         collectionView.scrollToItem(at: IndexPath(row: messages.count - 1, section: 0), at: .bottom, animated: true)
     }
@@ -257,7 +257,7 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
 
     @objc
     func fetchMessages(){
-        Network.request(url: "https://api.tryflux.app:3000/messages", type: .post, paramters: ["convoID":convoID], auth: true) { (result, err) in
+        Network.request(url: "https://api.tryflux.app/messages", type: .post, paramters: ["convoID":convoID], auth: true) { (result, err) in
             if let e = err {
                 print(e.localizedDescription)
                 return

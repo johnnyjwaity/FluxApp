@@ -207,7 +207,7 @@ class CreateOptionPostController: UIViewController, UICollectionViewDelegateFlow
         print(params)
         let loading = LoadingController("Posting")
         present(loading, animated: true, completion: nil)
-        Network.request(url: "https://api.tryflux.app:3000/post", type: .post, paramters: params, auth: true) { (response, error) in
+        Network.request(url: "https://api.tryflux.app/post", type: .post, paramters: params, auth: true) { (response, error) in
             if let err = error {
                 print(err)
                 loading.dismiss(animated: true, completion: nil)

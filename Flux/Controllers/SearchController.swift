@@ -105,7 +105,7 @@ class SearchController: UIViewController, UISearchResultsUpdating, UISearchBarDe
     func updateSearchResults(for searchController: UISearchController) {
     }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        Network.request(url: "https://api.tryflux.app:3000/queryUsers?search=\(searchBar.text ?? "")", type: .get, paramters: nil) { (res, err) in
+        Network.request(url: "https://api.tryflux.app/queryUsers?search=\(searchBar.text ?? "")", type: .get, paramters: nil) { (res, err) in
             if let results = res["result"] as? [String] {
                 self.listController.setUsers(results)
             }

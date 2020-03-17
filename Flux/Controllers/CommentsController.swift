@@ -184,7 +184,7 @@ class CommentsController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.endUpdates()
         tableView.scrollToRow(at: IndexPath(row: post.comments.count - 1, section: 0), at: .bottom, animated: true)
         
-        Network.request(url: "https://api.tryflux.app:3000/comment", type: .post, paramters: ["postID": post.postID, "comment": newComment ?? ""], auth: true)
+        Network.request(url: "https://api.tryflux.app/comment", type: .post, paramters: ["postID": post.postID, "comment": newComment ?? ""], auth: true)
     }
     
 //    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

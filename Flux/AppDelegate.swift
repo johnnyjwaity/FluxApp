@@ -44,7 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         
         let keychain = Keychain(service: "com.johnnywaity.flux")
         if let refresh = keychain["refresh"] {
-            Network.request(url: "https://api.tryflux.app:3000/getNewToken", type: .post, paramters: ["refreshToken": refresh]) { (response, error) in
+            Network.request(url: "https://api.tryflux.app/getNewToken", type: .post, paramters: ["refreshToken": refresh]) { (response, error) in
                 if let s = response["success"] as? Bool {
                     if s {
                         Network.authToken = (response["token"]! as! String)
@@ -117,7 +117,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         let token = tokenParts.joined()
         print("Device Token: \(token)")
         AppDelegate.deviceToken = token
-        Network.request(url: "https://api.tryflux.app:3000/deviceToken", type: .post, paramters: ["deviceToken" : token], auth: true)
+        Network.request(url: "https://api.tryflux.app/deviceToken", type: .post, paramters: ["deviceToken" : token], auth: true)
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {

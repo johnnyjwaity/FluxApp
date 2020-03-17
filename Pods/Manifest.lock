@@ -29,7 +29,7 @@ DEPENDENCIES:
   - SwiftyJSON
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - Alamofire
     - Charts
     - CropViewController
@@ -53,4 +53,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 6762abf2e923248c631b15242bb3981bd231598e
 
-COCOAPODS: 1.6.0
+COCOAPODS: 1.9.0

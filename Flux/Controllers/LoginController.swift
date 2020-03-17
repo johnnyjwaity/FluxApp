@@ -206,7 +206,7 @@ class LoginController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }
         let loading = LoadingController(loggingIn ? "Logging In" : "Creating Account")
         present(loading, animated: true, completion: nil)
-        Network.request(url: "https://api.tryflux.app:3000/\(loggingIn ? "login": "createAccount")", type: .post, paramters: parameters) { (response, error) in
+        Network.request(url: "https://api.tryflux.app/\(loggingIn ? "login": "createAccount")", type: .post, paramters: parameters) { (response, error) in
             if let err = error {
                 loading.dismiss(animated: true, completion: nil)
                 print(err)

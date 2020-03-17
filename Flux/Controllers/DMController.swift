@@ -53,7 +53,7 @@ class DMController: UITableViewController, UserListControllerDelegate {
 
     @objc
     func fetchConvos(){
-        Network.request(url: "https://api.tryflux.app:3000/convos", type: .get, paramters: nil, auth: true) { (result, err) in
+        Network.request(url: "https://api.tryflux.app/convos", type: .get, paramters: nil, auth: true) { (result, err) in
             if let e = err {
                 print(e.localizedDescription)
                 return
@@ -80,7 +80,7 @@ class DMController: UITableViewController, UserListControllerDelegate {
         }catch{
             print(error)
         }
-        Network.request(url: "https://api.tryflux.app:3000/account?user=\(myUsername)", type: .get, paramters: nil, auth: true) { (result, error) in
+        Network.request(url: "https://api.tryflux.app/account?user=\(myUsername)", type: .get, paramters: nil, auth: true) { (result, error) in
             if let err = error {
                 print(err)
                 return
@@ -96,7 +96,7 @@ class DMController: UITableViewController, UserListControllerDelegate {
     }
     func userClicked(_ user: String) {
         navigationController?.popViewController(animated: true)
-        Network.request(url: "https://api.tryflux.app:3000/createDM", type: .post, paramters: ["recipient":user], auth: true) { (result, error) in
+        Network.request(url: "https://api.tryflux.app/createDM", type: .post, paramters: ["recipient":user], auth: true) { (result, error) in
             if error != nil {
                 return
             }

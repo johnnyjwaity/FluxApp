@@ -73,7 +73,7 @@ class ContactsController: UIViewController, UITableViewDelegate, UITableViewData
         for c in contacts {
             emails.append(contentsOf: c.emails)
         }
-        Network.request(url: "https://api.tryflux.app:3000/contacts", type: .post, paramters: ["emails":emails], auth: false) { (result, error) in
+        Network.request(url: "https://api.tryflux.app/contacts", type: .post, paramters: ["emails":emails], auth: false) { (result, error) in
             let fluxUsers:[[String:String]] = result["users"] as? [[String:String]] ?? []
             print(fluxUsers)
             for u in fluxUsers {

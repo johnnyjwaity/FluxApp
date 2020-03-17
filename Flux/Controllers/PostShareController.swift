@@ -131,7 +131,7 @@ class PostShareController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     func fetchConvos(){
-        Network.request(url: "https://api.tryflux.app:3000/convos", type: .get, paramters: nil, auth: true) { (result, err) in
+        Network.request(url: "https://api.tryflux.app/convos", type: .get, paramters: nil, auth: true) { (result, err) in
             if let e = err {
                 print(e.localizedDescription)
                 return
@@ -156,7 +156,7 @@ class PostShareController: UIViewController, UITableViewDelegate, UITableViewDat
         var counter = 0
         for s in selected {
             if s {
-                Network.request(url: "https://api.tryflux.app:3000/sendDM", type: .post, paramters: ["convoID": convos[counter].id, "type": 1, "postID":postID], auth: true)
+                Network.request(url: "https://api.tryflux.app/sendDM", type: .post, paramters: ["convoID": convos[counter].id, "type": 1, "postID":postID], auth: true)
             }
             counter += 1
         }

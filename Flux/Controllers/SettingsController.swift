@@ -43,9 +43,9 @@ class SettingsController: UITableViewController {
         Network.authToken = nil
         AppDelegate.hasAttemptedRegistrantion = false
         let keychain = Keychain(service: "com.johnnywaity.flux")
-        Network.request(url: "https://api.tryflux.app:3000/invalidateToken", type: .delete, paramters: ["refreshToken": keychain["refresh"] ?? ""])
+        Network.request(url: "https://api.tryflux.app/invalidateToken", type: .delete, paramters: ["refreshToken": keychain["refresh"] ?? ""])
         if let t = AppDelegate.deviceToken {
-            Network.request(url: "https://api.tryflux.app:3000/deviceToken", type: .delete, paramters: ["deviceToken" : t])
+            Network.request(url: "https://api.tryflux.app/deviceToken", type: .delete, paramters: ["deviceToken" : t])
         }
         keychain["refresh"] = nil
         tabBarController?.present(LoginController(), animated: true, completion: nil)

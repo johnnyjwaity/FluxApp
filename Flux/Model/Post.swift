@@ -40,7 +40,7 @@ class Post:Hashable{
     }
     
     func fetch(completion:@escaping () -> Void){
-        Network.request(url: "https://api.tryflux.app:3000/fetchPost?id="+postID, type: .get, paramters: nil, callback: { (response, error) in
+        Network.request(url: "https://api.tryflux.app/fetchPost?id="+postID, type: .get, paramters: nil, callback: { (response, error) in
             let rPost:[String:Any] = response["post"] as! [String:Any]
             self.question = (rPost["question"]! as! String)
             self.timeStamp = (rPost["timestamp"]! as! String)
@@ -76,7 +76,7 @@ class Post:Hashable{
     }
     
     func answerOption(_ index:Int){
-        Network.request(url: "https://api.tryflux.app:3000/answer", type: .post, paramters: ["postID": postID, "answer": index], auth: true)
+        Network.request(url: "https://api.tryflux.app/answer", type: .post, paramters: ["postID": postID, "answer": index], auth: true)
         var username:String? = nil
         do{
             let jwt = try decode(jwt: Network.authToken!)

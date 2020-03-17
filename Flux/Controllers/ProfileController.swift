@@ -328,7 +328,7 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
             self.user = username
             followButton.setTitle("Edit", for: .normal)
         }
-        Network.request(url: "https://api.tryflux.app:3000/account?user=\(username)", type: .get, paramters: nil, auth: true) { (result, error) in
+        Network.request(url: "https://api.tryflux.app/account?user=\(username)", type: .get, paramters: nil, auth: true) { (result, error) in
             if let err = error {
                 print(err)
                 self.refreshControl.endRefreshing()
@@ -392,7 +392,7 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
                     finalBio.append(NSAttributedString(string: "\n\n"))
                 }
                 let linkstr = NSMutableAttributedString(string: link)
-                linkstr.addAttribute(.link, value: self.linkField.text, range: NSRange(location: 0, length: link.count))
+                linkstr.addAttribute(.link, value: self.linkField.text ?? "", range: NSRange(location: 0, length: link.count))
                 linkstr.addAttribute(.font, value: UIFont.systemFont(ofSize: 16), range: NSRange(location: 0, length: link.count))
                 let imageAttatchment = NSTextAttachment()
                 let titleFont = UIFont.systemFont(ofSize: 16)
@@ -462,7 +462,7 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
         }
         let deletePhoto = UIAlertAction(title: "Delete Profile Picture", style: .destructive) { (a) in
             self.profilePicture.image = #imageLiteral(resourceName: "profilePlaceholder")
-            Network.request(url: "https://api.tryflux.app:3000/profilePicture", type: .delete, paramters: nil, auth: true)
+            Network.request(url: "https://api.tryflux.app/profilePicture", type: .delete, paramters: nil, auth: true)
         }
         let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (a) in
             
@@ -521,7 +521,7 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
                     }
                     Network.uploadImage(image: newImage)
                 }catch{
-                    print(error ?? "Error")
+                    print(error)
                 }
             }
         }, failure: { (err, loggedOut) in
@@ -541,12 +541,12 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
         if followButton.titleLabel?.text == "Follow"{
             followButton.setTitle("Following", for: .normal)
             if let u = user {
-                Network.request(url: "https://api.tryflux.app:3000/follow", type: .post, paramters: ["account": u], auth: true)
+                Network.request(url: "https://api.tryflux.app/follow", type: .post, paramters: ["account": u], auth: true)
             }
         }else if followButton.titleLabel?.text == "Following"{
             followButton.setTitle("Follow", for: .normal)
             if let u = user {
-                Network.request(url: "https://api.tryflux.app:3000/unfollow", type: .post, paramters: ["account": u], auth: true)
+                Network.request(url: "https://api.tryflux.app/unfollow", type: .post, paramters: ["account": u], auth: true)
             }
         }else if followButton.titleLabel?.text == "Edit" {
             
