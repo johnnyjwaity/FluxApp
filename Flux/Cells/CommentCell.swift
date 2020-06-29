@@ -11,7 +11,7 @@ import UIKit
 class CommentCell: UITableViewCell {
     
     let profile = UIImageView(image: #imageLiteral(resourceName: "profilePlaceholder"))
-    let username:UILabel = UILabel()
+    let username:UIButton = UIButton()
     let timestamp = UILabel()
     let comment = UILabel()
     
@@ -30,13 +30,14 @@ class CommentCell: UITableViewCell {
         profile.widthAnchor.constraint(equalToConstant: 60).isActive = true
         profile.heightAnchor.constraint(equalToConstant: 60).isActive = true
         
-        username.text = "Johnnyjw"
+        username.setTitle("", for: .normal)
         username.translatesAutoresizingMaskIntoConstraints = false
-        username.textColor = UIColor.appBlue
-        username.font = UIFont.boldSystemFont(ofSize: 18)
+        username.setTitleColor(UIColor.appBlue, for: .normal)
+        username.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         addSubview(username)
-        username.topAnchor.constraint(equalTo: profile.topAnchor, constant: 4).isActive = true
+        username.topAnchor.constraint(equalTo: profile.topAnchor, constant: 0).isActive = true
         username.leftAnchor.constraint(equalTo: profile.rightAnchor, constant: 8).isActive = true
+        username.addTarget(self, action: #selector(tappedUsername), for: .touchUpInside)
         
         timestamp.text = "11/19/01 10:45 AM"
         timestamp.translatesAutoresizingMaskIntoConstraints = false
@@ -68,8 +69,9 @@ class CommentCell: UITableViewCell {
         let text = comment.comment.highlightUsers()
         text.addAttributes([.font: UIFont.systemFont(ofSize: 15)], range: NSRange(location: 0, length: comment.comment.count))
         self.comment.attributedText = text
-        self.username.text = comment.user
-        self.timestamp.text = comment.timestamp
+        self.username.setTitle(comment.user, for: .normal)
+        let date = Date.UTCDate(date: comment.timestamp)
+        self.timestamp.text = Date.elapsedTime(date: date)
         self.profile.image = #imageLiteral(resourceName: "profilePlaceholder")
         Network.downloadImage(user: comment.user) { (image) in
             if let i = image {
@@ -99,6 +101,12 @@ class CommentCell: UITableViewCell {
                 break
             }
         }
+    }
+    
+    @objc
+    func tappedUsername() {
+        let username = self.username.titleLabel?.text ?? ""
+        delegate?.openProfile(username)
     }
     
 }

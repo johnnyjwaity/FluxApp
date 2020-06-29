@@ -12,430 +12,117 @@ import CropViewController
 import SCSDKBitmojiKit
 import SCSDKLoginKit
 
-class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CropViewControllerDelegate, UITableViewDelegate, UITableViewDataSource {
+class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CropViewControllerDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, ProfileViewDelegate {
     
-    static var myProfile:ProfileController? = nil
-    let followButton = UIButton(type: .system)
+    let refreshControl = UIRefreshControl()
     
-    var profilePicture:UIImageView!
-    let box1 = InfoButton("Posts", showDivider: false)
-    let box2 = InfoButton("Followers")
-    let box3 = InfoButton("Following")
-    let usernameLabel = UILabel()
-    let nameLabel = UILabel()
-    let bioField = UITextView()
-    var bioHeight:NSLayoutConstraint!
-    let linkField = UITextView()
-    var containerHeight:NSLayoutConstraint!
-    var postContoller:HomeController? = nil
-    var isMe = false
+    let collectionView:UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        let c = UICollectionView(frame: CGRect(), collectionViewLayout: layout)
+        c.translatesAutoresizingMaskIntoConstraints = false
+        c.alwaysBounceVertical = true
+        c.register(PostCell.self, forCellWithReuseIdentifier: "post")
+        c.register(ProfileInfoView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "profileHeader")
+        c.register(QuestionCell.self, forCellWithReuseIdentifier: "question")
+        c.backgroundColor = UIColor.white
+        return c
+    }()
     
-    var tableView:UITableView? = nil
-    var tablePosts:[Post] = []
+    var profileView:ProfileInfoView? = nil
+    
     
     let picker = UIImagePickerController()
     
-    var user:String? = nil
-    
-    let refreshControl = UIRefreshControl()
-    var followers:[String] = []
-    var following:[String] = []
-    
-//    let tableView = UITableView()
-    var scrollView:UIScrollView!
-    var constraintedScrollView = false
-    
     var profile:Profile? = nil
     
-    init(_ user:String){
-        self.user = user
-        if user == ""{
-            isMe = true
-        }
+    var settingsButton:UIBarButtonItem!
+    
+    
+    init(profile:Profile? = nil){
         super.init(nibName: nil, bundle: nil)
+        view.backgroundColor = UIColor.white
+        picker.delegate = self
+        
+        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        collectionView.refreshControl = refreshControl
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        view.addSubview(collectionView)
+        collectionView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        collectionView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        collectionView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+
+        settingsButton = UIBarButtonItem(image: #imageLiteral(resourceName: "settings"), style: .plain, target: self, action: #selector(openSettings))
+        
+        
+        if let p = profile {
+            setProfile(p)
+        }
     }
     
-    init(){
-        super.init(nibName: nil, bundle: nil)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        tabBarController?.tabBar.isHidden = false
     }
+    
+    @objc
+    func refresh(){
+        if let p = profile {
+            p.fetched = false
+            setProfile(p)
+        }
+    }
+    
+    func setProfile(_ profile:Profile){
+        self.profile = profile
+        if profile.fetched {
+            collectionView.reloadData()
+            fetchPosts()
+            refreshControl.endRefreshing()
+        }else {
+            profile.fetch {
+                self.collectionView.reloadData()
+                self.fetchPosts()
+                self.refreshControl.endRefreshing()
+            }
+        }
+        if profile.username == Network.username {
+            navigationItem.rightBarButtonItem = settingsButton
+        }else{
+            navigationItem.rightBarButtonItem = nil
+        }
+    }
+    
+    func fetchPosts(){
+        var counter = 0
+        for p in profile?.posts ?? [] {
+            let c = counter
+            if !p.fetched {
+                p.fetch {
+                    if let cell = self.collectionView.cellForItem(at: IndexPath(row: ((self.profile?.posts?.count ?? 0) - 1) - c, section: 0)) as? PostCell {
+                        cell.update()
+                    }else if let cell = self.collectionView.cellForItem(at: IndexPath(row: ((self.profile?.posts?.count ?? 0) - 1) - c, section: 0)) as? QuestionCell {
+                        cell.questionLabel.text = p.question ?? ""
+                    }
+                }
+            }
+            counter += 1
+        }
+    }
+    
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        picker.delegate = self
-        view.backgroundColor = UIColor.white
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont(name: "Amandita", size: 28)!]
-        navigationController?.navigationBar.tintColor = UIColor.appBlue
-        navigationController?.navigationBar.barTintColor = UIColor.appBlue
-        self.navigationController?.navigationBar.tintColor = UIColor.white
-        
-        scrollView = UIScrollView()//UIScrollView(frame: view.safeAreaLayoutGuide.layoutFrame)
-        scrollView.backgroundColor = UIColor.white
-        scrollView.alwaysBounceVertical = true
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(scrollView)
-        refreshControl.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
-        scrollView.addSubview(refreshControl)
-        
-        
-        let containerView = UIView()//UIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: view.safeAreaLayoutGuide.layoutFrame.height))
-        containerView.backgroundColor = UIColor.white
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.addSubview(containerView)
-        containerView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
-        containerView.leftAnchor.constraint(equalTo: scrollView.leftAnchor).isActive = true
-        containerView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-        containerHeight = containerView.heightAnchor.constraint(equalToConstant: 180)
-//        containerHeight.isActive = true
-        
-        profilePicture = UIImageView(image: #imageLiteral(resourceName: "profilePlaceholder"))
-        profilePicture.backgroundColor = UIColor.lightGray
-        profilePicture.translatesAutoresizingMaskIntoConstraints = false
-        profilePicture.contentMode = .scaleAspectFill
-        profilePicture.layer.cornerRadius = 50
-        profilePicture.layer.masksToBounds = true
-        profilePicture.clipsToBounds = true
-        profilePicture.isUserInteractionEnabled = true
-        containerView.addSubview(profilePicture)
-        profilePicture.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10).isActive = true
-        profilePicture.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 10).isActive = true
-        profilePicture.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        profilePicture.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        let tap = UITapGestureRecognizer(target: self, action: #selector(profilePictureClicked))
-        tap.numberOfTapsRequired = 1
-        profilePicture.addGestureRecognizer(tap)
-        
-        
-        let infoBar = UIView()
-        infoBar.translatesAutoresizingMaskIntoConstraints = false
-        infoBar.backgroundColor = UIColor.white
-        containerView.addSubview(infoBar)
-        infoBar.leftAnchor.constraint(equalTo: profilePicture.rightAnchor, constant: 10).isActive = true
-        infoBar.topAnchor.constraint(equalTo: profilePicture.topAnchor, constant: 10).isActive = true
-        infoBar.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -10).isActive = true
-        infoBar.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        
-        box1.tag = 0
-        infoBar.addSubview(box1)
-        box1.leftAnchor.constraint(equalTo: infoBar.leftAnchor).isActive = true
-        box1.heightAnchor.constraint(equalTo: infoBar.heightAnchor).isActive = true
-        box1.centerYAnchor.constraint(equalTo: infoBar.centerYAnchor).isActive = true
-        box1.widthAnchor.constraint(equalTo: infoBar.widthAnchor, multiplier: 1.0/3).isActive = true
-        
-        box2.tag = 1
-        box2.addTarget(self, action: #selector(infoButtonClicked(_:)), for: .touchUpInside)
-        infoBar.addSubview(box2)
-        box2.leftAnchor.constraint(equalTo: box1.rightAnchor).isActive = true
-        box2.heightAnchor.constraint(equalTo: infoBar.heightAnchor).isActive = true
-        box2.centerYAnchor.constraint(equalTo: infoBar.centerYAnchor).isActive = true
-        box2.widthAnchor.constraint(equalTo: infoBar.widthAnchor, multiplier: 1.0/3).isActive = true
-        
-        box3.tag = 2
-        box3.addTarget(self, action: #selector(infoButtonClicked(_:)), for: .touchUpInside)
-        infoBar.addSubview(box3)
-        box3.leftAnchor.constraint(equalTo: box2.rightAnchor).isActive = true
-        box3.heightAnchor.constraint(equalTo: infoBar.heightAnchor).isActive = true
-        box3.centerYAnchor.constraint(equalTo: infoBar.centerYAnchor).isActive = true
-        box3.widthAnchor.constraint(equalTo: infoBar.widthAnchor, multiplier: 1.0/3).isActive = true
-        
-        
-        followButton.translatesAutoresizingMaskIntoConstraints = false
-        followButton.setTitle("Follow", for: .normal)
-        followButton.backgroundColor = UIColor.appBlue
-        followButton.layer.cornerRadius = 15
-        followButton.setTitleColor(UIColor.white, for: .normal)
-        followButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
-        followButton.addTarget(self, action: #selector(followButtonClicked), for: .touchUpInside)
-        containerView.addSubview(followButton)
-        followButton.bottomAnchor.constraint(equalTo: profilePicture.bottomAnchor, constant: 0).isActive = true
-        followButton.topAnchor.constraint(equalTo: infoBar.bottomAnchor, constant: 10).isActive = true
-        followButton.leftAnchor.constraint(equalTo: infoBar.leftAnchor).isActive = true
-        followButton.rightAnchor.constraint(equalTo: infoBar.rightAnchor).isActive = true
-        
-        nameLabel.text = "Test Username"
-        nameLabel.textColor = UIColor.appBlue
-        nameLabel.font = UIFont.boldSystemFont(ofSize: 22)
-        nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(nameLabel)
-        nameLabel.topAnchor.constraint(equalTo: profilePicture.bottomAnchor, constant: 12).isActive = true
-        nameLabel.leftAnchor.constraint(equalTo: profilePicture.leftAnchor).isActive = true
-        nameLabel.rightAnchor.constraint(equalTo: infoBar.rightAnchor).isActive = true
-        
-        
-        usernameLabel.text = "Test Username"
-        usernameLabel.textColor = UIColor.appGreen
-        usernameLabel.font = UIFont.boldSystemFont(ofSize: 16)
-        usernameLabel.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(usernameLabel)
-        usernameLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 1).isActive = true
-        usernameLabel.leftAnchor.constraint(equalTo: nameLabel.leftAnchor).isActive = true
-        usernameLabel.rightAnchor.constraint(equalTo: infoBar.rightAnchor).isActive = true
-        
-        linkField.text = "https://johnnywaity.com"
-        linkField.font = UIFont.systemFont(ofSize: 16)
-        linkField.textColor = UIColor.appBlue
-        linkField.translatesAutoresizingMaskIntoConstraints = false
-        linkField.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0)
-        linkField.isEditable = false
-        linkField.isScrollEnabled = false
-//        containerView.addSubview(linkField)
-//        linkField.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
-//        linkField.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
-//        linkField.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-        
-        bioField.text = ""
-        bioField.textColor = UIColor.black
-        bioField.font = UIFont.boldSystemFont(ofSize: 15)
-        bioField.translatesAutoresizingMaskIntoConstraints = false
-        bioField.isEditable = false
-        bioField.isScrollEnabled = false
-        bioField.textContainer.lineBreakMode = .byWordWrapping
-        containerView.addSubview(bioField)
-        bioField.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 0).isActive = true
-        bioField.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
-        bioField.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-        bioHeight = bioField.heightAnchor.constraint(equalToConstant: 0)
-        bioHeight.isActive = true
-        containerView.bottomAnchor.constraint(equalTo: bioField.bottomAnchor, constant: 10).isActive = true
-        
-        let divider = UIView()
-        divider.backgroundColor = UIColor.lightGray
-        divider.layer.cornerRadius = 0.5
-        divider.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(divider)
-        divider.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0).isActive = true
-        divider.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
-        divider.widthAnchor.constraint(equalTo: containerView.widthAnchor, multiplier: 1).isActive = true
-        divider.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        
-//        let scrollTable = UITableView(frame: CGRect.zero, style: .plain)
-//        scrollTable.translatesAutoresizingMaskIntoConstraints = false
-//        tableView?.clipsToBounds = false
-//        tableView?.layer.masksToBounds = false
-//        scrollTable.tableHeaderView = containerView
-//        view.addSubview(scrollTable)
-//        scrollTable.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-//        scrollTable.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-//        scrollTable.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-////        scrollTable.heightAnchor.constraint(equalToConstant: 160).isActive = true
-//        scrollTable.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-        
-        var myUsername = ""
-        if let auth = Network.authToken {
-            do{
-                let jwt = try decode(jwt: auth)
-                myUsername = (jwt.body["uID"] as! String)
-                
-            }catch{
-                print(error)
-            }
-        }
-        
-        
-        if user != nil && user != myUsername {
-            let homeController = HomeController(collectionViewLayout: UICollectionViewFlowLayout())
-            homeController.allowsRefresh = false
-            addChild(homeController)
-            homeController.view.translatesAutoresizingMaskIntoConstraints = false
-            scrollView.addSubview(homeController.view)
-            homeController.view.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0).isActive = true
-            homeController.view.leftAnchor.constraint(equalTo: scrollView.leftAnchor).isActive = true
-            homeController.view.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-            homeController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-            postContoller = homeController
-        }else{
-            navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "settings").withRenderingMode(.alwaysTemplate), style: .plain, target: self, action: #selector(openSettings))
-            navigationItem.rightBarButtonItem?.tintColor = UIColor.white
-//            navigationItem.rightBarButtonItem?.imageInsets = UIImagr
-            let tableView = UITableView(frame: CGRect.zero, style: .plain)
-            tableView.translatesAutoresizingMaskIntoConstraints = false
-            tableView.delegate = self
-            tableView.dataSource = self
-            tableView.tableFooterView = UIView()
-            scrollView.addSubview(tableView)
-            tableView.topAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-            tableView.leftAnchor.constraint(equalTo: scrollView.leftAnchor).isActive = true
-            tableView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-            
-            self.tableView = tableView
-        }
-        
-        
-        
-//        if let u = user {
-            setAccount(user ?? "")
-//        }
-        
-    }
-    
     @objc
     func openSettings(){
         navigationController?.pushViewController(SettingsController(style: .grouped), animated: true)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        tabBarController?.tabBar.isHidden = false
-        
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-//        if user == nil {
-//            setAccount()
-//        }
-//        scrollView.frame = view.safeAreaLayoutGuide.layoutFrame
-        if !constraintedScrollView {
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-            scrollView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
-            scrollView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
-            constraintedScrollView = true
-        }
-        
-    }
-    
-    @objc
-    func refresh(_ indicator:UIRefreshControl){
-        if let u = user {
-            setAccount(u)
-        }else{
-            setAccount()
-        }
-    }
-    
-    func setAccount(_ username:String = ""){
-        var username:String = username
-        
-        var myUsername = ""
-        do{
-            let jwt = try decode(jwt: Network.authToken!)
-            myUsername = (jwt.body["uID"] as! String)
-            
-        }catch{
-            print(error)
-        }
-        
-        if username == "" || username == myUsername {
-            username = myUsername
-            self.user = username
-            followButton.setTitle("Edit", for: .normal)
-        }
-        Network.request(url: "https://api.tryflux.app/account?user=\(username)", type: .get, paramters: nil, auth: true) { (result, error) in
-            if let err = error {
-                print(err)
-                self.refreshControl.endRefreshing()
-                return
-            }
-            let account = result["account"] as! [String:Any]
-            
-            self.followers = account["followers"] as? [String] ?? []
-            self.following = account["following"] as? [String] ?? []
-            
-            
-            
-            self.usernameLabel.text = "@\((account["username"] as? String) ?? "n/a")"
-            self.box1.numberLabel.text = "\((account["posts"] as? [Any] ?? []).count)"
-            self.box2.numberLabel.text = "\((account["followers"] as! [Any]).count)"
-            self.box3.numberLabel.text = "\((account["following"] as! [Any]).count)"
-            
-            let name = (account["name"] as? String) ?? "\((account["username"] as? String) ?? "n/a")"
-            self.nameLabel.text = name
-            
-            let link = (account["link"] as? String) ?? ""
-//
-            let bio = (account["bio"] as? String) ?? ""
-            self.profile = Profile(username: username, name: name, bio: bio, link: link)
-            
-            var posts:[Post] = []
-            var postsData = account["posts"] as? [[String:Any]] ?? []
-            postsData.reverse()
-            for post in postsData {
-                let p = Post(postID: post["id"] as! String, type: PostType.getType(post["type"] as! Int))
-                posts.append(p)
-            }
-            
-            if let cont = self.postContoller {
-                cont.setPosts(posts)
-            }else {
-                self.tablePosts = posts
-                self.tableView?.reloadData()
-                var counter = 0
-                for post in self.tablePosts {
-                    let indexPath = IndexPath(row: counter, section: 0)
-                    post.fetch {
-                        self.tableView?.cellForRow(at: indexPath)?.textLabel?.text = post.question
-                    }
-                    counter += 1
-                }
-            }
-            
-            if let followers = account["followers"] as? [String] {
-                for follower in followers {
-                    if follower == myUsername {
-                        self.followButton.setTitle("Following", for: .normal)
-                        break
-                    }
-                }
-            }
-            let finalBio = NSMutableAttributedString(string: bio)
-            finalBio.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 16), range: NSRange(location: 0, length: bio.count))
-            if link != "" {
-                if bio != "" {
-                    finalBio.append(NSAttributedString(string: "\n\n"))
-                }
-                let linkstr = NSMutableAttributedString(string: link)
-                linkstr.addAttribute(.link, value: self.linkField.text ?? "", range: NSRange(location: 0, length: link.count))
-                linkstr.addAttribute(.font, value: UIFont.systemFont(ofSize: 16), range: NSRange(location: 0, length: link.count))
-                let imageAttatchment = NSTextAttachment()
-                let titleFont = UIFont.systemFont(ofSize: 16)
-                imageAttatchment.bounds = CGRect(x: 0.0, y: (titleFont.capHeight - 30).rounded() / 2, width: 30.0, height: 30.0)//CGRect(x: 0, y: 8, width: 30, height: 30)
-                imageAttatchment.image = #imageLiteral(resourceName: "link").withRenderingMode(.alwaysTemplate)
-                let imageStr = NSAttributedString(attachment: imageAttatchment)
-                
-                let colorStr = NSMutableAttributedString(string: " ")
-                colorStr.append(imageStr)
-                colorStr.append(NSAttributedString(string: "  "))
-                colorStr.addAttribute(.foregroundColor, value: UIColor.appBlue, range: NSRange(location: 0, length: colorStr.length))
-                finalBio.append(colorStr)
-                finalBio.append(linkstr)
-            }
-            self.bioField.text = ""
-            self.bioField.attributedText = finalBio
-            self.bioHeight.isActive = false
-            if finalBio.string.count == 0 {
-                self.bioHeight.isActive = true
-            }
-            self.refreshControl.endRefreshing()
-        }
-        Network.downloadImage(user: username) { (image) in
-            if let i = image {
-                self.profilePicture.image = i
-            }
-        }
-    }
-    
-    @objc
     func profilePictureClicked(){
-        print("Cliked")
-        var myUsername = ""
-        do{
-            let jwt = try decode(jwt: Network.authToken!)
-            myUsername = (jwt.body["uID"] as! String)
-            
-        }catch{
-            print(error)
-        }
-        if user != "" && user != myUsername {
-            return
-        }
         let action = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let takePhoto = UIAlertAction(title: "Take Photo", style: .default) { (a) in
             if UIImagePickerController.isSourceTypeAvailable(.camera){
@@ -449,19 +136,24 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
         }
         let choosePhoto = UIAlertAction(title: "Choose Photo", style: .default) { (a) in
             self.picker.sourceType = .photoLibrary
-//            action.dismiss(animated: true, completion: nil)
             self.present(self.picker, animated: true, completion: nil)
         }
         let linkBitmoji = UIAlertAction(title: "Link Bitmoji", style: .default) { (a) in
-            SCSDKLoginClient.login(from: self, completion: { (res, err) in
-                if res {
-                    self.getBitmoji()
-                }
-                
-            })
+            if SCSDKLoginClient.isUserLoggedIn {
+                self.getBitmoji()
+            }else{
+                SCSDKLoginClient.login(from: self, completion: { (res, err) in
+                    if res {
+                        self.getBitmoji()
+                    }else {
+                        let errorMessage = UIAlertController(title: "Sorry...", message: "Could not connect to your snapchat account. Please try again later.", preferredStyle: .alert)
+                        self.present(errorMessage, animated: true, completion: nil)
+                    }
+                })
+            }
         }
         let deletePhoto = UIAlertAction(title: "Delete Profile Picture", style: .destructive) { (a) in
-            self.profilePicture.image = #imageLiteral(resourceName: "profilePlaceholder")
+            self.profileView?.profilePicture.image = #imageLiteral(resourceName: "profilePlaceholder")
             Network.request(url: "https://api.tryflux.app/profilePicture", type: .delete, paramters: nil, auth: true)
         }
         let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (a) in
@@ -479,14 +171,7 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
         let chosenImage = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
         let cropController = CropViewController(croppingStyle: .circular, image: chosenImage)
         cropController.delegate = self
-        if picker.sourceType == .camera {
-            picker.dismiss(animated: true, completion: {
-                self.present(cropController, animated: true, completion: nil)
-            })
-        } else {
-            picker.pushViewController(cropController, animated: true)
-        }
-        
+        picker.pushViewController(cropController, animated: true)
     }
     
     func getBitmoji(){
@@ -517,7 +202,7 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
                     let newImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
                     UIGraphicsEndImageContext()
                     DispatchQueue.main.async {
-                        self.profilePicture.image = newImage
+                        self.profileView?.profilePicture.image = newImage
                     }
                     Network.uploadImage(image: newImage)
                 }catch{
@@ -530,67 +215,357 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
     }
     
     func cropViewController(_ cropViewController: CropViewController, didCropToCircularImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
-        profilePicture.image = image
-        print("HiISAODOJSAKLDJKLSAJNDKNSA<MDN<MSAND<MNSADMAS<MND<MASN<M>DN")
         cropViewController.dismiss(animated: true, completion: nil)
+        profileView?.profilePicture.image = image
         Network.uploadImage(image: image)
+    }
+    
+    
+    func followButtonClicked(){
+        profile?.addLocalFollow(Network.username!)
+        if let p = profile {
+            Network.profile?.addLocalFollowing(p.username)
+            profileView?.setInfo(p)
+        }
+        Network.request(url: "https://api.tryflux.app/follow", type: .post, paramters: ["account": profile!.username], auth: true)
+    }
+    func followingButtonClicked() {
+        profile?.removeLocalFollow(Network.username!)
+        if let p = profile {
+            Network.profile?.removeLocalFollowing(p.username)
+            profileView?.setInfo(p)
+        }
+        Network.request(url: "https://api.tryflux.app/unfollow", type: .post, paramters: ["account": profile!.username], auth: true)
+    }
+    func editButtonClicked() {
+        present(UINavigationController(rootViewController: ProfileEditController(name: profile?.name ?? "", bio: profile?.bio ?? "", link: profile?.link ?? "")), animated: true, completion: nil)
+    }
+    
+    func followersClicked() {
+        print("followers clicked")
+        let userListController = UserListController()
+        userListController.setUsers(profile?.followers ?? [])
+        navigationController?.pushViewController(userListController, animated: true)
+    }
+    
+    func followingClicked() {
+        let userListController = UserListController()
+        userListController.setUsers(profile?.following ?? [])
+        navigationController?.pushViewController(userListController, animated: true)
+    }
+    
+    
+    
+    
+    
+    
+
+    @objc
+    func infoButtonClicked(_ sender:InfoButton) {
+//        let listCont = UserListController(style: .plain)
+//        listCont.setUsers(sender.tag == 1 ? followers : following)
+//        navigationController?.pushViewController(listCont, animated: true)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return profile?.posts?.count ?? 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if profile?.username == Network.username {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "question", for: indexPath) as! QuestionCell
+            cell.questionLabel.text = profile?.posts?[((profile?.posts?.count ?? 0) - 1) - indexPath.row].question ?? ""
+            return cell
+        }else{
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "post", for: indexPath) as! PostCell
+            cell.setPost((profile?.posts![((profile?.posts?.count ?? 0) - 1) - indexPath.row])!)
+            return cell
+        }
+        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if profile?.username == Network.username {
+            return CGSize(width: UIScreen.main.bounds.width, height: 70)
+        }else{
+            return CGSize(width: UIScreen.main.bounds.width, height: 450)
+        }
+    }
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionHeader {
+            let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "profileHeader", for: indexPath) as! ProfileInfoView
+            if let p = profile {
+                header.setInfo(p)
+            }
+            header.delegate = self
+            profileView = header
+            return header
+        }else {
+            return UICollectionReusableView()
+        }
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        let indexPath = IndexPath(row: 0, section: section)
+        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
+        return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: UIView.layoutFittingExpandedSize.height),
+                                                      withHorizontalFittingPriority: .required, // Width is fixed
+                                                      verticalFittingPriority: .fittingSizeLevel) // Height can be as large as needed
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if profile?.username == Network.username {
+            let resultsController = PostResultsController((profile?.posts![(profile?.posts!.count)! - 1 - indexPath.row])!)
+            navigationController?.pushViewController(resultsController, animated: true)
+        }
+    }
+    
+    
+}
+
+class ProfileInfoView:UICollectionReusableView {
+    let profilePicture:UIImageView = {
+        let iv = UIImageView(image: #imageLiteral(resourceName: "profilePlaceholder"))
+        iv.backgroundColor = UIColor.lightGray
+        iv.translatesAutoresizingMaskIntoConstraints = false
+        iv.contentMode = .scaleAspectFill
+        iv.layer.cornerRadius = 50
+        iv.layer.masksToBounds = true
+        iv.clipsToBounds = true
+        iv.isUserInteractionEnabled = true
+        return iv
+    }()
+    
+    let infoBar:UIView = {
+        let v = UIView()
+        v.backgroundColor = UIColor.white
+        v.translatesAutoresizingMaskIntoConstraints = false
+        return v
+    }()
+    let box1 = InfoButton("Posts", showDivider: false)
+    let box2 = InfoButton("Followers")
+    let box3 = InfoButton("Following")
+    
+    let followButton:UIButton = {
+        let b = UIButton(type: .system)
+        b.translatesAutoresizingMaskIntoConstraints = false
+        b.setTitle("Follow", for: .normal)
+        b.backgroundColor = UIColor.appBlue
+        b.layer.cornerRadius = 15
+        b.setTitleColor(UIColor.white, for: .normal)
+        b.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
+        return b
+    }()
+    
+    let nameLabel:UILabel = {
+        let l = UILabel()
+        l.text = "Test Name"
+        l.textColor = UIColor.black
+        l.font = UIFont.boldSystemFont(ofSize: 22)
+        l.translatesAutoresizingMaskIntoConstraints = false
+        return l
+    }()
+    
+    let usernameLabel:UILabel = {
+        let l = UILabel()
+        l.text = "Test Username"
+        l.textColor = UIColor.appBlue
+        l.font = UIFont.boldSystemFont(ofSize: 16)
+        l.translatesAutoresizingMaskIntoConstraints = false
+        return l
+    }()
+    
+    let bioField:UITextView = {
+        let textView = UITextView()
+        textView.text = ""
+        textView.textColor = UIColor.lightGray
+        textView.font = UIFont.systemFont(ofSize: 15)
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.isEditable = false
+        textView.isScrollEnabled = false
+        textView.textContainer.lineBreakMode = .byWordWrapping
+        return textView
+    }()
+    var bioHeight:NSLayoutConstraint? = nil
+    
+    let divider:UIView = {
+        let divider = UIView()
+        divider.backgroundColor = UIColor.lightGray
+        divider.layer.cornerRadius = 0.5
+        divider.translatesAutoresizingMaskIntoConstraints = false
+        return divider
+    }()
+    
+    var delegate:ProfileViewDelegate? = nil
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.backgroundColor = UIColor.white
+        self.translatesAutoresizingMaskIntoConstraints = false
+        let containerView = UIView()
+        
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(containerView)
+        containerView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        containerView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
+        containerView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width).isActive = true
+        containerView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        
+        containerView.addSubview(profilePicture)
+        profilePicture.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10).isActive = true
+        profilePicture.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 10).isActive = true
+        profilePicture.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        profilePicture.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(profilePictureClicked))
+        tap.numberOfTapsRequired = 1
+        profilePicture.addGestureRecognizer(tap)
+        
+        containerView.addSubview(infoBar)
+        infoBar.leftAnchor.constraint(equalTo: profilePicture.rightAnchor, constant: 10).isActive = true
+        infoBar.topAnchor.constraint(equalTo: profilePicture.topAnchor, constant: 10).isActive = true
+        infoBar.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -10).isActive = true
+        infoBar.heightAnchor.constraint(equalToConstant: 50).isActive = true
+
+        box1.tag = 0
+        infoBar.addSubview(box1)
+        box1.leftAnchor.constraint(equalTo: infoBar.leftAnchor).isActive = true
+        box1.heightAnchor.constraint(equalTo: infoBar.heightAnchor).isActive = true
+        box1.centerYAnchor.constraint(equalTo: infoBar.centerYAnchor).isActive = true
+        box1.widthAnchor.constraint(equalTo: infoBar.widthAnchor, multiplier: 1.0/3).isActive = true
+
+        box2.tag = 1
+        box2.addTarget(self, action: #selector(infoButtonClicked(_:)), for: .touchUpInside)
+        infoBar.addSubview(box2)
+        box2.leftAnchor.constraint(equalTo: box1.rightAnchor).isActive = true
+        box2.heightAnchor.constraint(equalTo: infoBar.heightAnchor).isActive = true
+        box2.centerYAnchor.constraint(equalTo: infoBar.centerYAnchor).isActive = true
+        box2.widthAnchor.constraint(equalTo: infoBar.widthAnchor, multiplier: 1.0/3).isActive = true
+
+        box3.tag = 2
+        box3.addTarget(self, action: #selector(infoButtonClicked(_:)), for: .touchUpInside)
+        infoBar.addSubview(box3)
+        box3.leftAnchor.constraint(equalTo: box2.rightAnchor).isActive = true
+        box3.heightAnchor.constraint(equalTo: infoBar.heightAnchor).isActive = true
+        box3.centerYAnchor.constraint(equalTo: infoBar.centerYAnchor).isActive = true
+        box3.widthAnchor.constraint(equalTo: infoBar.widthAnchor, multiplier: 1.0/3).isActive = true
+
+        followButton.addTarget(self, action: #selector(followButtonClicked), for: .touchUpInside)
+        containerView.addSubview(followButton)
+//        followButton.bottomAnchor.constraint(equalTo: profilePicture.bottomAnchor, constant: 0).isActive = true
+        followButton.topAnchor.constraint(equalTo: infoBar.bottomAnchor, constant: 10).isActive = true
+        followButton.leftAnchor.constraint(equalTo: infoBar.leftAnchor).isActive = true
+        followButton.rightAnchor.constraint(equalTo: infoBar.rightAnchor).isActive = true
+        followButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+
+        containerView.addSubview(nameLabel)
+        nameLabel.topAnchor.constraint(equalTo: profilePicture.bottomAnchor, constant: 12).isActive = true
+        nameLabel.leftAnchor.constraint(equalTo: profilePicture.leftAnchor).isActive = true
+        nameLabel.rightAnchor.constraint(equalTo: infoBar.rightAnchor).isActive = true
+
+        containerView.addSubview(usernameLabel)
+        usernameLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 1).isActive = true
+        usernameLabel.leftAnchor.constraint(equalTo: nameLabel.leftAnchor).isActive = true
+        usernameLabel.rightAnchor.constraint(equalTo: infoBar.rightAnchor).isActive = true
+
+
+        containerView.addSubview(bioField)
+        bioField.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 0).isActive = true
+        bioField.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
+        bioField.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
+
+        containerView.addSubview(divider)
+        divider.topAnchor.constraint(equalTo: bioField.bottomAnchor).isActive = true
+        divider.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0).isActive = true
+        divider.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
+        divider.widthAnchor.constraint(equalTo: containerView.widthAnchor, multiplier: 1).isActive = true
+        divider.heightAnchor.constraint(equalToConstant: 1).isActive = true
+    }
+    
+    @objc
+    func profilePictureClicked(){
+        delegate?.profilePictureClicked()
     }
     
     @objc
     func followButtonClicked(){
-        if followButton.titleLabel?.text == "Follow"{
-            followButton.setTitle("Following", for: .normal)
-            if let u = user {
-                Network.request(url: "https://api.tryflux.app/follow", type: .post, paramters: ["account": u], auth: true)
-            }
-        }else if followButton.titleLabel?.text == "Following"{
-            followButton.setTitle("Follow", for: .normal)
-            if let u = user {
-                Network.request(url: "https://api.tryflux.app/unfollow", type: .post, paramters: ["account": u], auth: true)
-            }
-        }else if followButton.titleLabel?.text == "Edit" {
-            
-            present(UINavigationController(rootViewController: ProfileEditController(name: profile?.name ?? "", bio: profile?.bio ?? "", link: profile?.link ?? "")), animated: true, completion: nil)
+        if followButton.tag == 0 {
+            delegate?.editButtonClicked()
+        }else if followButton.tag == 1 {
+            delegate?.followingButtonClicked()
+        }else if followButton.tag == 2 {
+            delegate?.followButtonClicked()
         }
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tablePosts.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-        cell.textLabel?.text = ""
-        cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 20)
-        cell.textLabel?.textColor = UIColor.appBlue
-        cell.accessoryType = .disclosureIndicator
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        if tableView.cellForRow(at: indexPath)?.textLabel?.text == "" {
-            return
-        }
-        let controller = PostResultsController(tablePosts[indexPath.row])
-        controller.title = "Post"
-        navigationController?.pushViewController(controller, animated: true)
-    }
-    
-//    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-//        scrollView.frame = view.safeAreaLayoutGuide.layoutFrame
-//    }
-
     @objc
-    func infoButtonClicked(_ sender:InfoButton) {
-        let listCont = UserListController(style: .plain)
-        listCont.setUsers(sender.tag == 1 ? followers : following)
-        navigationController?.pushViewController(listCont, animated: true)
+    func infoButtonClicked(_ sender:UIButton) {
+        if sender.tag == 1 {
+            delegate?.followersClicked()
+        }else if sender.tag == 2 {
+            delegate?.followingClicked()
+        }
     }
+    
+    func setInfo(_ profile:Profile) {
+        self.profilePicture.image = profile.photo ?? #imageLiteral(resourceName: "profilePlaceholder")
+        box1.numberLabel.text = String(profile.posts?.count ?? 0)
+        box2.numberLabel.text = String(profile.followers?.count ?? 0)
+        box3.numberLabel.text = String(profile.following?.count ?? 0)
+        nameLabel.text = profile.name ?? ""
+        usernameLabel.text = "@\(profile.username)"
+        setBio(bioText: profile.bio ?? "", linkText: profile.link)
+        if profile.username == Network.username {
+            followButton.setTitle("Edit", for: .normal)
+            followButton.tag = 0
+        }else{
+            if Network.profile?.following?.contains(profile.username) ?? false {
+                followButton.setTitle("Following", for: .normal)
+                followButton.tag = 1
+            }else{
+                followButton.setTitle("Follow", for: .normal)
+                followButton.tag = 2
+            }
+        }
+        
+    }
+    
+    func setBio(bioText:String, linkText:String? = nil){
+        let finalBio = NSMutableAttributedString(string: bioText)
+        finalBio.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 16), range: NSRange(location: 0, length: bioText.count))
+        if linkText != "" && linkText != nil {
+            if bioText != "" {
+                finalBio.append(NSAttributedString(string: "\n\n"))
+            }
+            let linkstr = NSMutableAttributedString(string: linkText!)
+            linkstr.addAttribute(.link, value: linkText!, range: NSRange(location: 0, length: linkText!.count))
+            linkstr.addAttribute(.font, value: UIFont.systemFont(ofSize: 16), range: NSRange(location: 0, length: linkText!.count))
+            let imageAttatchment = NSTextAttachment()
+            let titleFont = UIFont.systemFont(ofSize: 16)
+            imageAttatchment.bounds = CGRect(x: 0.0, y: (titleFont.capHeight - 30).rounded() / 2, width: 30.0, height: 30.0)
+            imageAttatchment.image = #imageLiteral(resourceName: "link").withRenderingMode(.alwaysTemplate)
+            let imageStr = NSAttributedString(attachment: imageAttatchment)
+            let colorStr = NSMutableAttributedString(string: " ")
+            colorStr.append(imageStr)
+            colorStr.append(NSAttributedString(string: "  "))
+            colorStr.addAttribute(.foregroundColor, value: UIColor.appBlue, range: NSRange(location: 0, length: colorStr.length))
+            finalBio.append(colorStr)
+            finalBio.append(linkstr)
+        }
+        self.bioField.text = ""
+        self.bioField.attributedText = finalBio
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+protocol ProfileViewDelegate {
+    func followButtonClicked()
+    func editButtonClicked()
+    func followingButtonClicked()
+    func followersClicked()
+    func followingClicked()
+    func profilePictureClicked()
 }
 
 class InfoButton:UIButton {
@@ -619,7 +594,7 @@ class InfoButton:UIButton {
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         textLabel.text = name
         textLabel.textAlignment = .center
-        textLabel.textColor = UIColor.appBlue
+        textLabel.textColor = UIColor.black
         textLabel.adjustsFontSizeToFitWidth = true
         
         addSubview(textLabel)
@@ -629,7 +604,7 @@ class InfoButton:UIButton {
         
         numberLabel.translatesAutoresizingMaskIntoConstraints = false
         numberLabel.text = "0"
-        numberLabel.textColor = UIColor.appBlue
+        numberLabel.textColor = UIColor.black
         numberLabel.font = UIFont.boldSystemFont(ofSize: 25)
         numberLabel.adjustsFontSizeToFitWidth = true
         numberLabel.textAlignment = .center
@@ -649,11 +624,4 @@ class InfoButton:UIButton {
     }
     
     
-}
-
-struct Profile {
-    let username:String
-    let name:String
-    let bio:String
-    let link:String
 }

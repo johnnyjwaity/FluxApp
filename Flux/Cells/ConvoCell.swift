@@ -27,21 +27,21 @@ class ConvoCell: UITableViewCell {
         profile.topAnchor.constraint(equalTo: topAnchor, constant: 8).isActive = true
         profile.leftAnchor.constraint(equalTo: leftAnchor, constant: 8).isActive = true
         profile.widthAnchor.constraint(equalToConstant: 60).isActive = true
-        profile.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8).isActive = true
         profile.heightAnchor.constraint(equalToConstant: 60).isActive = true
         
         username.text = ""
         username.translatesAutoresizingMaskIntoConstraints = false
-        username.textColor = UIColor.appBlue
         username.font = UIFont.boldSystemFont(ofSize: 18)
         addSubview(username)
-        username.topAnchor.constraint(equalTo: profile.topAnchor, constant: 4).isActive = true
+        username.topAnchor.constraint(equalTo: profile.topAnchor, constant: 0).isActive = true
         username.leftAnchor.constraint(equalTo: profile.rightAnchor, constant: 8).isActive = true
+        username.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
         
         preview.text = ""
         preview.translatesAutoresizingMaskIntoConstraints = false
         preview.isUserInteractionEnabled = false
+        preview.textColor = UIColor.gray
         preview.font = UIFont.systemFont(ofSize: 15)
         addSubview(preview)
         preview.leftAnchor.constraint(equalTo: username.leftAnchor).isActive = true

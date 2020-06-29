@@ -21,44 +21,44 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         window = UIWindow(frame: UIScreen.main.bounds)
-//        UNUserNotificationCenter.current().delegate = self
-        let tabController = UITabBarController()
-        let layout = UICollectionViewFlowLayout()
-        let homeController = HomeController(collectionViewLayout: layout)
-        homeController.tabBarItem = UITabBarItem(title: "Home", image: #imageLiteral(resourceName: "home").withRenderingMode(.alwaysTemplate), tag: 0)
-        homeController.title = "Home"
-        let searchController = SearchController()
-        searchController.tabBarItem = UITabBarItem(title: "Search", image: #imageLiteral(resourceName: "search").withRenderingMode(.alwaysTemplate), tag: 1)
-        searchController.title = "Search"
-        let postController = PostController()
-        postController.title = "Post"
-        postController.tabBarItem = UITabBarItem(title: "Post", image: #imageLiteral(resourceName: "send").withRenderingMode(.alwaysTemplate), tag: 2)
-        let profileController = ProfileController()
-        ProfileController.myProfile = profileController
-        profileController.title = "Profile"
-        profileController.tabBarItem = UITabBarItem(title: "Profile", image: #imageLiteral(resourceName: "profile").withRenderingMode(.alwaysTemplate), tag: 3)
-        tabController.viewControllers = [UINavigationController(rootViewController: homeController), UINavigationController(rootViewController: searchController), UINavigationController(rootViewController: postController), UINavigationController(rootViewController: profileController)]
-        window?.rootViewController = tabController
-        window?.makeKeyAndVisible()
+        Emoji.loadEmojis()
+        CountryCode.loadCodes()
         
+//        let tabView = tabController.tabBar
+//
+//        let testView = UIView()
+//        testView.translatesAutoresizingMaskIntoConstraints = false
+//        testView.backgroundColor = UIColor.red
+//        testView.layer.cornerRadius = 35
+//        tabController.tabBar.addSubview(testView)
+//        testView.centerXAnchor.constraint(equalTo: tabView.centerXAnchor).isActive = true
+//        testView.centerYAnchor.constraint(equalTo: tabView.centerYAnchor).isActive = true
+//        testView.widthAnchor.constraint(equalToConstant: 70).isActive = true
+//        testView.heightAnchor.constraint(equalToConstant: 70).isActive = true
+        let fluxTabBarCont = FluxTabBarController()
+        window?.rootViewController = fluxTabBarCont
+        window?.makeKeyAndVisible()
         
         let keychain = Keychain(service: "com.johnnywaity.flux")
         if let refresh = keychain["refresh"] {
             Network.request(url: "https://api.tryflux.app/getNewToken", type: .post, paramters: ["refreshToken": refresh]) { (response, error) in
                 if let s = response["success"] as? Bool {
                     if s {
-                        Network.authToken = (response["token"]! as! String)
-                        homeController.getFeed()
+                        Network.setToken(response["token"]! as? String)
+                        let profile = Profile(username: Network.username ?? "")
+                        Network.profile = profile
+                        FluxTabBarController.shared.profileController.setProfile(profile)
+                        FluxTabBarController.shared.homeController.getFeed()
                     }
                     else{
-                        tabController.present(LoginController(), animated: true, completion: nil)
+                        fluxTabBarCont.present(LoginController(), animated: false, completion: nil)
                     }
                 }else{
-                    tabController.present(LoginController(), animated: true, completion: nil)
+                    fluxTabBarCont.present(LoginController(), animated: false, completion: nil)
                 }
             }
         }else{
-            tabController.present(LoginController(), animated: true, completion: nil)
+            fluxTabBarCont.present(LoginController(), animated: false, completion: nil)
         }
         return true
     }
@@ -85,10 +85,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+            let incomingURL = userActivity.webpageURL,
+            let components = NSURLComponents(url: incomingURL, resolvingAgainstBaseURL: true) else {
+            return false
+        }
+        guard let path = components.path else {return false}
+        let pathComp = path.components(separatedBy: "/")
+        if pathComp.count > 1 {
+            if pathComp[1] == "verify" {
+                if pathComp.count == 3 {
+                    let code = pathComp[2]
+                    Network.request(url: "https://api.tryflux.app/verify/\(code)", type: .get, paramters: nil, auth: false, callback: { (res, err) in
+                        NotificationCenter.default.post(name: Notification.Name(rawValue: "verify"), object: nil)
+                    })
+                    return true
+                }
+            }
+        }
+        
+        return false
+    }
+    
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        print("HELLO")
-        let handled = SCSDKLoginClient.application(app, open: url, options: options)
-        return handled
+        if url.absoluteString == "flux://verify" {
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "verify"), object: nil)
+            return true
+        }else{
+            let handled = SCSDKLoginClient.application(app, open: url, options: options)
+            return handled
+        }
     }
     
     static func registerForPushNotifications() {
@@ -126,6 +153,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler(.alert)
+    }
+    
+    static func openPrivacyPolicy() {
+        guard let url = URL(string: "https://tryflux.app/privacy") else { return }
+        UIApplication.shared.open(url)
     }
 }
 

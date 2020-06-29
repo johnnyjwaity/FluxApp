@@ -9,7 +9,9 @@
 import Foundation
 import UIKit
 import JWTDecode
-class Post:Hashable{
+class Post:Hashable, CustomStringConvertible{
+    
+    
     static func == (lhs: Post, rhs: Post) -> Bool {
         if lhs.postID == rhs.postID {
             return true
@@ -21,10 +23,8 @@ class Post:Hashable{
     }
     
     let postID:String
-    let type:PostType
-    var amount:Int? = nil
+    var postType:PostType? = nil
     var fetched = false
-    
     var question:String? = nil
     var timeStamp:String? = nil
     var user:String? = nil
@@ -34,59 +34,52 @@ class Post:Hashable{
     var colors:[String]? = nil
     var profilePicture:UIImage? = nil
     
-    init(postID:String, type:PostType) {
+    init(postID:String) {
         self.postID = postID
-        self.type = type
     }
     
     func fetch(completion:@escaping () -> Void){
         Network.request(url: "https://api.tryflux.app/fetchPost?id="+postID, type: .get, paramters: nil, callback: { (response, error) in
-            let rPost:[String:Any] = response["post"] as! [String:Any]
-            self.question = (rPost["question"]! as! String)
-            self.timeStamp = (rPost["timestamp"]! as! String)
-            self.user = (rPost["user"]! as! String)
-            self.answers = []
-            let rawAnswers = (rPost["answers"]! as! [[String:Any]])
-            for a in rawAnswers {
-                self.answers?.append(Answer(a))
-            }
-            self.comments = []
-            if let cs = rPost["comments"] as? [[String: String]] {
-                for c in cs {
-                    guard let user = c["user"] else {continue}
-                    guard let comment = c["comment"] else {continue}
-                    guard var timestamp = c["timestamp"] else {continue}
-                    timestamp = Date.UTCToLocal(date: timestamp)
-                    self.comments.append(Comment(user: user, comment: comment, timestamp: timestamp))
+            if let resPost = response["post"] as? [String:Any] {
+                self.user = resPost["user"] as? String
+                self.question = resPost["question"] as? String
+                self.timeStamp = resPost["timestamp"] as? String
+                if let postTypeNum = resPost["type"] as? Int {
+                    self.postType = PostType.fromNum(postTypeNum)
+                }else{
+                    self.postType = nil
+                }
+                if let postOptions = resPost["options"] as? [String:[String]] {
+                    self.choices = postOptions["choices"]
+                    self.colors = postOptions["colors"]
+                }
+                self.answers = []
+                if let resAnswers = resPost["answers"] as? [[String:Any]] {
+                    for a in resAnswers {
+                        let answer = Answer(a)
+                        self.answers?.append(answer)
+                    }
+                }
+                self.comments = []
+                if let resComments = resPost["comments"] as? [[String:String]] {
+                    for c in resComments {
+                        let comment = Comment(c)
+                        self.comments.append(comment)
+                    }
                 }
             }
-            if self.type == .Option {
-                let options = (rPost["options"]! as! [String:Any])
-                self.choices = (options["choices"]! as! [String])
-                self.colors = (options["colors"]! as! [String])
-            }
-            self.fetched = true
-//            print(rPost)
-            Network.downloadImage(user: self.user!, callback: { (image) in
+            Network.downloadImage(user: self.user ?? "") { (image) in
                 self.profilePicture = image
+                self.fetched = true
                 completion()
-            })
-            
+            }
         })
     }
     
     func answerOption(_ index:Int){
+        print("Answering \(index)")
         Network.request(url: "https://api.tryflux.app/answer", type: .post, paramters: ["postID": postID, "answer": index], auth: true)
-        var username:String? = nil
-        do{
-            let jwt = try decode(jwt: Network.authToken!)
-            username = (jwt.body["uID"] as! String)
-        }catch{
-            print(error)
-        }
-        if let u = username {
-            answers?.append(Answer(["username": u, "answer": index, "time": ""]))
-        }
+        answers?.append(Answer(user: Network.username ?? "", answer: index, timestamp: ""))
     }
     
     func getAnswers() -> [Int] {
@@ -95,8 +88,14 @@ class Post:Hashable{
             trimedAnswers[a.user] = a.answer
         }
         var finalAnswers:[Int] = []
-        for _ in choices ?? [] {
-            finalAnswers.append(0)
+        if (postType ?? .Option) == .Rating {
+            for _ in 0...10 {
+                finalAnswers.append(0)
+            }
+        }else{
+            for _ in choices ?? [] {
+                finalAnswers.append(0)
+            }
         }
         for value in trimedAnswers.values {
             finalAnswers[value] += 1
@@ -107,9 +106,10 @@ class Post:Hashable{
     func getAnswers(_ time:Date) -> [Int] {
         var filteredAnswers:[Answer] = []
         for a in answers ?? [] {
-            let at = Date.fromStamp(a.timestamp)
+            let at = Date.UTCDate(date: a.timestamp)
             if at.timeIntervalSince1970 <= time.timeIntervalSince1970 {
                 filteredAnswers.append(a)
+                
             }
         }
         var trimedAnswers:[String:Int] = [:]
@@ -118,14 +118,50 @@ class Post:Hashable{
         }
         
         var finalAnswers:[Int] = []
-        for _ in choices ?? [] {
-            finalAnswers.append(0)
+        if (postType ?? .Option) == .Rating {
+            for _ in 0...10 {
+                finalAnswers.append(0)
+            }
+        }else{
+            for _ in choices ?? [] {
+                finalAnswers.append(0)
+            }
         }
         for value in trimedAnswers.values {
-            print("value \(value)")
             finalAnswers[value] += 1
         }
         return finalAnswers
+    }
+    func getRatingAverage() -> Float{
+        let curAnswers = getAnswers()
+        var sum = 0
+        var totalAmount = 0
+        for i in 0..<curAnswers.count {
+            sum += (i * curAnswers[i])
+            totalAmount += curAnswers[i]
+        }
+        var avg:Float = Float(sum) / Float(totalAmount)
+        avg *= 10
+        avg = roundf(avg)
+        avg /= 10
+        return avg
+    }
+    func getRatingAverage(_ time:Date) -> Float{
+        let curAnswers = getAnswers(time)
+        var sum = 0
+        var totalAmount = 0
+        for i in 0..<curAnswers.count {
+            sum += (i * curAnswers[i])
+            totalAmount += curAnswers[i]
+        }
+        if totalAmount == 0{
+            return 0
+        }
+        var avg:Float = Float(sum) / Float(totalAmount)
+        avg *= 10
+        avg = roundf(avg)
+        avg /= 10
+        return avg
     }
     func getUsers(_ index:Int) -> [String] {
         var trimedAnswers:[String:Int] = [:]
@@ -142,18 +178,9 @@ class Post:Hashable{
     }
     
     func didAnswer() -> Bool {
-        var username:String? = nil
-        do{
-            let jwt = try decode(jwt: Network.authToken!)
-            username = (jwt.body["uID"] as! String)
-        }catch{
-            print(error)
-        }
-        if let u = username {
-            for a in answers ?? [] {
-                if a.user == u {
-                    return true
-                }
+        for a in answers ?? [] {
+            if a.user == Network.username ?? "" {
+                return true
             }
         }
         return false
@@ -162,6 +189,11 @@ class Post:Hashable{
     func invalidate(){
         fetched = false
     }
+    
+    var description: String {
+        return "\(type(of: self))(Post ID: \(postID))"
+    }
+    
 }
 
 struct Answer {
@@ -173,22 +205,25 @@ struct Answer {
         answer = answerDict["answer"] as! Int
         timestamp = answerDict["time"] as! String
     }
+    init(user: String, answer:Int, timestamp:String){
+        self.user = user
+        self.answer = answer
+        self.timestamp = timestamp
+    }
 }
 struct Comment {
     let user:String
     let comment:String
     let timestamp:String
-}
-enum PostType{
-    case Option
-    case Text
-    static func getType(_ i:Int) -> PostType {
-        if i == 0 {
-            return PostType.Option
-        }else if i == 1{
-            return PostType.Text
-        }
-        return .Option
+    init(user:String, comment:String, timestamp:String){
+        self.user = user
+        self.comment = comment
+        self.timestamp = timestamp
+    }
+    init(_ commentDict:[String:String]) {
+        user = commentDict["user"] ?? ""
+        comment = commentDict["comment"] ?? ""
+        timestamp = commentDict["timestamp"] ?? ""
     }
 }
 enum PostState{

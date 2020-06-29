@@ -40,7 +40,7 @@ class SettingsController: UITableViewController {
     
     
     func logout(){
-        Network.authToken = nil
+        Network.setToken(nil)
         AppDelegate.hasAttemptedRegistrantion = false
         let keychain = Keychain(service: "com.johnnywaity.flux")
         Network.request(url: "https://api.tryflux.app/invalidateToken", type: .delete, paramters: ["refreshToken": keychain["refresh"] ?? ""])

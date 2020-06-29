@@ -34,15 +34,15 @@ class UserListController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
+        return 60
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        if let d = delegate {
-            d.userClicked((tableView.cellForRow(at: indexPath) as! UserCell).user)
+        if let del = delegate {
+            del.userClicked(users[indexPath.row])
         }else{
-            navigationController?.pushViewController(ProfileController((tableView.cellForRow(at: indexPath) as! UserCell).user), animated: true)
+            let profile = Profile(username: users[indexPath.row])
+            navigationController?.pushViewController(ProfileController(profile: profile), animated: true)
         }
     }
     

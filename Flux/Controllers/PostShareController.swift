@@ -20,7 +20,7 @@ class PostShareController: UIViewController, UITableViewDelegate, UITableViewDat
     init(_ postID:String){
         self.postID = postID
         super.init(nibName: nil, bundle: nil)
-        self.modalPresentationStyle = .overCurrentContext
+//        self.modalPresentationStyle = .overCurrentContext
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -36,24 +36,13 @@ class PostShareController: UIViewController, UITableViewDelegate, UITableViewDat
         containerView.backgroundColor = UIColor.white
         containerView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(containerView)
-        bottomConstraint = containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: view.bounds.height * 0.45)
+        bottomConstraint = containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         bottomConstraint.isActive = true
         containerView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         containerView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         containerView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.45).isActive = true
-        
-        let dismissArea = UIView()
-        dismissArea.translatesAutoresizingMaskIntoConstraints = false
-        dismissArea.backgroundColor = UIColor.clear
-        view.addSubview(dismissArea)
-        dismissArea.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        dismissArea.bottomAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
-        dismissArea.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        dismissArea.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissView))
-        dismissArea.addGestureRecognizer(tapGesture)
-        
-        
+
+
         let cancelButton = UIButton(type: .system)
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.setTitle("Cancel", for: .normal)
@@ -63,7 +52,7 @@ class PostShareController: UIViewController, UITableViewDelegate, UITableViewDat
         cancelButton.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
         cancelButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
         cancelButton.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -16).isActive = true
-        
+
         let shareTitle = UILabel()
         shareTitle.translatesAutoresizingMaskIntoConstraints = false
         shareTitle.text = "Share Post"
@@ -73,9 +62,9 @@ class PostShareController: UIViewController, UITableViewDelegate, UITableViewDat
         shareTitle.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 2).isActive = true
         shareTitle.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
         shareTitle.heightAnchor.constraint(equalToConstant: 44).isActive = true
-        
-        
-        
+
+
+
         let sendButton = UIButton(type: .system)
         sendButton.setTitle("Send", for: .normal)
         sendButton.backgroundColor = UIColor.appBlue
@@ -88,7 +77,7 @@ class PostShareController: UIViewController, UITableViewDelegate, UITableViewDat
         sendButton.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
         sendButton.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
         sendButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
-        
+
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
         tableView.dataSource = self
@@ -99,7 +88,7 @@ class PostShareController: UIViewController, UITableViewDelegate, UITableViewDat
         tableView.bottomAnchor.constraint(equalTo: sendButton.topAnchor).isActive = true
         tableView.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
         tableView.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-        
+
         fetchConvos()
     }
     
@@ -118,16 +107,19 @@ class PostShareController: UIViewController, UITableViewDelegate, UITableViewDat
             selected[indexPath.row] = !selected[indexPath.row]
         }
     }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 56
+    }
     
     override func viewDidAppear(_ animated: Bool) {
-        UIView.animate(withDuration: 0.2, animations: {
-            self.view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
-        }) { (completed) in
-            self.bottomConstraint.constant = 0
-            UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
-                self.view.layoutIfNeeded()
-            }, completion: nil)
-        }
+//        UIView.animate(withDuration: 0.2, animations: {
+////            self.view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+//        }) { (completed) in
+//            self.bottomConstraint.constant = 0
+//            UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
+//                self.view.layoutIfNeeded()
+//            }, completion: nil)
+//        }
     }
     
     func fetchConvos(){

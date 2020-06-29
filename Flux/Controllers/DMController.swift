@@ -26,7 +26,6 @@ class DMController: UITableViewController, UserListControllerDelegate {
         view.backgroundColor = UIColor.white
         tableView.register(ConvoCell.self, forCellReuseIdentifier: "convo")
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(compose))
-        navigationItem.rightBarButtonItem?.tintColor = UIColor.white
         tableView.tableFooterView = UIView()
         fetchConvos()
     }
@@ -38,6 +37,9 @@ class DMController: UITableViewController, UserListControllerDelegate {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return convos.count
+    }
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 76
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -72,14 +74,7 @@ class DMController: UITableViewController, UserListControllerDelegate {
     
     @objc
     func compose(){
-        var myUsername = ""
-        do{
-            let jwt = try decode(jwt: Network.authToken!)
-            myUsername = (jwt.body["uID"] as! String)
-            
-        }catch{
-            print(error)
-        }
+        let myUsername = Network.username ?? ""
         Network.request(url: "https://api.tryflux.app/account?user=\(myUsername)", type: .get, paramters: nil, auth: true) { (result, error) in
             if let err = error {
                 print(err)

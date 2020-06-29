@@ -20,18 +20,17 @@ class SelectConvoCell: UITableViewCell {
         profileView.layer.masksToBounds = true
         profileView.translatesAutoresizingMaskIntoConstraints = false
         profileView.layer.cornerRadius = 20
-        addSubview(profileView)
-        profileView.topAnchor.constraint(equalTo: topAnchor, constant: 8).isActive = true
-        profileView.leftAnchor.constraint(equalTo: leftAnchor, constant: 8).isActive = true
-        profileView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8).isActive = true
+        contentView.addSubview(profileView)
+        profileView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8).isActive = true
+        profileView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 8).isActive = true
         profileView.heightAnchor.constraint(equalToConstant: 40).isActive = true
         profileView.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        
+
         recipientLabel.text = "Test"
-        recipientLabel.textColor = UIColor.appBlue
+        recipientLabel.textColor = UIColor.black
         recipientLabel.translatesAutoresizingMaskIntoConstraints = false
         recipientLabel.font = UIFont.boldSystemFont(ofSize: 20)
-        addSubview(recipientLabel)
+        contentView.addSubview(recipientLabel)
         recipientLabel.leftAnchor.constraint(equalTo: profileView.rightAnchor, constant: 8).isActive = true
         recipientLabel.centerYAnchor.constraint(equalTo: profileView.centerYAnchor).isActive = true
         
@@ -40,12 +39,12 @@ class SelectConvoCell: UITableViewCell {
         selectView.layer.borderWidth = 0.5
         selectView.layer.borderColor = UIColor.lightGray.cgColor
         selectView.backgroundColor = UIColor.white
-        addSubview(selectView)
-        selectView.rightAnchor.constraint(equalTo: rightAnchor, constant: -13).isActive = true
-        selectView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        contentView.addSubview(selectView)
+        selectView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -13).isActive = true
+        selectView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
         selectView.widthAnchor.constraint(equalToConstant: 30).isActive = true
         selectView.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        
+
         let checkMark = UIImageView(image: #imageLiteral(resourceName: "check").withRenderingMode(.alwaysTemplate))
         checkMark.translatesAutoresizingMaskIntoConstraints = false
         checkMark.tintColor = UIColor.white

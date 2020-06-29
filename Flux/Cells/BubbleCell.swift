@@ -91,15 +91,15 @@ class BubbleCell: UICollectionViewCell {
             bubbleLeft.isActive = false
             bubbleRight.isActive = true
             bubble.backgroundColor = UIColor.appBlue
-//            message.textColor = UIColor.white
+            message.textColor = UIColor.white
             break
         case .other:
             iconRight.isActive = false
             iconLeft.isActive = true
             bubbleRight.isActive = false
             bubbleLeft.isActive = true
-            bubble.backgroundColor = UIColor.appGreen//UIColor(red: 0.9, green: 0.9, blue: 0.9, alpha: 1)
-//            message.textColor = UIColor.white
+            bubble.backgroundColor = UIColor(red: 0.9, green: 0.9, blue: 0.9, alpha: 1)
+            message.textColor = UIColor.black
             break
         }
         
@@ -136,10 +136,7 @@ class BubbleCell: UICollectionViewCell {
     }
     
 }
-enum BubbleStyle {
-    case mine
-    case other
-}
+
 protocol BubbleDelegate {
     func openProfileLink(_ username:String)
 }

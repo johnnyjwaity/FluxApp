@@ -143,7 +143,10 @@ class CommentsController: UIViewController, UITableViewDelegate, UITableViewData
             }, completion: { (completed) in
                 let commentCount = self.post.comments.count
                 if commentCount > 0 {
-                    self.tableView.scrollToRow(at: IndexPath(row: commentCount - 1, section: 0), at: .bottom, animated: true)
+                    print("Scrolling to \(commentCount - 1)")
+                    if keyboardIsShowing {
+                        self.tableView.scrollToRow(at: IndexPath(row: commentCount - 1, section: 0), at: .bottom, animated: true)
+                    }
                 }
             })
         }
@@ -194,7 +197,7 @@ class CommentsController: UIViewController, UITableViewDelegate, UITableViewData
 //    }
     
     func openProfile(_ username: String) {
-        navigationController?.pushViewController(ProfileController(username), animated: true)
+        navigationController?.pushViewController(ProfileController(profile: Profile(username: username)), animated: true)
     }
 
 }

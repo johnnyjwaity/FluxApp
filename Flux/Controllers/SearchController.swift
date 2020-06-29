@@ -15,15 +15,12 @@ class SearchController: UIViewController, UISearchResultsUpdating, UISearchBarDe
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.white
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont(name: "Amandita", size: 28)!]
-        navigationController?.navigationBar.tintColor = UIColor.white
-        navigationController?.navigationBar.barTintColor = UIColor.appBlue
         
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search For User"
-        searchController.searchBar.searchTextField.backgroundColor = UIColor.white
+//        searchController.searchBar.searchTextField.backgroundColor = UIColor.white
         searchController.searchBar.delegate = self
         searchController.searchBar.searchBarStyle = .prominent
         searchController.searchBar.barTintColor = UIColor.white
@@ -113,9 +110,8 @@ class SearchController: UIViewController, UISearchResultsUpdating, UISearchBarDe
     }
     
     func userClicked(_ user: String) {
-        let profileController = ProfileController(user)
-        profileController.title = user
-        navigationController?.pushViewController(profileController, animated: true)
+        let profile = Profile(username: user)
+        navigationController?.pushViewController(ProfileController(profile: profile), animated: true)
     }
     
     @objc

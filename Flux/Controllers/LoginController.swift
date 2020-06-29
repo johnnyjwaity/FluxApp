@@ -9,20 +9,47 @@
 import UIKit
 import KeychainAccess
 
-class LoginController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
+class LoginController: UIViewController, UITextFieldDelegate {
     
-    let fields = ["Username", "Password", "Email"]
-    var textFields:[UITextField?] = [nil, nil, nil]
+    let titleLabel:UILabel = {
+        let titleLabel = UILabel()
+        titleLabel.text = "Flux"
+        titleLabel.textColor = UIColor.appBlue
+        titleLabel.font = UIFont(name: "Amandita", size: 75)
+        titleLabel.adjustsFontSizeToFitWidth = true
+        titleLabel.textAlignment = .center
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        return titleLabel
+    }()
     
-    var loggingIn = true
-    var heightAnchor:NSLayoutConstraint!
+    let usernameField = IconTextField(icon: #imageLiteral(resourceName: "profile"), field: "Username")
+    let passwordField = IconTextField(icon: #imageLiteral(resourceName: "lock"), field: "Password", secure: true)
     
-    var tableView:UITableView!
+    let button:LoadButton = LoadButton(title: "Login")
     
-    var segmentedIndex:UISegmentedControl!
-    var button:UIButton!
+    let signupButton:UIButton = {
+        let b = UIButton(type: .system)
+        b.translatesAutoresizingMaskIntoConstraints = false
+        var attributedString = NSMutableAttributedString(string: "Don't have an account? Sign up!")
+        attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.lightGray, range: NSRange(location: 0, length: 22))
+        attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.appBlue, range: NSRange(location: 23, length: 8))
+        b.setAttributedTitle(attributedString, for: .normal)
+        
+        return b
+    }()
+    
+    let privacyButton:UIButton = {
+        let b = UIButton(type: .system)
+        b.translatesAutoresizingMaskIntoConstraints = false
+        let titleString = NSMutableAttributedString(string: "Privacy Policy")
+        titleString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: NSRange(location: 0, length: 14))
+        titleString.addAttribute(.foregroundColor, value: UIColor.lightGray, range: NSRange(location: 0, length: 14))
+        b.setAttributedTitle(titleString, for: .normal)
+        return b
+    }()
     
     let errorBox = UILabel()
+    var errorBottom:NSLayoutConstraint!
     
     init(){
         super.init(nibName: nil, bundle: nil)
@@ -35,180 +62,83 @@ class LoginController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.colors = [UIColor.appBlue.cgColor, UIColor.appGreen.cgColor]
-        gradientLayer.frame = view.bounds
-        gradientLayer.masksToBounds = true
-        view.layer.addSublayer(gradientLayer)
-        
+        view.backgroundColor = UIColor.white
+        view.clipsToBounds = true
         
         errorBox.text = "Test Error"
-        errorBox.backgroundColor = UIColor.red
+        errorBox.backgroundColor = UIColor(red: 0.9, green: 0, blue: 0, alpha: 1)
         errorBox.textColor = UIColor.white
-        errorBox.font = UIFont.boldSystemFont(ofSize: 20)
+        errorBox.font = UIFont.systemFont(ofSize: 18)
         errorBox.adjustsFontSizeToFitWidth = true
         errorBox.translatesAutoresizingMaskIntoConstraints = false
         errorBox.textAlignment = .center
+        errorBox.layer.masksToBounds = true
+        errorBox.layer.cornerRadius = 16
         view.addSubview(errorBox)
-        errorBox.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        errorBox.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        errorBox.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        errorBox.heightAnchor.constraint(equalToConstant: 35).isActive = true
-        errorBox.alpha = 0
+        errorBottom = errorBox.bottomAnchor.constraint(equalTo: view.topAnchor)
+        errorBottom.isActive = true
+        errorBox.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20).isActive = true
+        errorBox.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20).isActive = true
+        errorBox.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         
-        tableView = UITableView(frame: view.bounds, style: .plain)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.layer.cornerRadius = 14
-        self.view.addSubview(tableView)
-        tableView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        tableView.topAnchor.constraint(equalTo: view.centerYAnchor, constant: -44).isActive = true
-        heightAnchor = tableView.heightAnchor.constraint(equalToConstant: 44 * 2)
-        heightAnchor.isActive = true
-        tableView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
         
-        segmentedIndex = UISegmentedControl(items: ["Login", "Create Account"])
-        segmentedIndex.selectedSegmentIndex = 0
-        segmentedIndex.translatesAutoresizingMaskIntoConstraints = false
-        segmentedIndex.tintColor = UIColor.white
-        view.addSubview(segmentedIndex)
-        segmentedIndex.bottomAnchor.constraint(equalTo: tableView.topAnchor, constant: -12).isActive = true
-        segmentedIndex.rightAnchor.constraint(equalTo: tableView.rightAnchor).isActive = true
-        segmentedIndex.leftAnchor.constraint(equalTo: tableView.leftAnchor).isActive = true
-        segmentedIndex.addTarget(self, action: #selector(switchType(_:)), for: .valueChanged)
         
-        button = UIButton(type: .system)
-        button.tintColor = UIColor.white
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Submit", for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 30)
-        button.layer.borderColor = UIColor.white.cgColor
-        button.layer.borderWidth = 3
-        button.layer.cornerRadius = 14
-        button.setTitleColor(UIColor.white, for: .normal)
-        button.addTarget(self, action: #selector(buttonClicked), for: .touchUpInside)
-//        button.backgroundColor = UIColor.white
-        view.addSubview(button)
-        button.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 12).isActive = true
-        button.leftAnchor.constraint(equalTo: tableView.leftAnchor).isActive = true
-        button.rightAnchor.constraint(equalTo: tableView.rightAnchor).isActive = true
-        button.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        view.addSubview(usernameField)
+        usernameField.bottomAnchor.constraint(equalTo: view.centerYAnchor, constant: -50).isActive = true
+        usernameField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
-        let titleLabel = UILabel()
-        titleLabel.text = "Flux"
-        titleLabel.textColor = UIColor.white
-        titleLabel.font = UIFont(name: "Amandita", size: 75)
-        titleLabel.adjustsFontSizeToFitWidth = true
-        titleLabel.textAlignment = .center
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(passwordField)
+        passwordField.topAnchor.constraint(equalTo: usernameField.bottomAnchor, constant: 20).isActive = true
+        passwordField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
         view.addSubview(titleLabel)
         titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 10).isActive = true
-        titleLabel.bottomAnchor.constraint(equalTo: tableView.topAnchor, constant: -10).isActive = true
+        titleLabel.bottomAnchor.constraint(equalTo: usernameField.topAnchor, constant: -10).isActive = true
         titleLabel.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
         titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return loggingIn ? 2 : 3
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: "")
-        let textView = UITextField(frame: cell.bounds)
-        textView.placeholder = fields[indexPath.row]
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        textView.delegate = self
-        textView.isSecureTextEntry = indexPath.row == 1
-        cell.addSubview(textView)
-        textView.topAnchor.constraint(equalTo: cell.topAnchor).isActive = true
-        textView.bottomAnchor.constraint(equalTo: cell.bottomAnchor).isActive = true
-        textView.rightAnchor.constraint(equalTo: cell.rightAnchor).isActive = true
-        textView.leftAnchor.constraint(equalTo: cell.leftAnchor, constant: 15).isActive = true
-        textFields[indexPath.row] = textView
         
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 44
-    }
-    
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        let offset = button.frame.maxY - (self.view.frame.height / 2)
-        UIView.animate(withDuration: 0.2) {
-            self.view.frame.origin.y -= offset
-        }
+        button.layer.cornerRadius = 8
+        button.addTarget(self, action: #selector(buttonClicked), for: .touchUpInside)
+        view.addSubview(button)
+        button.topAnchor.constraint(equalTo: passwordField.bottomAnchor, constant: 20).isActive = true
+        button.leftAnchor.constraint(equalTo: passwordField.leftAnchor).isActive = true
+        button.rightAnchor.constraint(equalTo: passwordField.rightAnchor).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        let offset = button.frame.maxY - (self.view.frame.height / 2)
-        UIView.animate(withDuration: 0.2) {
-            self.view.frame.origin.y += offset
-        }
-    }
-    
-    @objc
-    func switchType(_ sender:UISegmentedControl){
-        if sender.selectedSegmentIndex == 0{
-            heightAnchor.constant = 44 * 2
-            loggingIn = true
-//            tableView.beginUpdates()
-//            tableView.deleteRows(at: [IndexPath(row: 2, section: 0)], with: .fade)
-//            tableView.endUpdates()
-        }else{
-            heightAnchor.constant = 44 * 3
-            loggingIn = false
-//            tableView.beginUpdates()
-//            tableView.insertRows(at: [IndexPath(row: 2, section: 0)], with: .fade)
-//            tableView.endUpdates()
-        }
-        tableView.reloadData()
-        UIView.animate(withDuration: 0.2) {
-            self.view.layoutIfNeeded()
-        }
+        signupButton.addTarget(self, action: #selector(createAccountButtonClicked), for: .touchUpInside)
+        view.addSubview(signupButton)
+        signupButton.topAnchor.constraint(equalTo: button.bottomAnchor, constant: 8).isActive = true
+        signupButton.leftAnchor.constraint(equalTo: button.leftAnchor).isActive = true
+        signupButton.rightAnchor.constraint(equalTo: button.rightAnchor).isActive = true
+        
+        privacyButton.addTarget(self, action: #selector(openPrivacyPolicy), for: .touchUpInside)
+        view.addSubview(privacyButton)
+        privacyButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -8).isActive = true
+        privacyButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8).isActive = true
+        
     }
     
     @objc
     func buttonClicked(){
         self.view.endEditing(true)
+        guard let username = usernameField.textField.text else {
+            return
+        }
+        guard let password = passwordField.textField.text else {
+            return
+        }
+        login(username: username, password: password)
+    }
+    
+    func login(username:String, password:String) {
         var parameters:[String:Any] = [:]
-        guard let username = textFields[0]?.text else {
-            return
-        }
-        guard let password = textFields[1]?.text else {
-            return
-        }
         parameters["username"] = username
         parameters["password"] = password
-        if loggingIn == false {
-            guard let email = textFields[2]?.text else{
-                return
-            }
-            parameters["email"] = email
-            if username.count < 6 {
-                errorBox.text = "Username Needs To Be At Least 6 Characters Long"
-                displayErrorBox()
-                return
-            }
-            if password.count < 6 {
-                errorBox.text = "Password Needs To Be At Least 6 Characters Long"
-                displayErrorBox()
-                return
-            }
-            if !isValidEmail(email: email){
-                errorBox.text = "Email Not Valid"
-                displayErrorBox()
-                return
-            }
-        }
-        let loading = LoadingController(loggingIn ? "Logging In" : "Creating Account")
-        present(loading, animated: true, completion: nil)
-        Network.request(url: "https://api.tryflux.app/\(loggingIn ? "login": "createAccount")", type: .post, paramters: parameters) { (response, error) in
+        button.startRefresh()
+        Network.request(url: "https://api.tryflux.app/login", type: .post, paramters: parameters) { (response, error) in
             if let err = error {
-                loading.dismiss(animated: true, completion: nil)
+                self.button.endRefresh()
                 print(err)
                 self.errorBox.text = err.localizedDescription
                 self.displayErrorBox()
@@ -216,38 +146,20 @@ class LoginController: UIViewController, UITableViewDelegate, UITableViewDataSou
             }
             let keychain = Keychain(service: "com.johnnywaity.flux")
             keychain["refresh"] = response["refresh"] as? String
-            Network.authToken = (response["token"] as! String)
-            
-            HomeController.shared.getFeed()
-            loading.dismiss(animated: true, completion: {
-                self.dismiss(animated: true, completion: nil)
-            })
+            Network.setToken(response["token"] as? String)
+            Network.profile = Profile(username: Network.username!)
+            FluxTabBarController.shared.profileController.setProfile(Network.profile!)
+            FluxTabBarController.shared.homeController.getFeed()
+            self.button.endRefresh()
+            self.dismiss(animated: true, completion: nil)
         }
     }
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let oldText = textField.text ?? ""
-        let prospectiveText = (oldText as NSString).replacingCharacters(in: range, with: string)
-        if prospectiveText == "" {
-            return true
-        }
-        if prospectiveText.count > 320 {
-            return false
-        }
-        if textField.placeholder != "Email" {
-            if prospectiveText.count > 20 {
-                return false
-            }
-            let allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
-            for char in prospectiveText {
-                if !allowedChars.contains(char) {
-                    return false
-                }
-            }
-        }
-        return true
-        
+    @objc
+    func createAccountButtonClicked(){
+        present(CreateAccountController(self), animated: true, completion: nil)
     }
+    
     
     func isValidEmail(email:String?) -> Bool {
         
@@ -264,8 +176,14 @@ class LoginController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     func displayErrorBox(){
-        UIView.animate(withDuration: 0.2) {
-            self.errorBox.alpha = 1
+        errorBottom.constant = 60
+        UIView.animate(withDuration: 0.1) {
+            self.view.layoutIfNeeded()
         }
+    }
+    
+    @objc
+    func openPrivacyPolicy(){
+        AppDelegate.openPrivacyPolicy()
     }
 }

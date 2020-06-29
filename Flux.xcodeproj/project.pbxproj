@@ -9,7 +9,23 @@
 /* Begin PBXBuildFile section */
 		3D064C59226FFB680008A654 /* LoadingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D064C58226FFB680008A654 /* LoadingController.swift */; };
 		3D0A81D222827AA100ABB83E /* ProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0A81D122827AA100ABB83E /* ProfileController.swift */; };
+		3D1C0D88246BD9F6003998AC /* CreateAccountController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1C0D87246BD9F6003998AC /* CreateAccountController.swift */; };
+		3D1C0D8C246BE3CB003998AC /* CountryCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1C0D8B246BE3CB003998AC /* CountryCode.swift */; };
+		3D1C0D8E246CB249003998AC /* extensions.csv in Resources */ = {isa = PBXBuildFile; fileRef = 3D1C0D8D246CB249003998AC /* extensions.csv */; };
+		3D1C0D90246D47BC003998AC /* ExploreController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1C0D8F246D47BC003998AC /* ExploreController.swift */; };
 		3D2CB21A228D00940001DB8E /* PostResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2CB219228D00940001DB8E /* PostResultsController.swift */; };
+		3D2F58E4245FB6A000D32108 /* QuestionPreviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2F58E3245FB6A000D32108 /* QuestionPreviewCell.swift */; };
+		3D2F58E6245FF0A800D32108 /* TextEnterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2F58E5245FF0A800D32108 /* TextEnterCell.swift */; };
+		3D2F58E82460BDE200D32108 /* RatingControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2F58E72460BDE200D32108 /* RatingControl.swift */; };
+		3D2F58EA2461409E00D32108 /* RatingResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2F58E92461409E00D32108 /* RatingResultView.swift */; };
+		3D2F58EC246287A200D32108 /* IconTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2F58EB246287A200D32108 /* IconTextField.swift */; };
+		3D2F58EE2462977A00D32108 /* LoadButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2F58ED2462977900D32108 /* LoadButton.swift */; };
+		3D2FE2C5242181AF00B4B071 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2FE2C4242181AF00B4B071 /* LoadingView.swift */; };
+		3D2FE2C7242EBC5F00B4B071 /* PostPreviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2FE2C6242EBC5F00B4B071 /* PostPreviewCell.swift */; };
+		3D2FE2C9242F0CDB00B4B071 /* PostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2FE2C8242F0CDA00B4B071 /* PostViewController.swift */; };
+		3D2FE2F524300A4200B4B071 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2FE2F424300A4200B4B071 /* Profile.swift */; };
+		3D2FE2F72432CC3A00B4B071 /* QuestionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2FE2F62432CC3A00B4B071 /* QuestionCell.swift */; };
+		3D2FE2F92439545E00B4B071 /* FluxTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2FE2F82439545E00B4B071 /* FluxTabBarController.swift */; };
 		3D46FD7A22CC4BB400DC6876 /* ProfileEditController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46FD7922CC4BB400DC6876 /* ProfileEditController.swift */; };
 		3D46FD7C22CD913C00DC6876 /* CommentsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46FD7B22CD913C00DC6876 /* CommentsController.swift */; };
 		3D46FD7E22CD938200DC6876 /* CommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D46FD7D22CD938200DC6876 /* CommentCell.swift */; };
@@ -26,11 +42,9 @@
 		3D50A5532250AEC900619CF2 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D50A5522250AEC900619CF2 /* Extensions.swift */; };
 		3D50A55622512B2F00619CF2 /* Amandita.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3D50A55522512B0900619CF2 /* Amandita.ttf */; };
 		3D50A558225132F300619CF2 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D50A557225132F300619CF2 /* Post.swift */; };
-		3D50A55B2251367400619CF2 /* OptionPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D50A55A2251367400619CF2 /* OptionPostCell.swift */; };
 		3D56D9BB228D4C4E00090A4C /* LegendCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D56D9BA228D4C4E00090A4C /* LegendCell.swift */; };
 		3D58E47422C3EFA500B373A5 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D58E47322C3EFA500B373A5 /* CacheManager.swift */; };
 		3D58E47622C976DA00B373A5 /* ContactsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D58E47522C976DA00B373A5 /* ContactsController.swift */; };
-		3D6BA2F02254889200DAEEB7 /* TextPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D6BA2EF2254889200DAEEB7 /* TextPostCell.swift */; };
 		3D70CDDE226D2C5500D3A5F8 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D70CDDD226D2C5500D3A5F8 /* Network.swift */; };
 		3D70CDE2226D61F300D3A5F8 /* Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D70CDE1226D61F300D3A5F8 /* Auth.swift */; };
 		3D70CDE4226D6A8B00D3A5F8 /* PostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D70CDE3226D6A8B00D3A5F8 /* PostController.swift */; };
@@ -41,6 +55,11 @@
 		3D9723372250A3D70093C754 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9723362250A3D70093C754 /* AppDelegate.swift */; };
 		3D97233E2250A3DA0093C754 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D97233D2250A3DA0093C754 /* Assets.xcassets */; };
 		3D9723412250A3DA0093C754 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D97233F2250A3DA0093C754 /* LaunchScreen.storyboard */; };
+		3DC81FCE243EC16D001D0FC4 /* Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC81FCD243EC16D001D0FC4 /* Emoji.swift */; };
+		3DC81FD0243FBD76001D0FC4 /* EmojiPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC81FCF243FBD76001D0FC4 /* EmojiPickerController.swift */; };
+		3DC81FD2243FBE2D001D0FC4 /* EmojiCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC81FD1243FBE2D001D0FC4 /* EmojiCell.swift */; };
+		3DC81FD624404ADA001D0FC4 /* emoji.csv in Resources */ = {isa = PBXBuildFile; fileRef = 3DC81FD524404ADA001D0FC4 /* emoji.csv */; };
+		3DC81FD824417002001D0FC4 /* PostTypeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC81FD724417002001D0FC4 /* PostTypeCell.swift */; };
 		3DD8F1902283F72F00DCCB0F /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD8F18F2283F72F00DCCB0F /* SearchController.swift */; };
 		3DD8F1922283FC9A00DCCB0F /* UserListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD8F1912283FC9A00DCCB0F /* UserListController.swift */; };
 		3DD8F1942283FCFF00DCCB0F /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD8F1932283FCFF00DCCB0F /* UserCell.swift */; };
@@ -51,7 +70,23 @@
 /* Begin PBXFileReference section */
 		3D064C58226FFB680008A654 /* LoadingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingController.swift; sourceTree = "<group>"; };
 		3D0A81D122827AA100ABB83E /* ProfileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileController.swift; sourceTree = "<group>"; };
+		3D1C0D87246BD9F6003998AC /* CreateAccountController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountController.swift; sourceTree = "<group>"; };
+		3D1C0D8B246BE3CB003998AC /* CountryCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryCode.swift; sourceTree = "<group>"; };
+		3D1C0D8D246CB249003998AC /* extensions.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = extensions.csv; sourceTree = "<group>"; };
+		3D1C0D8F246D47BC003998AC /* ExploreController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreController.swift; sourceTree = "<group>"; };
 		3D2CB219228D00940001DB8E /* PostResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostResultsController.swift; sourceTree = "<group>"; };
+		3D2F58E3245FB6A000D32108 /* QuestionPreviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionPreviewCell.swift; sourceTree = "<group>"; };
+		3D2F58E5245FF0A800D32108 /* TextEnterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEnterCell.swift; sourceTree = "<group>"; };
+		3D2F58E72460BDE200D32108 /* RatingControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingControl.swift; sourceTree = "<group>"; };
+		3D2F58E92461409E00D32108 /* RatingResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingResultView.swift; sourceTree = "<group>"; };
+		3D2F58EB246287A200D32108 /* IconTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconTextField.swift; sourceTree = "<group>"; };
+		3D2F58ED2462977900D32108 /* LoadButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadButton.swift; sourceTree = "<group>"; };
+		3D2FE2C4242181AF00B4B071 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		3D2FE2C6242EBC5F00B4B071 /* PostPreviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostPreviewCell.swift; sourceTree = "<group>"; };
+		3D2FE2C8242F0CDA00B4B071 /* PostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewController.swift; sourceTree = "<group>"; };
+		3D2FE2F424300A4200B4B071 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
+		3D2FE2F62432CC3A00B4B071 /* QuestionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionCell.swift; sourceTree = "<group>"; };
+		3D2FE2F82439545E00B4B071 /* FluxTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluxTabBarController.swift; sourceTree = "<group>"; };
 		3D395236228FB49A000B5496 /* Flux.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Flux.entitlements; sourceTree = "<group>"; };
 		3D46FD7922CC4BB400DC6876 /* ProfileEditController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditController.swift; sourceTree = "<group>"; };
 		3D46FD7B22CD913C00DC6876 /* CommentsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsController.swift; sourceTree = "<group>"; };
@@ -69,11 +104,9 @@
 		3D50A5522250AEC900619CF2 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		3D50A55522512B0900619CF2 /* Amandita.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Amandita.ttf; sourceTree = "<group>"; };
 		3D50A557225132F300619CF2 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
-		3D50A55A2251367400619CF2 /* OptionPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionPostCell.swift; sourceTree = "<group>"; };
 		3D56D9BA228D4C4E00090A4C /* LegendCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegendCell.swift; sourceTree = "<group>"; };
 		3D58E47322C3EFA500B373A5 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
 		3D58E47522C976DA00B373A5 /* ContactsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsController.swift; sourceTree = "<group>"; };
-		3D6BA2EF2254889200DAEEB7 /* TextPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPostCell.swift; sourceTree = "<group>"; };
 		3D70CDDD226D2C5500D3A5F8 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		3D70CDE1226D61F300D3A5F8 /* Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auth.swift; sourceTree = "<group>"; };
 		3D70CDE3226D6A8B00D3A5F8 /* PostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostController.swift; sourceTree = "<group>"; };
@@ -86,6 +119,11 @@
 		3D97233D2250A3DA0093C754 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3D9723402250A3DA0093C754 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3D9723422250A3DA0093C754 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3DC81FCD243EC16D001D0FC4 /* Emoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emoji.swift; sourceTree = "<group>"; };
+		3DC81FCF243FBD76001D0FC4 /* EmojiPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiPickerController.swift; sourceTree = "<group>"; };
+		3DC81FD1243FBE2D001D0FC4 /* EmojiCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCell.swift; sourceTree = "<group>"; };
+		3DC81FD524404ADA001D0FC4 /* emoji.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = emoji.csv; sourceTree = "<group>"; };
+		3DC81FD724417002001D0FC4 /* PostTypeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTypeCell.swift; sourceTree = "<group>"; };
 		3DD8F18F2283F72F00DCCB0F /* SearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
 		3DD8F1912283FC9A00DCCB0F /* UserListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListController.swift; sourceTree = "<group>"; };
 		3DD8F1932283FCFF00DCCB0F /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
@@ -126,6 +164,7 @@
 		3D50A54B2250A5A700619CF2 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3D2FE2F82439545E00B4B071 /* FluxTabBarController.swift */,
 				3D50A54C2250A61D00619CF2 /* HomeController.swift */,
 				3DDFB6AC226D07C7006EAFA0 /* LoginController.swift */,
 				3D70CDE3226D6A8B00D3A5F8 /* PostController.swift */,
@@ -142,6 +181,10 @@
 				3D46FD8122CF136400DC6876 /* DMController.swift */,
 				3D46FD8522CF16C600DC6876 /* ConvoController.swift */,
 				3D46FD8C22D9419000DC6876 /* PostShareController.swift */,
+				3D2FE2C8242F0CDA00B4B071 /* PostViewController.swift */,
+				3DC81FCF243FBD76001D0FC4 /* EmojiPickerController.swift */,
+				3D1C0D87246BD9F6003998AC /* CreateAccountController.swift */,
+				3D1C0D8F246D47BC003998AC /* ExploreController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -150,8 +193,6 @@
 			isa = PBXGroup;
 			children = (
 				3D50A54F2250ABDB00619CF2 /* PostCell.swift */,
-				3D50A55A2251367400619CF2 /* OptionPostCell.swift */,
-				3D6BA2EF2254889200DAEEB7 /* TextPostCell.swift */,
 				3D70CDE7226D7A0300D3A5F8 /* NewCell.swift */,
 				3D70CDE9226D817C00D3A5F8 /* OptionCell.swift */,
 				3DD8F1932283FCFF00DCCB0F /* UserCell.swift */,
@@ -160,6 +201,12 @@
 				3D46FD8322CF142C00DC6876 /* ConvoCell.swift */,
 				3D46FD8722CF197A00DC6876 /* BubbleCell.swift */,
 				3D46FD8E22D95AD200DC6876 /* SelectConvoCell.swift */,
+				3D2FE2C6242EBC5F00B4B071 /* PostPreviewCell.swift */,
+				3D2FE2F62432CC3A00B4B071 /* QuestionCell.swift */,
+				3DC81FD1243FBE2D001D0FC4 /* EmojiCell.swift */,
+				3DC81FD724417002001D0FC4 /* PostTypeCell.swift */,
+				3D2F58E3245FB6A000D32108 /* QuestionPreviewCell.swift */,
+				3D2F58E5245FF0A800D32108 /* TextEnterCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -187,6 +234,9 @@
 				3D70CDDD226D2C5500D3A5F8 /* Network.swift */,
 				3D70CDE1226D61F300D3A5F8 /* Auth.swift */,
 				3D58E47322C3EFA500B373A5 /* CacheManager.swift */,
+				3D2FE2F424300A4200B4B071 /* Profile.swift */,
+				3DC81FCD243EC16D001D0FC4 /* Emoji.swift */,
+				3D1C0D8B246BE3CB003998AC /* CountryCode.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -195,6 +245,11 @@
 			isa = PBXGroup;
 			children = (
 				3D70CDEC226D86B200D3A5F8 /* ColorPicker.swift */,
+				3D2FE2C4242181AF00B4B071 /* LoadingView.swift */,
+				3D2F58E72460BDE200D32108 /* RatingControl.swift */,
+				3D2F58E92461409E00D32108 /* RatingResultView.swift */,
+				3D2F58EB246287A200D32108 /* IconTextField.swift */,
+				3D2F58ED2462977900D32108 /* LoadButton.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -229,6 +284,8 @@
 				3D46FD8922CF2BDF00DC6876 /* Protocols */,
 				3D50A5512250AEBB00619CF2 /* Helpers */,
 				3D50A55422512AFB00619CF2 /* Fonts */,
+				3DC81FD524404ADA001D0FC4 /* emoji.csv */,
+				3D1C0D8D246CB249003998AC /* extensions.csv */,
 				3D97233D2250A3DA0093C754 /* Assets.xcassets */,
 				3D97233F2250A3DA0093C754 /* LaunchScreen.storyboard */,
 				3D9723422250A3DA0093C754 /* Info.plist */,
@@ -314,9 +371,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3D1C0D8E246CB249003998AC /* extensions.csv in Resources */,
 				3D50A55622512B2F00619CF2 /* Amandita.ttf in Resources */,
 				3D9723412250A3DA0093C754 /* LaunchScreen.storyboard in Resources */,
 				3D97233E2250A3DA0093C754 /* Assets.xcassets in Resources */,
+				3DC81FD624404ADA001D0FC4 /* emoji.csv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -369,40 +428,57 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3D2FE2C9242F0CDB00B4B071 /* PostViewController.swift in Sources */,
 				3D2CB21A228D00940001DB8E /* PostResultsController.swift in Sources */,
+				3D2F58E4245FB6A000D32108 /* QuestionPreviewCell.swift in Sources */,
 				3D70CDE6226D755500D3A5F8 /* CreateOptionPostController.swift in Sources */,
-				3D6BA2F02254889200DAEEB7 /* TextPostCell.swift in Sources */,
 				3D70CDED226D86B200D3A5F8 /* ColorPicker.swift in Sources */,
 				3D70CDEA226D817C00D3A5F8 /* OptionCell.swift in Sources */,
 				3D46FD8B22CF2BFE00DC6876 /* PostDelegate.swift in Sources */,
 				3D46FD7C22CD913C00DC6876 /* CommentsController.swift in Sources */,
+				3D1C0D8C246BE3CB003998AC /* CountryCode.swift in Sources */,
 				3D46FD7A22CC4BB400DC6876 /* ProfileEditController.swift in Sources */,
+				3D1C0D88246BD9F6003998AC /* CreateAccountController.swift in Sources */,
+				3D2F58EE2462977A00D32108 /* LoadButton.swift in Sources */,
 				3D064C59226FFB680008A654 /* LoadingController.swift in Sources */,
 				3D58E47422C3EFA500B373A5 /* CacheManager.swift in Sources */,
+				3DC81FCE243EC16D001D0FC4 /* Emoji.swift in Sources */,
 				3D50A54D2250A61D00619CF2 /* HomeController.swift in Sources */,
+				3D2FE2F72432CC3A00B4B071 /* QuestionCell.swift in Sources */,
 				3D9723372250A3D70093C754 /* AppDelegate.swift in Sources */,
 				3DD8F1902283F72F00DCCB0F /* SearchController.swift in Sources */,
+				3D2F58E82460BDE200D32108 /* RatingControl.swift in Sources */,
 				3DD8F1942283FCFF00DCCB0F /* UserCell.swift in Sources */,
 				3D46FD8422CF142C00DC6876 /* ConvoCell.swift in Sources */,
-				3D50A55B2251367400619CF2 /* OptionPostCell.swift in Sources */,
 				3D46FD7E22CD938200DC6876 /* CommentCell.swift in Sources */,
+				3D2F58EA2461409E00D32108 /* RatingResultView.swift in Sources */,
+				3D2FE2F92439545E00B4B071 /* FluxTabBarController.swift in Sources */,
+				3D2F58E6245FF0A800D32108 /* TextEnterCell.swift in Sources */,
 				3D46FD8622CF16C600DC6876 /* ConvoController.swift in Sources */,
 				3D70CDE4226D6A8B00D3A5F8 /* PostController.swift in Sources */,
 				3D56D9BB228D4C4E00090A4C /* LegendCell.swift in Sources */,
+				3D1C0D90246D47BC003998AC /* ExploreController.swift in Sources */,
 				3D50A5502250ABDB00619CF2 /* PostCell.swift in Sources */,
+				3DC81FD0243FBD76001D0FC4 /* EmojiPickerController.swift in Sources */,
 				3D70CDE2226D61F300D3A5F8 /* Auth.swift in Sources */,
 				3D46FD8222CF136400DC6876 /* DMController.swift in Sources */,
+				3D2FE2F524300A4200B4B071 /* Profile.swift in Sources */,
+				3D2FE2C5242181AF00B4B071 /* LoadingView.swift in Sources */,
+				3D2F58EC246287A200D32108 /* IconTextField.swift in Sources */,
 				3D70CDDE226D2C5500D3A5F8 /* Network.swift in Sources */,
 				3D46FD8822CF197A00DC6876 /* BubbleCell.swift in Sources */,
 				3DD8F1922283FC9A00DCCB0F /* UserListController.swift in Sources */,
 				3D46FD8F22D95AD200DC6876 /* SelectConvoCell.swift in Sources */,
+				3DC81FD824417002001D0FC4 /* PostTypeCell.swift in Sources */,
 				3DDFB6AD226D07C7006EAFA0 /* LoginController.swift in Sources */,
 				3D70CDE8226D7A0300D3A5F8 /* NewCell.swift in Sources */,
 				3D50A5532250AEC900619CF2 /* Extensions.swift in Sources */,
 				3D46FD8D22D9419000DC6876 /* PostShareController.swift in Sources */,
+				3DC81FD2243FBE2D001D0FC4 /* EmojiCell.swift in Sources */,
 				3D46FD8022CF0B2000DC6876 /* SettingsController.swift in Sources */,
 				3D50A558225132F300619CF2 /* Post.swift in Sources */,
 				3D58E47622C976DA00B373A5 /* ContactsController.swift in Sources */,
+				3D2FE2C7242EBC5F00B4B071 /* PostPreviewCell.swift in Sources */,
 				3D0A81D222827AA100ABB83E /* ProfileController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

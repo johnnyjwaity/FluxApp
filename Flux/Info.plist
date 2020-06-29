@@ -27,6 +27,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>flux</string>
 				<string>johnnywaity</string>
 			</array>
 		</dict>

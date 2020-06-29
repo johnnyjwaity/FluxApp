@@ -9,11 +9,10 @@
 import UIKit
 import JWTDecode
 
-class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, PostDelegate, BubbleDelegate {
-
+class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, BubbleDelegate, PostPreviewDelegate {
+    
     let convoID:String
     var posts:[Post] = []
-    var postStates:[PostState] = []
 
     init(_ convoID:String, title:String) {
         self.convoID = convoID
@@ -80,10 +79,8 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
         
 
         collectionView = UICollectionView(frame: UIScreen.main.bounds, collectionViewLayout: layout)
-        fetchMessages()
-
         collectionView.register(BubbleCell.self, forCellWithReuseIdentifier: bubbleID)
-        collectionView.register(OptionPostCell.self, forCellWithReuseIdentifier: postCellId)
+        collectionView.register(PostPreviewCell.self, forCellWithReuseIdentifier: postCellId)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -105,7 +102,6 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
 
         let sendButton = UIButton()
         sendButton.translatesAutoresizingMaskIntoConstraints = false
-        //        sendButton.setTitle("Send", for: .normal)
         sendButton.setImage(#imageLiteral(resourceName: "send").withRenderingMode(.alwaysTemplate), for: .normal)
         sendButton.imageEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
         sendButton.tintColor = UIColor.appBlue
@@ -133,7 +129,6 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
 
         messageInputContainer.addSubview(inputTextField)
         inputTextField.delegate = self
-        //        inputTextField.topAnchor.constraint(equalTo: messageInputContainer.topAnchor).isActive = true
         inputTextField.heightAnchor.constraint(greaterThanOrEqualToConstant: 32).isActive = true
         inputTextField.leftAnchor.constraint(equalTo: postButton.rightAnchor, constant: 8).isActive = true
         inputTextField.rightAnchor.constraint(equalTo: sendButton.leftAnchor, constant: -8).isActive = true
@@ -142,7 +137,6 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
         inputTextField.addSubview(placeholderLabel)
         placeholderLabel.topAnchor.constraint(equalTo: inputTextField.topAnchor, constant: 1).isActive = true
         placeholderLabel.leftAnchor.constraint(equalTo: inputTextField.leftAnchor, constant: 4).isActive = true
-        //        placeholderLabel.widthAnchor.constraint(equalTo: inputTextField.widthAnchor, constant: -4).isActive = true
         placeholderLabel.heightAnchor.constraint(equalToConstant: 32).isActive = true
 
 
@@ -152,6 +146,8 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
 
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboard), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        fetchMessages()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -170,15 +166,12 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
             cell.delegate = self
             return cell
         }else if let postMessage = messages[indexPath.row] as? PostMessage{
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: postCellId, for: indexPath) as! OptionPostCell
-            cell.setPost(postMessage.postID, collectionView: collectionView)
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: postCellId, for: indexPath) as! PostPreviewCell
             cell.delegate = self
-            if posts[postMessage.postIndex].fetched {
-                cell.update(posts[postMessage.postIndex])
-            }
+            cell.setPost(message: postMessage, post: posts[postMessage.postIndex])
             return cell
         }
-        return UICollectionViewCell()
+        fatalError("Invalid Message Type")
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -186,27 +179,12 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
             let message = textMessage.message
             let size = CGSize(width: 250 - 20, height: 10000)
             let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
-
             let estimatedFrame = NSString(string: message).boundingRect(with: size, options: options, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18)], context: nil)
-
-
             return CGSize(width: UIScreen.main.bounds.width, height: estimatedFrame.height + 20)
-        }else if let postMessage = messages[indexPath.row] as? PostMessage{
-            switch posts[postMessage.postIndex].type {
-            case .Option:
-                if posts[postMessage.postIndex].fetched == false {
-                    return CGSize(width: (UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width : UIScreen.main.bounds.height) * 0.96, height: CGFloat(112 + round((Double(posts[postMessage.postIndex].amount ?? 1) / 2)) * 70))
-                }else{
-                    if postStates[postMessage.postIndex] == .Result {
-                        return CGSize(width: (UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width : UIScreen.main.bounds.height) * 0.96, height: CGFloat(162 + (posts[postMessage.postIndex].choices!.count * 72)))
-                    }
-                    return CGSize(width: (UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width : UIScreen.main.bounds.height) * 0.96, height: CGFloat(112 + round((Double(posts[postMessage.postIndex].choices!.count) / 2)) * 70))
-                }
-            case .Text:
-                return CGSize(width: (UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width : UIScreen.main.bounds.height) * 0.96, height: 245)
-            }
+        }else if let _ = messages[indexPath.row] as? PostMessage{
+            return CGSize(width: UIScreen.main.bounds.width, height: 80)
         }
-        return CGSize(width: 0, height: 0)
+        fatalError("Invalid Cell Type")
     }
 
 
@@ -235,16 +213,9 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
 
     @objc
     func sendButtonClicked(){
-        var myUsername = ""
-        do{
-            let jwt = try decode(jwt: Network.authToken!)
-            myUsername = (jwt.body["uID"] as! String)
-
-        }catch{
-            print(error)
-        }
+        let myUsername = Network.username ?? ""
         let message = inputTextField.text!
-        messages.append(TextMessage(user: myUsername, time: "now", message: message, style: .mine))
+        messages.append(TextMessage(user: myUsername, time: "now", style: .mine, message: message))
         collectionView.insertItems(at: [IndexPath(row: messages.count - 1, section: 0)])
         Network.request(url: "https://api.tryflux.app/sendDM", type: .post, paramters: ["convoID": convoID, "type": 0, "message": message], auth: true)
         inputTextField.text = ""
@@ -264,7 +235,6 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
             }
             var posts:[Post] = []
             var cellIndexes:[Int] = []
-            var states:[PostState] = []
             var newMessages:[Message] = []
             if let ms = result["messages"] as? [[String:Any]] {
                 for m in ms {
@@ -272,22 +242,21 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
                     guard let type = m["type"] as? Int else{continue}
                     guard let time = m["time"] as? String else{continue}
                     guard let isMe = m["isMe"] as? Bool else{continue}
+                    let style = isMe ? MessageStyle.mine : MessageStyle.other
                     if type == 0 {
                         guard let message = m["message"] as? String else{continue}
-                        let text = TextMessage(user: user, time: time, message: message, style: isMe ? BubbleStyle.mine : BubbleStyle.other)
+                        let text = TextMessage(user: user, time: time, style: style, message: message)
                         newMessages.append(text)
                     }else if type == 1 {
                         guard let postID = m["postID"] as? String else{continue}
-                        let postMessage = PostMessage(user: user, time: time, postID: postID, postIndex: posts.count, cellIndex: newMessages.count)
-                        posts.append(Post(postID: postID, type: .Option))
-                        states.append(.Question)
+                        let postMessage = PostMessage(user: user, time: time, style: style, postID: postID, postIndex: posts.count, cellIndex: newMessages.count)
+                        posts.append(Post(postID: postID))
                         cellIndexes.append(newMessages.count)
                         newMessages.append(postMessage)
                     }
                 }
             }
             self.posts = posts
-            self.postStates = states
             for i in 0..<self.posts.count {
                 self.fetchPost(self.posts[i], index: cellIndexes[i])
             }
@@ -306,132 +275,54 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
     
     func fetchPost(_ post:Post, index:Int){
         post.fetch {
-            if let cell = self.collectionView.cellForItem(at: IndexPath(row: index, section: 0)) as? PostCell {
-                cell.update(post)
+            if let cell = self.collectionView.cellForItem(at: IndexPath(row: index, section: 0)) as? PostPreviewCell {
+                cell.update()
             }
         }
     }
     
     /* BubbleDelegate START */
     func openProfileLink(_ username: String) {
-        navigationController?.pushViewController(ProfileController(username), animated: true)
     }
     /* BubbleDelegate END */
     
-    /* PostDelegate START */
-    func openProfile(for postID: String) {
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                navigationController?.pushViewController(ProfileController(posts[i].user ?? ""), animated: true)
-                break
-            }
-        }
+    /* PostPreviewDelegate START */
+    func openPost(_ post: Post) {
+        let postView = PostViewController(post)
+        present(postView, animated: true, completion: nil)
     }
-    func openComments(for postID: String) {
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                navigationController?.pushViewController(CommentsController(posts[i]), animated: true)
-                break
-            }
-        }
-    }
-    func postState(for postID: String) -> PostState {
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                return postStates[i]
-            }
-        }
-        return .Question
-    }
-    func setPostState(for postID: String, with state: PostState) {
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                postStates[i] = state
-                break
-            }
-        }
-    }
-    func answerPost(for postID: String, with answer: Int) {
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                posts[i].answerOption(answer)
-                break
-            }
-        }
-    }
-    func getAnswers(for postID: String) -> [Int] {
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                return posts[i].getAnswers()
-            }
-        }
-        fatalError("No Answers")
-    }
-    func getCommentCount(for postID: String) -> Int {
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                return posts[i].comments.count
-            }
-        }
-        return 0
-    }
-    func getPostChoices(for postID: String) -> [String] {
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                return posts[i].choices ?? []
-            }
-        }
-        fatalError("No Choices")
-    }
-    func getPostColors(for postID: String) -> [String] {
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                return posts[i].colors ?? []
-            }
-        }
-        fatalError("No Colors")
-    }
-    func refreshPost(for postID: String) {
-        for i in 0..<messages.count {
-            if let postMessage = messages[i] as? PostMessage {
-                if let cell = collectionView.cellForItem(at: IndexPath(row: postMessage.cellIndex, section: 0)) as? PostCell {
-                    cell.setPost(postMessage.postID, collectionView: collectionView)
-                }
-                fetchPost(posts[postMessage.postIndex], index: postMessage.cellIndex)
-            }
-        }
-    }
-    func shouldShowShare() -> Bool {
-        return false
-    }
-    /* PostDelegate END */
-
+    /* PostPreviewDelegate END */
+    
 }
 class Message {
     let user:String
     let time:String
-    init(user:String, time:String) {
+    let style:MessageStyle
+    init(user:String, time:String, style:MessageStyle) {
         self.user = user
         self.time = time
+        self.style = style
     }
+}
+enum MessageStyle {
+    case mine
+    case other
 }
 class TextMessage:Message {
     let message:String
-    let style:BubbleStyle
-    init(user:String, time:String, message:String, style:BubbleStyle) {
+    init(user:String, time:String, style:MessageStyle, message:String) {
         self.message = message
-        self.style = style
-        super.init(user: user, time: time)
+        super.init(user: user, time: time, style: style)
     }
 }
 class PostMessage:Message {
     let postID:String
     let postIndex:Int
     let cellIndex:Int
-    init(user:String, time:String, postID:String, postIndex:Int, cellIndex:Int) {
+    init(user:String, time:String, style:MessageStyle, postID:String, postIndex:Int, cellIndex:Int) {
         self.postID = postID
         self.postIndex = postIndex
         self.cellIndex = cellIndex
-        super.init(user: user, time: time)
+        super.init(user: user, time: time, style: style)
     }
 }

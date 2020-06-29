@@ -13,10 +13,27 @@ import UIKit
 import JWTDecode
 
 class Network{
-    static var authToken:String? = nil
+    static private var authToken:String? = nil
+    static var username:String? = nil
+    static var profile:Profile? = nil
     
+    static func setToken(_ token:String?) {
+        authToken = token
+        if let t = token {
+            do{
+                let jwt = try decode(jwt: t)
+                username = (jwt.body["uID"] as! String)
+            }catch{
+                print(error)
+            }
+        }else{
+            username = nil
+        }
+    }
     
-    static func request(url:String, type:HTTPMethod, paramters:[String:Any]?, auth:Bool = false, callback:@escaping (_ response:[String:Any], _ error:NSError?) -> Void = { _,_  in }){
+    static func request(url:String, type:HTTPMethod, paramters:[String:Any]?, auth:Bool = false, callback:@escaping (_ response:[String:Any], _ error:NSError?) ->
+        Void = { _,_  in }){
+        URLCache.shared = URLCache()
         var headers:HTTPHeaders = [:]
         if auth {
             headers["Authorization"] = authToken
@@ -99,6 +116,7 @@ class Network{
                         if let dat = responseData.data {
                             let image = UIImage(data: dat)
                             CacheManager.profilePictures[user] = image
+                            print("Downloaded Picture For \(user)")
                             callback(image)
                         }else{
                             callback(nil)

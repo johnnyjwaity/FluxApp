@@ -9,52 +9,52 @@
 import UIKit
 import KeychainAccess
 
-class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout, PostDelegate {
-    
+class HomeController:UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, PostDelegate {
     
     static var shared:HomeController!
-    
-    var posts:[Post] = []
-    var postStates:[PostState] = []
     let refreshControl = UIRefreshControl()
     var allowsRefresh = true
+    var posts:[Post] = []
+    
+    let collectionView:UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        let c = UICollectionView(frame: CGRect(), collectionViewLayout: layout)
+        c.backgroundColor = UIColor.white
+        c.translatesAutoresizingMaskIntoConstraints = false
+        c.register(PostCell.self, forCellWithReuseIdentifier: "postCell")
+//        c.isScrollEnabled = false
+//        c.alwaysBounceVertical = true
+        return c
+    }()
     
     
-
     override func viewDidLoad() {
         if HomeController.shared == nil {
             HomeController.shared = self
         }
+        view.backgroundColor = UIColor.white
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        view.addSubview(collectionView)
+        collectionView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor).isActive = true
+        collectionView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor).isActive = true
+        collectionView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        collectionView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         
-        collectionView.backgroundColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
-        collectionView.register(OptionPostCell.self, forCellWithReuseIdentifier: "option")
-        collectionView.register(TextPostCell.self, forCellWithReuseIdentifier: "text")
-        collectionView.contentInset = UIEdgeInsets(top: 15, left: 0, bottom: 0, right: 0)
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont(name: "Amandita", size: 28)!]
-        navigationController?.navigationBar.barTintColor = UIColor.appBlue
-        navigationController?.navigationBar.tintColor = UIColor.white
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "message").withRenderingMode(.alwaysTemplate), style: .done, target: self, action: #selector(openDirectMessages))
-        navigationItem.rightBarButtonItem?.tintColor = UIColor.white
-//        refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         refreshControl.addTarget(self, action: #selector(getFeed), for: .valueChanged)
-        collectionView.alwaysBounceVertical = true
         if allowsRefresh {
             collectionView.refreshControl = refreshControl
         }
         
         
-    }
-    @objc
-    func openDirectMessages(){
-        navigationController?.pushViewController(DMController(), animated: true)
+        let dmItem = UIBarButtonItem(image: #imageLiteral(resourceName: "message"), style: .plain, target: self, action: #selector(openDM))
+        navigationItem.rightBarButtonItem = dmItem
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
     }
-    
-    
     
     @objc
     func getFeed(){
@@ -64,7 +64,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             AppDelegate.registerForPushNotifications()
         }
         URLCache.shared = URLCache()
-        
         Network.request(url: "https://api.tryflux.app/feed", type: .get, paramters: nil, auth: true) { (response, error) in
             var posts:[Post] = []
             if let success = response["success"] as? Bool {
@@ -72,168 +71,97 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
                     let feed:[[String:Any]] = response["feed"] as! [[String:Any]]
                     for p in feed {
                         let id = p["id"]! as! String
-                        let type = p["type"]! as! Int
-                        posts.append(Post(postID: id, type: PostType.getType(type)))
-                        if type == 0 {
-                            let choices = p["choices"] as! Int
-                            posts.last?.amount = choices
-                        }
+                        let post = Post(postID: id)
+//                        if p["type"] as! Int == 3 {
+//                            continue
+//                        }
+                        posts.append(post)
                     }
                 }
             }
             self.setPosts(posts)
-            self.refreshControl.endRefreshing()
+            if self.refreshControl.isRefreshing {
+                self.refreshControl.endRefreshing()
+            }
+        }
+    }
+    func setPosts(_ posts:[Post]){
+        self.posts = posts
+        for p in self.posts {
+            p.fetch {
+                if let index = self.posts.firstIndex(of: p) {
+                    if let cell = self.collectionView.cellForItem(at: IndexPath(row: index, section: 0)) as? PostCell {
+                        cell.update()
+                    }
+                }
+            }
+        }
+        collectionView.reloadData()
+    }
+    
+    @objc
+    func openDM(){
+        navigationController?.pushViewController(DMController(), animated: true)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return posts.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "postCell", for: indexPath) as! PostCell
+        cell.setPost(posts[indexPath.row])
+        cell.delegate = self
+        return cell
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: UIScreen.main.bounds.width, height: 450)
+    }
+    
+    func openProfile(for user: String) {
+        var profile:Profile!
+        if user == Network.username {
+            profile = Network.profile
+        }else{
+            profile = Profile(username: user)
+        }
+        navigationController?.pushViewController(ProfileController(profile: profile), animated: true)
+    }
+    
+    func openComments(for postID: String) {
+        var post:Post? = nil
+        for p in self.posts {
+            if p.postID == postID {
+                post = p
+            }
+        }
+        if let p = post {
+            let navigationController = UINavigationController(rootViewController: CommentsController(p))
+            present(navigationController, animated: true, completion: nil)
         }
     }
     
-    func setPosts(_ posts:[Post]){
-        self.posts = posts
-        self.postStates = []
-        for _ in 0..<posts.count {
-            postStates.append(.Question)
-        }
-        self.collectionView.reloadData()
-        
+    func refreshPost(for postID: String) {
         var counter = 0
-        for post in self.posts {
-            let index = counter
-            fetchPost(post, index: index)
+        for p in posts {
+            if p.postID == postID {
+                p.invalidate()
+                if let cell = collectionView.cellForItem(at: IndexPath(row: counter, section: 0)) as? PostCell {
+                    cell.update()
+                }
+                p.fetch {
+                    if let cell = self.collectionView.cellForItem(at: IndexPath(row: counter, section: 0)) as? PostCell {
+                        cell.update()
+                    }
+                }
+                break
+            }
             counter += 1
         }
     }
     
-    func fetchPost(_ post:Post, index:Int){
-        post.fetch {
-            if let cell = self.collectionView.cellForItem(at: IndexPath(row: index, section: 0)) as? PostCell {
-                cell.update(post)
-            }
-        }
-    }
-    
-    
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return posts.count
-    }
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: posts[indexPath.row].type == .Option ? "option" : "text", for: indexPath) as! PostCell
-        cell.delegate = self
-        cell.setPost(posts[indexPath.row].postID, collectionView: collectionView)
-        if posts[indexPath.row].fetched {
-            cell.update(posts[indexPath.row])
-        }
-        return cell
-    }
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if indexPath.row >= posts.count {
-            return CGSize(width: 0, height: 0)
-        }
-        switch posts[indexPath.row].type {
-        case .Option:
-            if posts[indexPath.row].fetched == false {
-                return CGSize(width: (UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width : UIScreen.main.bounds.height) * 0.96, height: CGFloat(112 + round((Double(posts[indexPath.row].amount ?? 1) / 2)) * 70))
-            }else{
-                if postStates[indexPath.row] == .Result {
-                    return CGSize(width: (UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width : UIScreen.main.bounds.height) * 0.96, height: CGFloat(162 + (posts[indexPath.row].choices!.count * 72)))
-                }
-                return CGSize(width: (UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width : UIScreen.main.bounds.height) * 0.96, height: CGFloat(112 + round((Double(posts[indexPath.row].choices!.count) / 2)) * 70))
-            }
-        case .Text:
-            return CGSize(width: (UIScreen.main.bounds.width < UIScreen.main.bounds.height ? UIScreen.main.bounds.width : UIScreen.main.bounds.height) * 0.96, height: 245)
-        }
-    }
-    
-    /* PostDelegate START */
-    func openProfile(for postID:String) {
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                navigationController?.pushViewController(ProfileController(posts[i].user ?? ""), animated: true)
-                break
-            }
-        }
-    }
-    
-    func openComments(for postID:String) {
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                navigationController?.pushViewController(CommentsController(posts[i]), animated: true)
-                break
-            }
-        }
-        
-    }
-    func postState(for postID: String) -> PostState{
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                return postStates[i]
-            }
-        }
-        fatalError("No Post State")
-    }
-    func setPostState(for postID: String, with state: PostState) {
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                postStates[i] = state
-                break
-            }
-        }
-    }
-    func answerPost(for postID: String, with answer: Int) {
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                posts[i].answerOption(answer)
-                break
-            }
-        }
-    }
-    func getAnswers(for postID: String) -> [Int] {
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                return posts[i].getAnswers()
-            }
-        }
-        fatalError("Couldnt get answers")
-    }
-    func getCommentCount(for postID: String) -> Int {
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                return posts[i].comments.count
-            }
-        }
-        fatalError("Couldnt get Comment Count")
-    }
-    func getPostChoices(for postID: String) -> [String] {
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                return posts[i].choices ?? []
-            }
-        }
-        fatalError("Couldnt get Choices")
-    }
-    func getPostColors(for postID: String) -> [String] {
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                return posts[i].colors ?? []
-            }
-        }
-        fatalError("Couldnt get Colors")
-    }
-    func refreshPost(for postID: String) {
-        for i in 0..<posts.count {
-            if posts[i].postID == postID {
-                posts[i].invalidate()
-                if let cell = collectionView.cellForItem(at: IndexPath(row: i, section: 0)) as? PostCell {
-                    cell.setPost(postID, collectionView: collectionView)
-                }
-                fetchPost(posts[i], index: i)
-                break
-            }
-        }
-    }
-    func shouldShowShare() -> Bool {
-        return true
-    }
     func sharePost(for postID: String) {
-        tabBarController?.present(PostShareController(postID), animated: false, completion: nil)
+        let shareController = PostShareController(postID)
+        tabBarController?.present(shareController, animated: true, completion: nil)
     }
-    /* PostDelegate END */
 }

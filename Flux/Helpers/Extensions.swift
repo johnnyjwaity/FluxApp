@@ -6,6 +6,8 @@ extension UIColor {
     static let postColors:[String:UIColor] = ["r":UIColor.red, "o": UIColor.orange, "g": UIColor.appGreen, "b": UIColor.appBlue, "p":UIColor.purple]
 }
 
+
+
 extension Date {
     static func fromStamp(_ stamp:String) -> Date {
         var components = DateComponents()
@@ -22,6 +24,23 @@ extension Date {
         return date!
     }
     
+    static func UTCToLocalStamp(date:String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM-dd-yyyy:HH-mm-ss"
+        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+        
+        let dt = dateFormatter.date(from: date)
+        
+        dateFormatter.timeZone = TimeZone.current
+        
+        if let dtt = dt {
+            return dateFormatter.string(from: dtt)
+        }else{
+            return date
+        }
+        
+    }
+    
     static func UTCToLocal(date:String) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM-dd-yyyy:HH-mm-ss"
@@ -33,6 +52,46 @@ extension Date {
         dateFormatter.dateFormat = "M/dd/YY h:mm a"
         
         return dateFormatter.string(from: dt!)
+    }
+    
+    static func UTCDate(date:String) -> Date {
+        let localString:String = UTCToLocalStamp(date: date)
+        return fromStamp(localString)
+    }
+    
+    static func elapsedTime(date:Date) -> String {
+        let timeElapsed = Date().timeIntervalSince1970 - date.timeIntervalSince1970
+        let years = Int(timeElapsed / (60 * 60 * 24 * 360))
+        let months = Int(timeElapsed / (60 * 60 * 24 * 30))
+        let days = Int(timeElapsed / (60 * 60 * 24))
+        let hours = Int(timeElapsed / (60 * 60))
+        let minutes = Int(timeElapsed / (60))
+        let seconds = Int(timeElapsed)
+        var value:Int = 0
+        var unit:String = ""
+        if years > 0 {
+            value = years
+            unit = "year"
+        }else if months > 0 {
+            value = months
+            unit = "month"
+        }else if days > 0 {
+            value = days
+            unit = "day"
+        }else if hours > 0 {
+            value = hours
+            unit = "hour"
+        }else if minutes > 0 {
+            value = minutes
+            unit = "minute"
+        }else {
+            value = seconds
+            unit = "second"
+        }
+        if value != 1 {
+            unit += "s"
+        }
+        return "\(value) \(unit) ago"
     }
 }
 
