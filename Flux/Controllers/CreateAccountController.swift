@@ -60,16 +60,16 @@ class CreateAccountController: UIViewController, CreateAccountDelegate {
         let phoneEnter = PhoneNumberEnter()
         let phoneVerify = PhoneNumberVerify()
         let createPage = CreatePage()
-        controllers = [phoneEnter, phoneVerify, createPage]
+        controllers = [phoneEnter, createPage]
         super.init(nibName: nil, bundle: nil)
         phoneEnter.delegate = self
         phoneVerify.delegate = self
         createPage.delegate = self
         modalPresentationStyle = .fullScreen
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor(named: "BG")
         
         view.addSubview(topBar)
-        topBar.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        topBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 10).isActive = true
         topBar.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         topBar.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         topBar.heightAnchor.constraint(equalToConstant: 60).isActive = true
@@ -122,7 +122,7 @@ class CreateAccountController: UIViewController, CreateAccountDelegate {
             dot.translatesAutoresizingMaskIntoConstraints = false
             dot.widthAnchor.constraint(equalToConstant: 10).isActive = true
             dot.heightAnchor.constraint(equalToConstant: 10).isActive = true
-            dot.backgroundColor = i == currentController ? UIColor.appBlue : UIColor(red: 0.9, green: 0.9, blue: 0.9, alpha: 1)
+            dot.backgroundColor = i == currentController ? UIColor.appBlue : UIColor(named: "GR")
             dot.layer.cornerRadius = 5
             pageDotStack.addArrangedSubview(dot)
         }
@@ -184,7 +184,7 @@ class PhoneNumberEnter:UIViewController, UITextFieldDelegate, UIPickerViewDataSo
         l.translatesAutoresizingMaskIntoConstraints = false
         l.text = ""
         l.font = UIFont.boldSystemFont(ofSize: 35)
-        l.textColor = UIColor.black
+        l.textColor = UIColor(named: "FG")
         l.lineBreakMode = .byWordWrapping
         l.numberOfLines = 2
         return l
@@ -459,19 +459,20 @@ class PhoneNumberEnter:UIViewController, UITextFieldDelegate, UIPickerViewDataSo
     @objc
     func nextButtonClicked(){
         nextButton.startRefresh()
-        let params = ["phone": inputField.text ?? "", "countryCode": curCode.code]
-        Network.request(url: "https://api.tryflux.app/prepareVerification", type: .post, paramters: params, auth: false) { (res, err) in
+        var parameters:[String:Any] = [:]
+        parameters["phone"] = self.inputField.text ?? ""
+        parameters["countryCode"] = self.curCode.code
+        Network.request(url: "https://api.tryflux.app/validPhone", type: .post, paramters: parameters, auth: false) { (res, err) in
             self.nextButton.endRefresh()
-            if res["success"] as? Int == 0 {
-                let alert = UIAlertController(title: "Sorry...", message: res["reason"] as? String ?? "Unknown Error Occurred", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                self.present(alert, animated: true)
-            }else{
+            if res["success"] as? Int == 1 {
                 self.delegate?.setPhone(code: self.curCode, number: self.inputField.text ?? "")
                 self.delegate?.next()
+            }else{
+                let alert = UIAlertController(title: "Sorry...", message: "Phone number is already in use", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                self.present(alert, animated: true)
             }
         }
-        
     }
 
 }
@@ -485,7 +486,7 @@ class PhoneNumberVerify:UIViewController{
         l.translatesAutoresizingMaskIntoConstraints = false
         l.text = ""
         l.font = UIFont.boldSystemFont(ofSize: 35)
-        l.textColor = UIColor.black
+        l.textColor = UIColor(named: "FG")
         l.lineBreakMode = .byWordWrapping
         l.numberOfLines = 2
         return l
@@ -557,6 +558,7 @@ class PhoneNumberVerify:UIViewController{
     
     @objc
     func verifyButtonClicked(){
+        self.delegate?.next()
         if let number = delegate?.getPhone() {
             verifyButton.startRefresh()
             let params:[String:String] = ["countryCode": "\(number.code.code)", "phone": "\(number.number)"]
@@ -596,7 +598,7 @@ class CreatePage:UIViewController {
         l.translatesAutoresizingMaskIntoConstraints = false
         l.text = ""
         l.font = UIFont.boldSystemFont(ofSize: 35)
-        l.textColor = UIColor.black
+        l.textColor = UIColor(named: "FG")
         l.lineBreakMode = .byWordWrapping
         l.numberOfLines = 2
         return l
@@ -615,6 +617,7 @@ class CreatePage:UIViewController {
     
     let usernameField = IconTextField(icon: #imageLiteral(resourceName: "profile"), field: "Username")
     let passwordField = IconTextField(icon: #imageLiteral(resourceName: "lock"), field: "Password", secure: true)
+    let passwordConfirmField = IconTextField(icon: #imageLiteral(resourceName: "lock"), field: "Confirm Password", secure: true)
     
     let button:LoadButton = LoadButton(title: "Create Account")
     init(){
@@ -626,7 +629,7 @@ class CreatePage:UIViewController {
         label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10).isActive = true
         label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10).isActive = true
         
-        subLabel.text = "Final step to create your account is to create your username and password"
+        subLabel.text = "Next step to create your account is to create your username and password"
         view.addSubview(subLabel)
         subLabel.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 10).isActive = true
         subLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10).isActive = true
@@ -640,11 +643,15 @@ class CreatePage:UIViewController {
         passwordField.topAnchor.constraint(equalTo: usernameField.bottomAnchor, constant: 20).isActive = true
         passwordField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
+        view.addSubview(passwordConfirmField)
+        passwordConfirmField.topAnchor.constraint(equalTo: passwordField.bottomAnchor, constant: 20).isActive = true
+        passwordConfirmField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
         
         button.layer.cornerRadius = 8
         button.addTarget(self, action: #selector(buttonClicked), for: .touchUpInside)
         view.addSubview(button)
-        button.topAnchor.constraint(equalTo: passwordField.bottomAnchor, constant: 20).isActive = true
+        button.topAnchor.constraint(equalTo: passwordConfirmField.bottomAnchor, constant: 20).isActive = true
         button.leftAnchor.constraint(equalTo: passwordField.leftAnchor).isActive = true
         button.rightAnchor.constraint(equalTo: passwordField.rightAnchor).isActive = true
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
@@ -657,6 +664,7 @@ class CreatePage:UIViewController {
     func buttonClicked() {
         guard let username = usernameField.textField.text else {return}
         guard let password = passwordField.textField.text else {return}
+        guard let confirmPassword = passwordConfirmField.textField.text else {return}
         
         if username.count == 0 {
             let alert = UIAlertController(title: "Sorry...", message: "Please Enter Username", preferredStyle: .alert)
@@ -664,6 +672,14 @@ class CreatePage:UIViewController {
             self.present(alert, animated: true)
             return
         }
+        
+        if password != confirmPassword {
+            let alert = UIAlertController(title: "Sorry...", message: "Password does not match confiration password. Please check both and try again", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            self.present(alert, animated: true)
+            return
+        }
+        
         if password.count <= 6 {
             let alert = UIAlertController(title: "Sorry...", message: "Password is too short. Passwords need to be greater than 6 characters.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))

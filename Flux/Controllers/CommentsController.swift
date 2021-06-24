@@ -16,7 +16,7 @@ class CommentsController: UIViewController, UITableViewDelegate, UITableViewData
     
     let messageInputContainer:UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(red: 0.94, green: 0.94, blue: 0.94, alpha: 1)
+        view.backgroundColor = UIColor(named: "GR")
         view.translatesAutoresizingMaskIntoConstraints = false
         
         let divider = UIView()
@@ -35,7 +35,7 @@ class CommentsController: UIViewController, UITableViewDelegate, UITableViewData
         let field = UITextView()
         field.font = UIFont.systemFont(ofSize: 16)
         field.isScrollEnabled = false
-        field.backgroundColor = UIColor.white
+//        field.backgroundColor = UIColor.white
         field.layer.cornerRadius = 8
 //        field.placeholder = "Enter Comment"
         field.translatesAutoresizingMaskIntoConstraints = false

@@ -27,12 +27,13 @@ class QuestionCell: UICollectionViewCell {
     let divider:UIView = {
         let v = UIView()
         v.translatesAutoresizingMaskIntoConstraints = false
-        v.backgroundColor = UIColor.lightGray
+        v.backgroundColor = UIColor(named: "GR")
         return v
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        contentView.backgroundColor = UIColor(named: "BG")
         contentView.addSubview(arrowImage)
         arrowImage.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -8).isActive = true
         arrowImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true

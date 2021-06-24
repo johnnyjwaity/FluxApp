@@ -59,7 +59,7 @@ class PostController: UIViewController, CreatePostDelegate{
         controllers.append(typeController)
         super.init(nibName: nil, bundle: nil)
         typeController.delegate = self
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor(named: "BG")
         
         view.addSubview(topBar)
         topBar.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
@@ -117,7 +117,7 @@ class PostController: UIViewController, CreatePostDelegate{
             dot.translatesAutoresizingMaskIntoConstraints = false
             dot.widthAnchor.constraint(equalToConstant: 10).isActive = true
             dot.heightAnchor.constraint(equalToConstant: 10).isActive = true
-            dot.backgroundColor = i == currentController ? UIColor.appBlue : UIColor(red: 0.9, green: 0.9, blue: 0.9, alpha: 1)
+            dot.backgroundColor = i == currentController ? UIColor.appBlue : UIColor(named: "GR")
             dot.layer.cornerRadius = 5
             pageDotStack.addArrangedSubview(dot)
         }
@@ -262,6 +262,7 @@ class CreatePostTypeController: CreatePostPageController, UITableViewDelegate, U
         tableView.register(PostTypeCell.self, forCellReuseIdentifier: "postType")
         tableView.tableFooterView = UIView()
         tableView.alwaysBounceVertical = false
+        tableView.backgroundColor = UIColor(named: "BG")
         return tableView
     }()
     
@@ -326,7 +327,7 @@ class CreatePostTextController:CreatePostPageController, UITextViewDelegate{
         tf.isEditable = true
         tf.translatesAutoresizingMaskIntoConstraints = false
         tf.font = UIFont.systemFont(ofSize: 25)
-        
+        tf.backgroundColor = UIColor(named: "BG")
         return tf
     }()
     var inputHeightContraint:NSLayoutConstraint!

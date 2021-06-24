@@ -8,30 +8,24 @@
 
 import UIKit
 
-class FluxTabBarController: UITabBarController {
+class FluxTabBarController: UIViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, TabBarDelegate {
+    
     
     static var shared:FluxTabBarController!
+    
+    let pageController:UIPageViewController
+    let tabBar:FluxTabBar
+    var tabBarBottom:NSLayoutConstraint!
     
     let homeController:HomeController
     let exploreController:ExploreController
     let searchController:SearchController
     let profileController:ProfileController
     
-    let centerButton:UIView = {
-        let button = UIView()
-        button.backgroundColor = UIColor.appBlue
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 35
-        let plusSign = UIImageView(image: #imageLiteral(resourceName: "plus2").withRenderingMode(.alwaysTemplate))
-        plusSign.tintColor = UIColor.white
-        plusSign.translatesAutoresizingMaskIntoConstraints = false
-        button.addSubview(plusSign)
-        plusSign.centerXAnchor.constraint(equalTo: button.centerXAnchor).isActive = true
-        plusSign.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
-        plusSign.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        plusSign.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        return button
-    }()
+    var currentController = 0
+    let controllers:[UIViewController]
+    
+    var tabBarDisplayed:Bool = true
     
     
     init() {
@@ -39,7 +33,11 @@ class FluxTabBarController: UITabBarController {
         exploreController = ExploreController()
         searchController = SearchController()
         profileController = ProfileController()
+        controllers = [UINavigationController(rootViewController: homeController), UINavigationController(rootViewController: exploreController), UINavigationController(rootViewController: searchController), UINavigationController(rootViewController: profileController)]
+        pageController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+        tabBar = FluxTabBar()
         super.init(nibName: nil, bundle: nil)
+        view.backgroundColor = UIColor(named: "BG")
         
         FluxTabBarController.shared = self
         
@@ -59,15 +57,53 @@ class FluxTabBarController: UITabBarController {
         profileController.title = "Profile"
         profileController.tabBarItem = UITabBarItem(title: "", image: #imageLiteral(resourceName: "profile").withRenderingMode(.alwaysTemplate), tag: 4)
         
-        self.viewControllers = [UINavigationController(rootViewController: homeController),UINavigationController(rootViewController: exploreController), placeHolder, UINavigationController(rootViewController: searchController), UINavigationController(rootViewController: profileController)]
+        tabBar.delegate = self
+        view.addSubview(tabBar)
+        tabBarBottom = tabBar.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        tabBarBottom.isActive = true
+        tabBar.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        tabBar.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(createPost))
-        centerButton.addGestureRecognizer(tapGesture)
-        tabBar.addSubview(centerButton)
-        centerButton.centerXAnchor.constraint(equalTo: tabBar.centerXAnchor).isActive = true
-        centerButton.centerYAnchor.constraint(equalTo: tabBar.centerYAnchor, constant: -5).isActive = true
-        centerButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
-        centerButton.heightAnchor.constraint(equalToConstant: 70).isActive = true
+        addChild(pageController)
+        pageController.delegate = self
+        pageController.dataSource = self
+        pageController.view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(pageController.view)
+        pageController.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        pageController.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        pageController.view.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        pageController.view.bottomAnchor.constraint(equalTo: tabBar.topAnchor).isActive = true
+        
+        pageController.setViewControllers([controllers[0]], direction: .forward, animated: false, completion: nil)
+        
+        view.bringSubviewToFront(tabBar)
+
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        if completed {
+            if let curController = pageViewController.viewControllers?[0] {
+                let index = controllers.firstIndex(of: curController) ?? currentController
+                currentController = index
+                tabBar.changeTab(index)
+            }
+        }
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        let newIndex = currentController - 1
+        if newIndex < 0 {
+            return nil
+        }
+        return controllers[newIndex]
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        let newIndex = currentController + 1
+        if newIndex >= controllers.count {
+            return nil
+        }
+        return controllers[newIndex]
     }
     
     
@@ -75,6 +111,31 @@ class FluxTabBarController: UITabBarController {
     func createPost(){
         let postController = PostController()
         present(postController, animated: true)
+    }
+    
+    func tabClicked(_ index:Int) {
+        if index != currentController {
+            pageController.setViewControllers([controllers[index]], direction: index > currentController ? .forward : .reverse, animated: true, completion: nil)
+            currentController = index
+        }else{
+            if let navCont = controllers[index] as? UINavigationController {
+                navCont.popToRootViewController(animated: true)
+            }
+        }
+    }
+    
+    func toggleTabBar(shouldDisplay:Bool){
+        if shouldDisplay != tabBarDisplayed {
+            tabBarBottom.constant = shouldDisplay ? 0 : 50
+            let newAlpha:CGFloat = shouldDisplay ? 1 : 0
+            UIView.animate(withDuration: 0.2, animations: {
+                self.view.layoutIfNeeded()
+                self.tabBar.alpha = newAlpha
+            }) { (c) in
+                self.pageController.dataSource = shouldDisplay ? self : nil
+            }
+            tabBarDisplayed = shouldDisplay
+        }
     }
     
     

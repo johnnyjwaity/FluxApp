@@ -23,19 +23,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         window = UIWindow(frame: UIScreen.main.bounds)
         Emoji.loadEmojis()
         CountryCode.loadCodes()
-        
-//        let tabView = tabController.tabBar
-//
-//        let testView = UIView()
-//        testView.translatesAutoresizingMaskIntoConstraints = false
-//        testView.backgroundColor = UIColor.red
-//        testView.layer.cornerRadius = 35
-//        tabController.tabBar.addSubview(testView)
-//        testView.centerXAnchor.constraint(equalTo: tabView.centerXAnchor).isActive = true
-//        testView.centerYAnchor.constraint(equalTo: tabView.centerYAnchor).isActive = true
-//        testView.widthAnchor.constraint(equalToConstant: 70).isActive = true
-//        testView.heightAnchor.constraint(equalToConstant: 70).isActive = true
         let fluxTabBarCont = FluxTabBarController()
+        let _ = LinkedAccounts()
         window?.rootViewController = fluxTabBarCont
         window?.makeKeyAndVisible()
         

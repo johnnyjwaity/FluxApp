@@ -47,7 +47,7 @@ class BubbleCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = UIColor.white
+        backgroundColor = UIColor(named: "BG")
         
         addSubview(iconView)
         iconLeft = iconView.leftAnchor.constraint(equalTo: leftAnchor, constant: 8)
@@ -98,8 +98,8 @@ class BubbleCell: UICollectionViewCell {
             iconLeft.isActive = true
             bubbleRight.isActive = false
             bubbleLeft.isActive = true
-            bubble.backgroundColor = UIColor(red: 0.9, green: 0.9, blue: 0.9, alpha: 1)
-            message.textColor = UIColor.black
+            bubble.backgroundColor = UIColor(named: "GR")
+            message.textColor = UIColor(named: "FG")
             break
         }
         

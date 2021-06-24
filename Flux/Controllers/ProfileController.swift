@@ -9,29 +9,29 @@
 import UIKit
 import JWTDecode
 import CropViewController
-import SCSDKBitmojiKit
-import SCSDKLoginKit
 
-class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CropViewControllerDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, ProfileViewDelegate {
+
+class ProfileController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, ProfileViewDelegate {
     
     let refreshControl = UIRefreshControl()
     
     let collectionView:UICollectionView = {
         let layout = UICollectionViewFlowLayout()
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 0
         let c = UICollectionView(frame: CGRect(), collectionViewLayout: layout)
         c.translatesAutoresizingMaskIntoConstraints = false
         c.alwaysBounceVertical = true
         c.register(PostCell.self, forCellWithReuseIdentifier: "post")
         c.register(ProfileInfoView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "profileHeader")
         c.register(QuestionCell.self, forCellWithReuseIdentifier: "question")
-        c.backgroundColor = UIColor.white
+        c.backgroundColor = UIColor(named: "BG")
         return c
     }()
     
     var profileView:ProfileInfoView? = nil
     
     
-    let picker = UIImagePickerController()
     
     var profile:Profile? = nil
     
@@ -41,7 +41,7 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
     init(profile:Profile? = nil){
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = UIColor.white
-        picker.delegate = self
+        
         
         refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
         collectionView.refreshControl = refreshControl
@@ -122,103 +122,13 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
         navigationController?.pushViewController(SettingsController(style: .grouped), animated: true)
     }
     
-    func profilePictureClicked(){
-        let action = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let takePhoto = UIAlertAction(title: "Take Photo", style: .default) { (a) in
-            if UIImagePickerController.isSourceTypeAvailable(.camera){
-                self.picker.sourceType = UIImagePickerController.SourceType.camera
-                self.picker.cameraCaptureMode =  UIImagePickerController.CameraCaptureMode.photo
-                self.picker.modalPresentationStyle = .custom
-                self.present(self.picker,animated: true,completion: nil)
-            }else{
-                //action performed if there is no camera in device.
-            }
-        }
-        let choosePhoto = UIAlertAction(title: "Choose Photo", style: .default) { (a) in
-            self.picker.sourceType = .photoLibrary
-            self.present(self.picker, animated: true, completion: nil)
-        }
-        let linkBitmoji = UIAlertAction(title: "Link Bitmoji", style: .default) { (a) in
-            if SCSDKLoginClient.isUserLoggedIn {
-                self.getBitmoji()
-            }else{
-                SCSDKLoginClient.login(from: self, completion: { (res, err) in
-                    if res {
-                        self.getBitmoji()
-                    }else {
-                        let errorMessage = UIAlertController(title: "Sorry...", message: "Could not connect to your snapchat account. Please try again later.", preferredStyle: .alert)
-                        self.present(errorMessage, animated: true, completion: nil)
-                    }
-                })
-            }
-        }
-        let deletePhoto = UIAlertAction(title: "Delete Profile Picture", style: .destructive) { (a) in
-            self.profileView?.profilePicture.image = #imageLiteral(resourceName: "profilePlaceholder")
-            Network.request(url: "https://api.tryflux.app/profilePicture", type: .delete, paramters: nil, auth: true)
-        }
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (a) in
-            
-        }
-        action.addAction(takePhoto)
-        action.addAction(choosePhoto)
-        action.addAction(linkBitmoji)
-        action.addAction(deletePhoto)
-        action.addAction(cancel)
-        present(action, animated: true, completion: nil)
-    }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        let chosenImage = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
-        let cropController = CropViewController(croppingStyle: .circular, image: chosenImage)
-        cropController.delegate = self
-        picker.pushViewController(cropController, animated: true)
-    }
     
-    func getBitmoji(){
-        let graphQLQuery = "{me{displayName, bitmoji{avatar}}}"
-        SCSDKLoginClient.fetchUserData(withQuery: graphQLQuery, variables: ["page": "bitmoji"], success: { (resource) in
-            guard let resources = resource,
-                let data = resources["data"] as? [String: Any],
-                let me = data["me"] as? [String: Any] else { return }
-            var bitmojiAvatarUrl: String?
-            if let bitmoji = me["bitmoji"] as? [String: Any] {
-                bitmojiAvatarUrl = bitmoji["avatar"] as? String
-            }
-            if let link = bitmojiAvatarUrl {
-                do {
-                    let url = URL(string: link)!
-                    let data = try Data(contentsOf: url)
-                    let image = UIImage(data: data)
-                    
-                    let bottomImage = UIImage.from(color: UIColor.white)
-                    let size = CGSize(width: 200, height: 200)
-                    UIGraphicsBeginImageContext(size)
-                    
-                    let areaSize = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-                    bottomImage.draw(in: areaSize)
-                    
-                    image!.draw(in: areaSize, blendMode: .normal, alpha: 1)
-                    
-                    let newImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
-                    UIGraphicsEndImageContext()
-                    DispatchQueue.main.async {
-                        self.profileView?.profilePicture.image = newImage
-                    }
-                    Network.uploadImage(image: newImage)
-                }catch{
-                    print(error)
-                }
-            }
-        }, failure: { (err, loggedOut) in
-            
-        })
-    }
     
-    func cropViewController(_ cropViewController: CropViewController, didCropToCircularImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
-        cropViewController.dismiss(animated: true, completion: nil)
-        profileView?.profilePicture.image = image
-        Network.uploadImage(image: image)
-    }
+    
+    
+    
+    
     
     
     func followButtonClicked(){
@@ -325,7 +235,7 @@ class ProfileController: UIViewController, UIImagePickerControllerDelegate, UINa
 class ProfileInfoView:UICollectionReusableView {
     let profilePicture:UIImageView = {
         let iv = UIImageView(image: #imageLiteral(resourceName: "profilePlaceholder"))
-        iv.backgroundColor = UIColor.lightGray
+        iv.backgroundColor = UIColor(named: "GR")
         iv.translatesAutoresizingMaskIntoConstraints = false
         iv.contentMode = .scaleAspectFill
         iv.layer.cornerRadius = 50
@@ -337,7 +247,7 @@ class ProfileInfoView:UICollectionReusableView {
     
     let infoBar:UIView = {
         let v = UIView()
-        v.backgroundColor = UIColor.white
+        v.backgroundColor = UIColor(named: "BG")
         v.translatesAutoresizingMaskIntoConstraints = false
         return v
     }()
@@ -359,7 +269,7 @@ class ProfileInfoView:UICollectionReusableView {
     let nameLabel:UILabel = {
         let l = UILabel()
         l.text = "Test Name"
-        l.textColor = UIColor.black
+        l.textColor = UIColor(named: "FG")
         l.font = UIFont.boldSystemFont(ofSize: 22)
         l.translatesAutoresizingMaskIntoConstraints = false
         return l
@@ -377,7 +287,7 @@ class ProfileInfoView:UICollectionReusableView {
     let bioField:UITextView = {
         let textView = UITextView()
         textView.text = ""
-        textView.textColor = UIColor.lightGray
+        textView.textColor = UIColor(named: "GR")
         textView.font = UIFont.systemFont(ofSize: 15)
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.isEditable = false
@@ -389,7 +299,7 @@ class ProfileInfoView:UICollectionReusableView {
     
     let divider:UIView = {
         let divider = UIView()
-        divider.backgroundColor = UIColor.lightGray
+        divider.backgroundColor = UIColor(named: "GR")
         divider.layer.cornerRadius = 0.5
         divider.translatesAutoresizingMaskIntoConstraints = false
         return divider
@@ -399,7 +309,7 @@ class ProfileInfoView:UICollectionReusableView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = UIColor.white
+        self.backgroundColor = UIColor(named: "BG")
         self.translatesAutoresizingMaskIntoConstraints = false
         let containerView = UIView()
         
@@ -415,9 +325,7 @@ class ProfileInfoView:UICollectionReusableView {
         profilePicture.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 10).isActive = true
         profilePicture.widthAnchor.constraint(equalToConstant: 100).isActive = true
         profilePicture.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        let tap = UITapGestureRecognizer(target: self, action: #selector(profilePictureClicked))
-        tap.numberOfTapsRequired = 1
-        profilePicture.addGestureRecognizer(tap)
+        
         
         containerView.addSubview(infoBar)
         infoBar.leftAnchor.constraint(equalTo: profilePicture.rightAnchor, constant: 10).isActive = true
@@ -481,11 +389,6 @@ class ProfileInfoView:UICollectionReusableView {
     }
     
     @objc
-    func profilePictureClicked(){
-        delegate?.profilePictureClicked()
-    }
-    
-    @objc
     func followButtonClicked(){
         if followButton.tag == 0 {
             delegate?.editButtonClicked()
@@ -531,6 +434,7 @@ class ProfileInfoView:UICollectionReusableView {
     func setBio(bioText:String, linkText:String? = nil){
         let finalBio = NSMutableAttributedString(string: bioText)
         finalBio.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 16), range: NSRange(location: 0, length: bioText.count))
+        finalBio.addAttribute(.foregroundColor, value: UIColor(named: "FG") ?? UIColor.black, range: NSRange(location: 0, length: bioText.count))
         if linkText != "" && linkText != nil {
             if bioText != "" {
                 finalBio.append(NSAttributedString(string: "\n\n"))
@@ -565,7 +469,6 @@ protocol ProfileViewDelegate {
     func followingButtonClicked()
     func followersClicked()
     func followingClicked()
-    func profilePictureClicked()
 }
 
 class InfoButton:UIButton {
@@ -575,7 +478,7 @@ class InfoButton:UIButton {
     init(_ name:String, showDivider:Bool = true) {
         self.name = name
         super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-        backgroundColor = UIColor.white
+        backgroundColor = UIColor(named: "BG")
         translatesAutoresizingMaskIntoConstraints = false
         
         if showDivider {
@@ -594,7 +497,7 @@ class InfoButton:UIButton {
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         textLabel.text = name
         textLabel.textAlignment = .center
-        textLabel.textColor = UIColor.black
+        textLabel.textColor = UIColor(named: "FG")
         textLabel.adjustsFontSizeToFitWidth = true
         
         addSubview(textLabel)
@@ -604,7 +507,7 @@ class InfoButton:UIButton {
         
         numberLabel.translatesAutoresizingMaskIntoConstraints = false
         numberLabel.text = "0"
-        numberLabel.textColor = UIColor.black
+        numberLabel.textColor = UIColor(named: "FG")
         numberLabel.font = UIFont.boldSystemFont(ofSize: 25)
         numberLabel.adjustsFontSizeToFitWidth = true
         numberLabel.textAlignment = .center

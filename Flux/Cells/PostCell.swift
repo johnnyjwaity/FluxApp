@@ -18,12 +18,12 @@ class PostCell: UICollectionViewCell {
         i.layer.cornerRadius = 20
         i.layer.masksToBounds = true
         i.translatesAutoresizingMaskIntoConstraints = false
-        i.backgroundColor = UIColor.appBlue
+        i.backgroundColor = UIColor(named: "GR")
         return i
     }()
     let usernameButton:UIButton = {
        let b = UIButton()
-        b.setTitleColor(UIColor.black, for: .normal)
+        b.setTitleColor(UIColor(named: "FG"), for: .normal)
         b.translatesAutoresizingMaskIntoConstraints = false
         b.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         return b
@@ -48,7 +48,7 @@ class PostCell: UICollectionViewCell {
     
     let headerDivider:UIView = {
         let v = UIView()
-        v.backgroundColor = UIColor.lightGray
+        v.backgroundColor = UIColor(named: "GR")
         v.translatesAutoresizingMaskIntoConstraints = false
         return v
     }()
@@ -72,6 +72,7 @@ class PostCell: UICollectionViewCell {
     
     let questionLabel:UILabel = {
         let l = UILabel()
+        l.textColor = UIColor(named: "FG")
         l.translatesAutoresizingMaskIntoConstraints = false
         l.font = UIFont.boldSystemFont(ofSize: 24)
         l.numberOfLines = 0
@@ -111,6 +112,7 @@ class PostCell: UICollectionViewCell {
     
     let emojiQuestionLabel:UILabel = {
         let l = UILabel()
+        l.textColor = UIColor(named: "FG")
         l.translatesAutoresizingMaskIntoConstraints = false
         l.font = UIFont.boldSystemFont(ofSize: 24)
         l.numberOfLines = 0
@@ -171,6 +173,7 @@ class PostCell: UICollectionViewCell {
     
     let ratingQuestionLabel:UILabel = {
         let l = UILabel()
+        l.textColor = UIColor(named: "FG")
         l.translatesAutoresizingMaskIntoConstraints = false
         l.font = UIFont.boldSystemFont(ofSize: 24)
         l.numberOfLines = 0
@@ -380,7 +383,7 @@ class PostCell: UICollectionViewCell {
     
     let bottomDivider:UIView = {
         let v = UIView()
-        v.backgroundColor = UIColor.lightGray
+        v.backgroundColor = UIColor(named: "GR")
         v.translatesAutoresizingMaskIntoConstraints = false
         return v
     }()
@@ -396,7 +399,7 @@ class PostCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.backgroundColor = UIColor.white
+        contentView.backgroundColor = UIColor(named: "BG")
         contentView.addSubview(profilePicture)
         profilePicture.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8).isActive = true
         profilePicture.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 8).isActive = true
@@ -538,6 +541,9 @@ class PostCell: UICollectionViewCell {
         ratingQuestionLabel.leftAnchor.constraint(equalTo: ratingQuestionView.leftAnchor, constant: 8).isActive = true
         ratingQuestionLabel.rightAnchor.constraint(equalTo: ratingQuestionView.rightAnchor, constant: -8).isActive = true
         
+        let panGesture = UIPanGestureRecognizer(target: self, action: nil)
+        panGesture.cancelsTouchesInView = false
+        ratingControl.addGestureRecognizer(panGesture)
         ratingQuestionView.addSubview(ratingControl)
         ratingControl.centerXAnchor.constraint(equalTo: ratingQuestionView.centerXAnchor).isActive = true
         ratingControl.centerYAnchor.constraint(equalTo: ratingQuestionView.centerYAnchor).isActive = true

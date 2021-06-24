@@ -16,7 +16,7 @@ class LoadingView: UIView {
     init() {
         super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         self.translatesAutoresizingMaskIntoConstraints = false
-        self.backgroundColor = UIColor.white
+        self.backgroundColor = UIColor(named: "BG")
         let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         containerView.translatesAutoresizingMaskIntoConstraints = false
         containerView.backgroundColor = UIColor.white

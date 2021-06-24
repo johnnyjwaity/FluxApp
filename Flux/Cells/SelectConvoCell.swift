@@ -13,6 +13,7 @@ class SelectConvoCell: UITableViewCell {
     let profileView = UIImageView(image: #imageLiteral(resourceName: "profilePlaceholder"))
     let recipientLabel = UILabel()
     let selectView = UIView()
+    let checkMark = UIImageView(image: #imageLiteral(resourceName: "check").withRenderingMode(.alwaysTemplate))
     
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -27,7 +28,7 @@ class SelectConvoCell: UITableViewCell {
         profileView.widthAnchor.constraint(equalToConstant: 40).isActive = true
 
         recipientLabel.text = "Test"
-        recipientLabel.textColor = UIColor.black
+        recipientLabel.textColor = UIColor(named: "FG")
         recipientLabel.translatesAutoresizingMaskIntoConstraints = false
         recipientLabel.font = UIFont.boldSystemFont(ofSize: 20)
         contentView.addSubview(recipientLabel)
@@ -38,16 +39,16 @@ class SelectConvoCell: UITableViewCell {
         selectView.layer.cornerRadius = 15
         selectView.layer.borderWidth = 0.5
         selectView.layer.borderColor = UIColor.lightGray.cgColor
-        selectView.backgroundColor = UIColor.white
+        selectView.backgroundColor = UIColor(named: "BG")
         contentView.addSubview(selectView)
         selectView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -13).isActive = true
         selectView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
         selectView.widthAnchor.constraint(equalToConstant: 30).isActive = true
         selectView.heightAnchor.constraint(equalToConstant: 30).isActive = true
 
-        let checkMark = UIImageView(image: #imageLiteral(resourceName: "check").withRenderingMode(.alwaysTemplate))
         checkMark.translatesAutoresizingMaskIntoConstraints = false
         checkMark.tintColor = UIColor.white
+        checkMark.alpha = 0
         selectView.addSubview(checkMark)
         checkMark.centerYAnchor.constraint(equalTo: selectView.centerYAnchor).isActive = true
         checkMark.centerXAnchor.constraint(equalTo: selectView.centerXAnchor).isActive = true
@@ -82,8 +83,10 @@ class SelectConvoCell: UITableViewCell {
     func toggleCheck(){
         if selectView.backgroundColor == UIColor.white {
             selectView.backgroundColor = UIColor.appBlue
+            checkMark.alpha = 1
         }else{
             selectView.backgroundColor = UIColor.white
+            checkMark.alpha = 0
         }
     }
 

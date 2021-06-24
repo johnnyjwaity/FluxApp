@@ -20,7 +20,7 @@ class PostTypeCell: UITableViewCell {
         let l = UILabel()
         l.font = UIFont.boldSystemFont(ofSize: 20)
         l.translatesAutoresizingMaskIntoConstraints = false
-        l.textColor = UIColor.black
+        l.textColor = UIColor(named: "FG")
         return l
     }()
     
@@ -36,6 +36,7 @@ class PostTypeCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        backgroundColor = UIColor(named: "BG")
         accessoryType = .disclosureIndicator
         contentView.addSubview(iconView)
         iconView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8).isActive = true

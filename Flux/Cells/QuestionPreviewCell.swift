@@ -23,6 +23,7 @@ class QuestionPreviewCell: UITableViewCell {
         tv.text = "Hello how are you doing today i really like you"
         tv.isSelectable = false
         tv.font = UIFont.systemFont(ofSize: 16)
+        tv.backgroundColor = UIColor.clear
         return tv
     }()
 

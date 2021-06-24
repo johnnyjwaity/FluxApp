@@ -19,7 +19,7 @@ class HomeController:UIViewController, UICollectionViewDelegate, UICollectionVie
     let collectionView:UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let c = UICollectionView(frame: CGRect(), collectionViewLayout: layout)
-        c.backgroundColor = UIColor.white
+        c.backgroundColor = UIColor(named: "BG")
         c.translatesAutoresizingMaskIntoConstraints = false
         c.register(PostCell.self, forCellWithReuseIdentifier: "postCell")
 //        c.isScrollEnabled = false
@@ -32,7 +32,7 @@ class HomeController:UIViewController, UICollectionViewDelegate, UICollectionVie
         if HomeController.shared == nil {
             HomeController.shared = self
         }
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor(named: "BG")
         collectionView.delegate = self
         collectionView.dataSource = self
         view.addSubview(collectionView)
@@ -53,7 +53,11 @@ class HomeController:UIViewController, UICollectionViewDelegate, UICollectionVie
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tabBarController?.tabBar.isHidden = false
+        
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        FluxTabBarController.shared.toggleTabBar(shouldDisplay: true)
     }
     
     @objc
@@ -162,6 +166,6 @@ class HomeController:UIViewController, UICollectionViewDelegate, UICollectionVie
     
     func sharePost(for postID: String) {
         let shareController = PostShareController(postID)
-        tabBarController?.present(shareController, animated: true, completion: nil)
+        FluxTabBarController.shared.present(shareController, animated: true, completion: nil)
     }
 }

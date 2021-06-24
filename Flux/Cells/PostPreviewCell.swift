@@ -25,7 +25,7 @@ class PostPreviewCell: UICollectionViewCell {
     
     let container:UIView = {
         let v = UIView()
-        v.backgroundColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 0.3)
+        v.backgroundColor = UIColor(named: "GR")
         v.translatesAutoresizingMaskIntoConstraints = false
         v.layer.cornerRadius = 40
         return v
@@ -44,7 +44,7 @@ class PostPreviewCell: UICollectionViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.boldSystemFont(ofSize: 20)
-        label.textColor = UIColor.black
+        label.textColor = UIColor(named: "FG")
         label.lineBreakMode = .byTruncatingTail
         label.text = "This is my question. How Are we doing today"
         return label

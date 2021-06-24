@@ -24,10 +24,10 @@ class PostResultsController: UIViewController, UITableViewDataSource, UITableVie
         self.post = post
         super.init(nibName: nil, bundle: nil)
         
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor(named: "BG")
         view.clipsToBounds = true
         let scrollView = UIScrollView()
-        scrollView.backgroundColor = UIColor.white
+        scrollView.backgroundColor = UIColor(named: "BG")
         scrollView.alwaysBounceVertical = true
         scrollView.isScrollEnabled = true
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -61,6 +61,7 @@ class PostResultsController: UIViewController, UITableViewDataSource, UITableVie
         pieChart.drawEntryLabelsEnabled = false
         pieChart.usePercentValuesEnabled = true
         pieChart.legend.enabled = false
+        pieChart.holeColor = UIColor(named: "BG")
         pieChart.animate(xAxisDuration: 0.3, yAxisDuration: 0.3, easingOption: .easeInOutSine)
         scrollView.addSubview(pieChart)
         pieChart.topAnchor.constraint(equalTo: control.bottomAnchor, constant: 12).isActive = true
@@ -74,7 +75,7 @@ class PostResultsController: UIViewController, UITableViewDataSource, UITableVie
         lineChart.xAxis.enabled = false
         lineChart.legend.enabled = false
         lineChart.leftAxis.labelFont = UIFont.systemFont(ofSize: 20)
-        lineChart.leftAxis.labelTextColor = UIColor.black
+        lineChart.leftAxis.labelTextColor = UIColor(named: "FG") ?? UIColor.black
         lineChart.isUserInteractionEnabled = false
         let formatter = NumberFormatter()
         formatter.minimumFractionDigits = 0
@@ -147,7 +148,7 @@ class PostResultsController: UIViewController, UITableViewDataSource, UITableVie
         let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
         if post.postType == .Rating {
             cell.textLabel?.text = "\(indexPath.row)/10"
-            cell.textLabel?.textColor = UIColor.black
+            cell.textLabel?.textColor = UIColor(named: "FG")
         }else{
             cell.textLabel?.text = post.choices![indexPath.row]
             cell.textLabel?.textColor = clrs[indexPath.row]

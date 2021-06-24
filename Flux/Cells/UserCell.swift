@@ -55,7 +55,7 @@ class UserCell: UITableViewCell {
         
         let userLabel = UILabel()
         userLabel.text = user
-        userLabel.textColor = UIColor.black
+        userLabel.textColor = UIColor(named: "FG")
         userLabel.font = UIFont.boldSystemFont(ofSize: 20)
         userLabel.translatesAutoresizingMaskIntoConstraints = false
         userLabel.adjustsFontSizeToFitWidth = true

@@ -25,6 +25,15 @@ class LoginController: UIViewController, UITextFieldDelegate {
     let usernameField = IconTextField(icon: #imageLiteral(resourceName: "profile"), field: "Username")
     let passwordField = IconTextField(icon: #imageLiteral(resourceName: "lock"), field: "Password", secure: true)
     
+    let forgotPasswordButton:UIButton = {
+        let b = UIButton(type: .system)
+        b.setTitle("Forgot Password?", for: .normal)
+        b.setTitleColor(UIColor.lightGray, for: .normal)
+        b.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        b.translatesAutoresizingMaskIntoConstraints = false
+        return b
+    }()
+    
     let button:LoadButton = LoadButton(title: "Login")
     
     let signupButton:UIButton = {
@@ -62,7 +71,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor(named: "BG")
         view.clipsToBounds = true
         
         errorBox.text = "Test Error"
@@ -92,6 +101,11 @@ class LoginController: UIViewController, UITextFieldDelegate {
         passwordField.topAnchor.constraint(equalTo: usernameField.bottomAnchor, constant: 20).isActive = true
         passwordField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
+        forgotPasswordButton.addTarget(self, action: #selector(forgotPasswordClicked), for: .touchUpInside)
+        view.addSubview(forgotPasswordButton)
+        forgotPasswordButton.topAnchor.constraint(equalTo: passwordField.bottomAnchor, constant: 6).isActive = true
+        forgotPasswordButton.rightAnchor.constraint(equalTo: passwordField.rightAnchor).isActive = true
+        
         view.addSubview(titleLabel)
         titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 10).isActive = true
         titleLabel.bottomAnchor.constraint(equalTo: usernameField.topAnchor, constant: -10).isActive = true
@@ -101,7 +115,7 @@ class LoginController: UIViewController, UITextFieldDelegate {
         button.layer.cornerRadius = 8
         button.addTarget(self, action: #selector(buttonClicked), for: .touchUpInside)
         view.addSubview(button)
-        button.topAnchor.constraint(equalTo: passwordField.bottomAnchor, constant: 20).isActive = true
+        button.topAnchor.constraint(equalTo: forgotPasswordButton.bottomAnchor, constant: 20).isActive = true
         button.leftAnchor.constraint(equalTo: passwordField.leftAnchor).isActive = true
         button.rightAnchor.constraint(equalTo: passwordField.rightAnchor).isActive = true
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
@@ -117,6 +131,9 @@ class LoginController: UIViewController, UITextFieldDelegate {
         privacyButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -8).isActive = true
         privacyButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8).isActive = true
         
+        
+        let dismissGesture = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing))
+        view.addGestureRecognizer(dismissGesture)
     }
     
     @objc
@@ -129,6 +146,11 @@ class LoginController: UIViewController, UITextFieldDelegate {
             return
         }
         login(username: username, password: password)
+    }
+    
+    @objc
+    func forgotPasswordClicked(){
+        
     }
     
     func login(username:String, password:String) {

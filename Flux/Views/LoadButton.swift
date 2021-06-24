@@ -35,7 +35,7 @@ class LoadButton: UIButton {
             self.backgroundColor = UIColor.appBlue
         }else{
             self.isEnabled = false
-            self.backgroundColor = UIColor.lightGray
+            self.backgroundColor = UIColor(named: "GR")
         }
     }
     

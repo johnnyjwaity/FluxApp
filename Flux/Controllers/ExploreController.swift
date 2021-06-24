@@ -62,13 +62,13 @@ class ExploreController: UIViewController, UICollectionViewDelegateFlowLayout, U
         c.translatesAutoresizingMaskIntoConstraints = false
         c.alwaysBounceVertical = true
         c.register(PostCell.self, forCellWithReuseIdentifier: "post")
-        c.backgroundColor = UIColor.white
+        c.backgroundColor = UIColor(named: "BG")
         return c
     }()
 
     init(){
         super.init(nibName: nil, bundle: nil)
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor(named: "BG")
         view.addSubview(sortToolbar)
         sortToolbar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         sortToolbar.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true

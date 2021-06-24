@@ -28,7 +28,7 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
     var messages:[Message] = []
     let messageInputContainer:UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(red: 0.94, green: 0.94, blue: 0.94, alpha: 1)
+        view.backgroundColor = UIColor(named: "GR")
         view.translatesAutoresizingMaskIntoConstraints = false
 
         let divider = UIView()
@@ -47,7 +47,7 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
         let field = UITextView()
         field.font = UIFont.systemFont(ofSize: 16)
         field.isScrollEnabled = false
-        field.backgroundColor = UIColor.white
+        field.backgroundColor = UIColor(named: "BG")
         field.layer.cornerRadius = 8
         //        field.placeholder = "Enter Comment"
         field.translatesAutoresizingMaskIntoConstraints = false
@@ -57,7 +57,7 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
     let placeholderLabel:UILabel = {
         let label = UILabel()
         label.text = "Enter Message..."
-        label.textColor = UIColor.lightGray
+        label.textColor = UIColor(named: "GR")
         label.font = UIFont.systemFont(ofSize: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -71,7 +71,7 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor(named: "BG")
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(fetchMessages))
         // Do any additional setup after loading the view.
@@ -84,7 +84,7 @@ class ConvoController: UIViewController, UITextViewDelegate, UICollectionViewDel
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.backgroundColor = UIColor.white
+        collectionView.backgroundColor = UIColor(named: "BG")
         collectionView.alwaysBounceVertical = true
         collectionView.contentInset = UIEdgeInsets(top: 16, left: 0, bottom: 0, right: 0)
         view.addSubview(collectionView)

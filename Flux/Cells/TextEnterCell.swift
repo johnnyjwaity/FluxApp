@@ -24,6 +24,7 @@ class TextEnterCell: UITableViewCell, UITextViewDelegate {
         tv.translatesAutoresizingMaskIntoConstraints = false
         tv.isEditable = true
         tv.font = UIFont.systemFont(ofSize: 18)
+        tv.backgroundColor = UIColor.clear
         return tv
     }()
 

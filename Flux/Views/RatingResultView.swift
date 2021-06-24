@@ -41,7 +41,7 @@ class RatingResultView: UIView {
         let l = UILabel()
         l.text = "5.0"
         l.translatesAutoresizingMaskIntoConstraints = false
-        l.textColor = UIColor.black
+        l.textColor = UIColor(named: "FG")
         l.font = UIFont.boldSystemFont(ofSize: 50)
         l.textAlignment = .center
         return l

@@ -14,7 +14,7 @@ class SearchController: UIViewController, UISearchResultsUpdating, UISearchBarDe
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor(named: "BG")
         
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
@@ -40,7 +40,7 @@ class SearchController: UIViewController, UISearchResultsUpdating, UISearchBarDe
         definesPresentationContext = true
         
         let findFreindsView = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 200))
-        findFreindsView.backgroundColor = UIColor.white
+//        findFreindsView.backgroundColor = UIColor.white
         
         let contactButton = UIButton(type: .roundedRect)
         contactButton.translatesAutoresizingMaskIntoConstraints = false

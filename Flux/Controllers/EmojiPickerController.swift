@@ -31,7 +31,7 @@ class EmojiPickerController: UIViewController, UICollectionViewDataSource, UICol
     let collectionView:UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: CGRect(), collectionViewLayout: layout)
-        collectionView.backgroundColor = UIColor.white
+        collectionView.backgroundColor = UIColor(named: "BG")
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.register(EmojiCell.self, forCellWithReuseIdentifier: "emojiCell")
         return collectionView
@@ -50,7 +50,7 @@ class EmojiPickerController: UIViewController, UICollectionViewDataSource, UICol
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 16
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor(named: "BG")
         view.layer.shadowColor = UIColor.black.cgColor
         view.layer.shadowOpacity = 0.2
         view.layer.shadowOffset = .zero
@@ -110,7 +110,7 @@ class EmojiPickerController: UIViewController, UICollectionViewDataSource, UICol
     
     init() {
         super.init(nibName: nil, bundle: nil)
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor(named: "BG")
         
         view.addSubview(searchIcon)
         searchIcon.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 13).isActive = true

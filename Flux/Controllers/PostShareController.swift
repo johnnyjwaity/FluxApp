@@ -33,7 +33,7 @@ class PostShareController: UIViewController, UITableViewDelegate, UITableViewDat
         super.viewDidLoad()
         view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0)
         
-        containerView.backgroundColor = UIColor.white
+        containerView.backgroundColor = UIColor(named: "GR")
         containerView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(containerView)
         bottomConstraint = containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -57,7 +57,7 @@ class PostShareController: UIViewController, UITableViewDelegate, UITableViewDat
         shareTitle.translatesAutoresizingMaskIntoConstraints = false
         shareTitle.text = "Share Post"
         shareTitle.font = UIFont.boldSystemFont(ofSize: 20)
-        shareTitle.textColor = UIColor.black
+        shareTitle.textColor = UIColor(named: "FG")
         containerView.addSubview(shareTitle)
         shareTitle.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 2).isActive = true
         shareTitle.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true

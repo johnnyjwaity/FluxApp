@@ -15,6 +15,7 @@ class SettingsController: UITableViewController {
         super.viewDidLoad()
         title = "Settings"
         navigationItem.title = "Settings"
+        tableView.register(LinkedAccountCell.self, forCellReuseIdentifier: "linked-account")
         // Do any additional setup after loading the view.
     }
     
@@ -24,22 +25,48 @@ class SettingsController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-        cell.textLabel?.text = "Logout"
-        cell.textLabel?.textColor = UIColor.red
-        return cell
+        if indexPath.section == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "linked-account") as! LinkedAccountCell
+            cell.setCell(type: indexPath.row == 0 ? .Snapchat : .Twitter)
+            return cell
+        }else{
+            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+            cell.textLabel?.text = "Logout"
+            cell.textLabel?.textColor = UIColor.red
+            return cell
+        }
+    }
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == 0 {
+            return "Linked Accounts"
+        }
+        return nil
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        if section == 0 {
+            return 2
+        }else if section == 1 {
+            return 1
+        }
+        return 0
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        logout()
+        if indexPath.section == 1 && indexPath.row == 0 {
+            logout()
+        }
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     
     func logout(){
+        
         Network.setToken(nil)
         AppDelegate.hasAttemptedRegistrantion = false
         let keychain = Keychain(service: "com.johnnywaity.flux")

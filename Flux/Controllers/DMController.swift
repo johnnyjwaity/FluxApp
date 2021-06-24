@@ -23,7 +23,7 @@ class DMController: UITableViewController, UserListControllerDelegate {
         refreshControl = rc
         title = "Direct Messages"
         navigationItem.title = "Direct Messages"
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor(named: "BG")
         tableView.register(ConvoCell.self, forCellReuseIdentifier: "convo")
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(compose))
         tableView.tableFooterView = UIView()
@@ -32,7 +32,7 @@ class DMController: UITableViewController, UserListControllerDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tabBarController?.tabBar.isHidden = true
+        FluxTabBarController.shared.toggleTabBar(shouldDisplay: false)
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
